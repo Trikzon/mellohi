@@ -8,6 +8,7 @@ namespace voxelgame.World;
 public partial class ChunkMesh : MeshInstance3D
 {
     private readonly List<Vector3> _vertices = new();
+    private readonly List<Vector3> _normals = new();
     private readonly List<int> _indices = new();
     private readonly List<Color> _colors = new();
 
@@ -16,9 +17,12 @@ public partial class ChunkMesh : MeshInstance3D
         return chunk.GetVoxel(localPos) == 0;
     }
 
-    private void AddQuad(IEnumerable<Vector3> vertices, IEnumerable<int> indices, Color color)
+    private void AddQuad(IEnumerable<Vector3> vertices, IEnumerable<int> indices, Color color, Vector3 normal)
     {
         _vertices.AddRange(vertices);
+        
+        for (var i = 0; i < 4; i++)
+            _normals.Add(normal);
         
         var index = _vertices.Count - 4;
         _indices.AddRange(indices.Select(i => i + index).ToArray());
@@ -53,7 +57,7 @@ public partial class ChunkMesh : MeshInstance3D
                         var v1 = new Vector3(x + 1, y + 1, z);
                         var v2 = new Vector3(x + 1, y + 1, z + 1);
                         var v3 = new Vector3(x, y + 1, z + 1);
-                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, color);
+                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, color, Vector3.Up);
                     }
                     
                     // Down
@@ -63,7 +67,7 @@ public partial class ChunkMesh : MeshInstance3D
                         var v1 = new Vector3(x + 1, y, z);
                         var v2 = new Vector3(x + 1, y, z + 1);
                         var v3 = new Vector3(x, y, z + 1);
-                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, color);
+                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, color, Vector3.Down);
                     }
                     
                     // Right
@@ -73,7 +77,7 @@ public partial class ChunkMesh : MeshInstance3D
                         var v1 = new Vector3(x + 1, y + 1, z);
                         var v2 = new Vector3(x + 1, y + 1, z + 1);
                         var v3 = new Vector3(x + 1, y, z + 1);
-                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, color);
+                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, color, Vector3.Right);
                     }
                     
                     // Left
@@ -83,7 +87,7 @@ public partial class ChunkMesh : MeshInstance3D
                         var v1 = new Vector3(x, y + 1, z);
                         var v2 = new Vector3(x, y + 1, z + 1);
                         var v3 = new Vector3(x, y, z + 1);
-                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, color);
+                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, color, Vector3.Left);
                     }
                     
                     // Forward
@@ -93,7 +97,7 @@ public partial class ChunkMesh : MeshInstance3D
                         var v1 = new Vector3(x + 1, y, z);
                         var v2 = new Vector3(x + 1, y + 1, z);
                         var v3 = new Vector3(x, y + 1, z);
-                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, color);
+                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, color, Vector3.Forward);
                     }
                     
                     // Back
@@ -103,7 +107,7 @@ public partial class ChunkMesh : MeshInstance3D
                         var v1 = new Vector3(x + 1, y, z + 1);
                         var v2 = new Vector3(x + 1, y + 1, z + 1);
                         var v3 = new Vector3(x, y + 1, z + 1);
-                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, color);
+                        AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, color, Vector3.Back);
                     }
                 }
             }
@@ -113,6 +117,7 @@ public partial class ChunkMesh : MeshInstance3D
         surface.Resize((int)Mesh.ArrayType.Max);
 
         surface[(int)Mesh.ArrayType.Vertex] = _vertices.ToArray();
+        surface[(int)Mesh.ArrayType.Normal] = _normals.ToArray();
         surface[(int)Mesh.ArrayType.Color] = _colors.ToArray();
         surface[(int)Mesh.ArrayType.Index] = _indices.ToArray();
 
