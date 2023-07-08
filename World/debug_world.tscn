@@ -1,9 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://cd62t0h0420o"]
+[gd_scene load_steps=3 format=3 uid="uid://cd62t0h0420o"]
 
 [ext_resource type="Script" path="res://FreeLookCamera.cs" id="1_3w20x"]
-[ext_resource type="PackedScene" uid="uid://cwekf0qtn8cyk" path="res://World/Chunk/chunk.tscn" id="2_fh2ys"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_4t6q5"]
+[ext_resource type="PackedScene" uid="uid://bgni4i74n4cpu" path="res://World/world.tscn" id="2_bd4ub"]
 
 [node name="DebugWorld" type="Node3D"]
 
@@ -14,8 +12,4 @@ script = ExtResource("1_3w20x")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -0.257858, 0.966183, 0, -0.966183, -0.257858, 0, 3.59672, -1.88372)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.10879, 0)
-mesh = SubResource("BoxMesh_4t6q5")
-
-[node name="Chunk" parent="." instance=ExtResource("2_fh2ys")]
+[node name="World" parent="." instance=ExtResource("2_bd4ub")]

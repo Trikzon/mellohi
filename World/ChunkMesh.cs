@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace voxelgame.World.Chunk;
+namespace voxelgame.World;
 
 public partial class ChunkMesh : MeshInstance3D
 {
@@ -11,11 +11,9 @@ public partial class ChunkMesh : MeshInstance3D
     private readonly List<int> _indices = new();
     private readonly List<Color> _colors = new();
 
-    private static bool IsVoid(Chunk chunk, int x, int y, int z)
+    private static bool IsVoid(Chunk chunk, Vector3I localPos)
     {
-        if (x is >= 0 and < 16 && y is >= 0 and < 16 && z is >= 0 and < 16)
-            return chunk.GetVoxel(x, y, z) == 0;
-        return true;
+        return chunk.GetVoxel(localPos) == 0;
     }
 
     private void AddQuad(IEnumerable<Vector3> vertices, IEnumerable<int> indices, Color color)
@@ -37,7 +35,8 @@ public partial class ChunkMesh : MeshInstance3D
             {
                 for (var z = 0; z < 16; z++)
                 {
-                    var voxel = chunk.GetVoxel(x, y, z);
+                    var blockPos = new Vector3I(x, y, z);
+                    var voxel = chunk.GetVoxel(blockPos);
                     if (voxel == 0) continue;
 
                     var color = voxel switch
@@ -48,7 +47,7 @@ public partial class ChunkMesh : MeshInstance3D
                     };
                     
                     // Up
-                    if (IsVoid(chunk, x, y + 1, z))
+                    if (IsVoid(chunk, blockPos + new Vector3I(0, 1, 0)))
                     {
                         var v0 = new Vector3(x, y + 1, z);
                         var v1 = new Vector3(x + 1, y + 1, z);
@@ -58,7 +57,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Down
-                    if (IsVoid(chunk, x, y - 1, z))
+                    if (IsVoid(chunk, blockPos + new Vector3I(0, -1, 0)))
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x + 1, y, z);
@@ -68,7 +67,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Right
-                    if (IsVoid(chunk, x + 1, y, z))
+                    if (IsVoid(chunk, blockPos + new Vector3I(1, 0, 0)))
                     {
                         var v0 = new Vector3(x + 1, y, z);
                         var v1 = new Vector3(x + 1, y + 1, z);
@@ -78,7 +77,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Left
-                    if (IsVoid(chunk, x - 1, y, z))
+                    if (IsVoid(chunk, blockPos + new Vector3I(-1, 0, 0)))
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x, y + 1, z);
@@ -88,7 +87,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Forward
-                    if (IsVoid(chunk, x, y, z - 1))
+                    if (IsVoid(chunk, blockPos + new Vector3I(0, 0, -1)))
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x + 1, y, z);
@@ -98,7 +97,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Back
-                    if (IsVoid(chunk, x, y, z + 1))
+                    if (IsVoid(chunk, blockPos + new Vector3I(0, 0, 1)))
                     {
                         var v0 = new Vector3(x, y, z + 1);
                         var v1 = new Vector3(x + 1, y, z + 1);
