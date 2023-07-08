@@ -1,0 +1,13 @@
+[gd_scene load_steps=4 format=3 uid="uid://cwekf0qtn8cyk"]
+
+[ext_resource type="Script" path="res://World/Chunk/Chunk.cs" id="1_rruwr"]
+[ext_resource type="Script" path="res://World/Chunk/ChunkMesh.cs" id="2_gati2"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wk8js"]
+
+[node name="Chunk" type="Node3D"]
+script = ExtResource("1_rruwr")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_wk8js")
+script = ExtResource("2_gati2")
