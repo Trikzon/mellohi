@@ -11,9 +11,14 @@ config_version=5
 [application]
 
 config/name="voxelgame"
-run/main_scene="res://World/debug_world.tscn"
+run/main_scene="res://World/world.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 config/icon="res://icon.svg"
+
+[display]
+
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [dotnet]
 
