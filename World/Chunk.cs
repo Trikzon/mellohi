@@ -89,4 +89,9 @@ public partial class Chunk : Node3D
 			_dimension?.SetVoxel(GetVoxelPos(localPos), voxel);
 		_voxels[localPos.X + localPos.Z * Size + localPos.Y * Size * Size] = voxel;
 	}
+	
+	public ChunkMesh GetMesh()
+	{
+		return GetNode<ChunkMesh>("Mesh");
+	}
 }

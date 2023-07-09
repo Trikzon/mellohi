@@ -40,6 +40,11 @@ public partial class Dimension : Node3D
         return _chunks.TryGetValue(chunkPos, out var chunk) ? chunk : null;
     }
 
+    public Dictionary<Vector3I, Chunk> GetChunks()
+    {
+        return _chunks;
+    }
+
     public Voxel GetVoxel(Vector3I voxelPos)
     {
         return GetChunk(GetChunkPos(voxelPos))?.GetVoxel(GetLocalPos(voxelPos)) ?? Voxel.Air;

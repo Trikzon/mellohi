@@ -7,23 +7,23 @@ namespace voxelgame.World;
 
 public partial class ChunkMesh : MeshInstance3D
 {
-    private readonly List<Vector3> _vertices = new();
-    private readonly List<Vector3> _normals = new();
-    private readonly List<int> _indices = new();
-    private readonly List<Color> _colors = new();
+    public readonly List<Vector3> Vertices = new();
+    public readonly List<Vector3> Normals = new();
+    public readonly List<int> Indices = new();
+    public readonly List<Color> Colors = new();
 
     private void AddQuad(IEnumerable<Vector3> vertices, IEnumerable<int> indices, Color color, Vector3 normal)
     {
-        _vertices.AddRange(vertices);
+        Vertices.AddRange(vertices);
         
         for (var i = 0; i < 4; i++)
-            _normals.Add(normal);
+            Normals.Add(normal);
         
-        var index = _vertices.Count - 4;
-        _indices.AddRange(indices.Select(i => i + index).ToArray());
+        var index = Vertices.Count - 4;
+        Indices.AddRange(indices.Select(i => i + index).ToArray());
         
         for (var i = 0; i < 4; i++)
-            _colors.Add(color);
+            Colors.Add(color);
     }
     
     public void GenerateMesh(Chunk chunk)
@@ -106,13 +106,13 @@ public partial class ChunkMesh : MeshInstance3D
         var surface = new Godot.Collections.Array();
         surface.Resize((int)Mesh.ArrayType.Max);
 
-        surface[(int)Mesh.ArrayType.Vertex] = _vertices.ToArray();
-        surface[(int)Mesh.ArrayType.Normal] = _normals.ToArray();
-        surface[(int)Mesh.ArrayType.Color] = _colors.ToArray();
-        surface[(int)Mesh.ArrayType.Index] = _indices.ToArray();
+        surface[(int)Mesh.ArrayType.Vertex] = Vertices.ToArray();
+        surface[(int)Mesh.ArrayType.Normal] = Normals.ToArray();
+        surface[(int)Mesh.ArrayType.Color] = Colors.ToArray();
+        surface[(int)Mesh.ArrayType.Index] = Indices.ToArray();
 
         var arrayMesh = new ArrayMesh();
-        if (_vertices.Count > 0)
+        if (Vertices.Count > 0)
         {
             arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surface);
         }
