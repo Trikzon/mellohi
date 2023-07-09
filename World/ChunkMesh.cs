@@ -39,8 +39,8 @@ public partial class ChunkMesh : MeshInstance3D
             {
                 for (var z = 0; z < 16; z++)
                 {
-                    var blockPos = new Vector3I(x, y, z);
-                    var voxel = chunk.GetVoxel(blockPos);
+                    var localPos = new Vector3I(x, y, z);
+                    var voxel = chunk.GetVoxel(localPos);
                     if (voxel == 0) continue;
 
                     var color = voxel switch
@@ -51,7 +51,7 @@ public partial class ChunkMesh : MeshInstance3D
                     };
                     
                     // Up
-                    if (IsVoid(chunk, blockPos + new Vector3I(0, 1, 0)))
+                    if (IsVoid(chunk, localPos + new Vector3I(0, 1, 0)))
                     {
                         var v0 = new Vector3(x, y + 1, z);
                         var v1 = new Vector3(x + 1, y + 1, z);
@@ -61,7 +61,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Down
-                    if (IsVoid(chunk, blockPos + new Vector3I(0, -1, 0)))
+                    if (IsVoid(chunk, localPos + new Vector3I(0, -1, 0)))
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x + 1, y, z);
@@ -71,7 +71,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Right
-                    if (IsVoid(chunk, blockPos + new Vector3I(1, 0, 0)))
+                    if (IsVoid(chunk, localPos + new Vector3I(1, 0, 0)))
                     {
                         var v0 = new Vector3(x + 1, y, z);
                         var v1 = new Vector3(x + 1, y + 1, z);
@@ -81,7 +81,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Left
-                    if (IsVoid(chunk, blockPos + new Vector3I(-1, 0, 0)))
+                    if (IsVoid(chunk, localPos + new Vector3I(-1, 0, 0)))
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x, y + 1, z);
@@ -91,7 +91,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Forward
-                    if (IsVoid(chunk, blockPos + new Vector3I(0, 0, -1)))
+                    if (IsVoid(chunk, localPos + new Vector3I(0, 0, -1)))
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x + 1, y, z);
@@ -101,7 +101,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Back
-                    if (IsVoid(chunk, blockPos + new Vector3I(0, 0, 1)))
+                    if (IsVoid(chunk, localPos + new Vector3I(0, 0, 1)))
                     {
                         var v0 = new Vector3(x, y, z + 1);
                         var v1 = new Vector3(x + 1, y, z + 1);

@@ -51,9 +51,8 @@ public partial class Chunk : Node3D
 	
 	public void SetVoxel(Vector3I localPos, int value)
 	{
-		// TODO: Set voxel in neighboring chunk if necessary
-		// if (localPos.X is < 0 or >= Size || localPos.Y is < 0 or >= Size || localPos.Z is < 0 or >= Size)
-		// 	return _world.SetVoxel(localPos + _chunkPos * Size);
+		if (localPos.X is < 0 or >= Size || localPos.Y is < 0 or >= Size || localPos.Z is < 0 or >= Size)
+			_dimension?.SetVoxel(localPos + _chunkPos * Size, value);
 		_voxels[localPos.X + localPos.Z * Size + localPos.Y * Size * Size] = value;
 	}
 }

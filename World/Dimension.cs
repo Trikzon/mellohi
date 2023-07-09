@@ -13,7 +13,7 @@ public partial class Dimension : Node3D
     {
         for (var x = -2; x < 2; x++)
         {
-            for (var y = 0; y < 1; y++)
+            for (var y = -2; y < 2; y++)
             {
                 for (var z = -2; z < 2; z++)
                 {
@@ -37,18 +37,40 @@ public partial class Dimension : Node3D
         return _chunks.TryGetValue(chunkPos, out var chunk) ? chunk : null;
     }
 
-    public int GetVoxel(Vector3I blockPos)
+    public int GetVoxel(Vector3I voxelPos)
     {
-        var chunkPos = new Vector3I(
-            Mathf.FloorToInt(blockPos.X / (float)Chunk.Size),
-            Mathf.FloorToInt(blockPos.Y / (float)Chunk.Size),
-            Mathf.FloorToInt(blockPos.Z / (float)Chunk.Size)
+        return GetChunk(GetChunkPos(voxelPos))?.GetVoxel(GetLocalPos(voxelPos)) ?? 0;
+    }
+    
+    public void SetVoxel(Vector3I voxelPos, int value)
+    {
+        GetChunk(GetChunkPos(voxelPos))?.SetVoxel(GetLocalPos(voxelPos), value);
+    }
+    
+    public static Vector3I GetVoxelPos(Vector3 worldPos)
+    {
+        return new Vector3I(
+            Mathf.FloorToInt(worldPos.X),
+            Mathf.FloorToInt(worldPos.Y),
+            Mathf.FloorToInt(worldPos.Z)
         );
-        var chunk = GetChunk(chunkPos);
-        return chunk?.GetVoxel(new Vector3I(
-            Mathf.PosMod(blockPos.X, Chunk.Size),
-            Mathf.PosMod(blockPos.Y, Chunk.Size),
-            Mathf.PosMod(blockPos.Z, Chunk.Size)
-        )) ?? 0;
+    }
+    
+    public static Vector3I GetChunkPos(Vector3I voxelPos)
+    {
+        return new Vector3I(
+            Mathf.FloorToInt(voxelPos.X / (float)Chunk.Size),
+            Mathf.FloorToInt(voxelPos.Y / (float)Chunk.Size),
+            Mathf.FloorToInt(voxelPos.Z / (float)Chunk.Size)
+        );
+    }
+    
+    public static Vector3I GetLocalPos(Vector3I voxelPos)
+    {
+        return new Vector3I(
+            Mathf.PosMod(voxelPos.X, Chunk.Size),
+            Mathf.PosMod(voxelPos.Y, Chunk.Size),
+            Mathf.PosMod(voxelPos.Z, Chunk.Size)
+        );
     }
 }
