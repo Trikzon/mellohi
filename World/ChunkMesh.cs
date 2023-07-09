@@ -1,7 +1,7 @@
 using Godot;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using voxelgame.World.Voxels;
 
 namespace voxelgame.World;
 
@@ -11,11 +11,6 @@ public partial class ChunkMesh : MeshInstance3D
     private readonly List<Vector3> _normals = new();
     private readonly List<int> _indices = new();
     private readonly List<Color> _colors = new();
-
-    private static bool IsVoid(Chunk chunk, Vector3I localPos)
-    {
-        return chunk.GetVoxel(localPos) == 0;
-    }
 
     private void AddQuad(IEnumerable<Vector3> vertices, IEnumerable<int> indices, Color color, Vector3 normal)
     {
@@ -41,17 +36,12 @@ public partial class ChunkMesh : MeshInstance3D
                 {
                     var localPos = new Vector3I(x, y, z);
                     var voxel = chunk.GetVoxel(localPos);
-                    if (voxel == 0) continue;
+                    if (voxel == Voxel.Air) continue;
 
-                    var color = voxel switch
-                    {
-                        1 => Colors.Brown,
-                        2 => Colors.Green,
-                        _ => Colors.Gray
-                    };
+                    var color = voxel.Color;
                     
                     // Up
-                    if (IsVoid(chunk, localPos + new Vector3I(0, 1, 0)))
+                    if (!chunk.GetVoxel(localPos + new Vector3I(0, 1, 0)).IsSolid)
                     {
                         var v0 = new Vector3(x, y + 1, z);
                         var v1 = new Vector3(x + 1, y + 1, z);
@@ -61,7 +51,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Down
-                    if (IsVoid(chunk, localPos + new Vector3I(0, -1, 0)))
+                    if (!chunk.GetVoxel(localPos + new Vector3I(0, -1, 0)).IsSolid)
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x + 1, y, z);
@@ -71,7 +61,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Right
-                    if (IsVoid(chunk, localPos + new Vector3I(1, 0, 0)))
+                    if (!chunk.GetVoxel(localPos + new Vector3I(1, 0, 0)).IsSolid)
                     {
                         var v0 = new Vector3(x + 1, y, z);
                         var v1 = new Vector3(x + 1, y + 1, z);
@@ -81,7 +71,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Left
-                    if (IsVoid(chunk, localPos + new Vector3I(-1, 0, 0)))
+                    if (!chunk.GetVoxel(localPos + new Vector3I(-1, 0, 0)).IsSolid)
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x, y + 1, z);
@@ -91,7 +81,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Forward
-                    if (IsVoid(chunk, localPos + new Vector3I(0, 0, -1)))
+                    if (!chunk.GetVoxel(localPos + new Vector3I(0, 0, -1)).IsSolid)
                     {
                         var v0 = new Vector3(x, y, z);
                         var v1 = new Vector3(x + 1, y, z);
@@ -101,7 +91,7 @@ public partial class ChunkMesh : MeshInstance3D
                     }
                     
                     // Back
-                    if (IsVoid(chunk, localPos + new Vector3I(0, 0, 1)))
+                    if (!chunk.GetVoxel(localPos + new Vector3I(0, 0, 1)).IsSolid)
                     {
                         var v0 = new Vector3(x, y, z + 1);
                         var v1 = new Vector3(x + 1, y, z + 1);

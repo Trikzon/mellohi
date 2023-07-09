@@ -1,7 +1,7 @@
 
 using Godot;
-using System;
 using System.Collections.Generic;
+using voxelgame.World.Voxels;
 
 namespace voxelgame.World;
 
@@ -37,14 +37,14 @@ public partial class Dimension : Node3D
         return _chunks.TryGetValue(chunkPos, out var chunk) ? chunk : null;
     }
 
-    public int GetVoxel(Vector3I voxelPos)
+    public Voxel GetVoxel(Vector3I voxelPos)
     {
-        return GetChunk(GetChunkPos(voxelPos))?.GetVoxel(GetLocalPos(voxelPos)) ?? 0;
+        return GetChunk(GetChunkPos(voxelPos))?.GetVoxel(GetLocalPos(voxelPos)) ?? Voxel.Air;
     }
     
-    public void SetVoxel(Vector3I voxelPos, int value)
+    public void SetVoxel(Vector3I voxelPos, Voxel voxel)
     {
-        GetChunk(GetChunkPos(voxelPos))?.SetVoxel(GetLocalPos(voxelPos), value);
+        GetChunk(GetChunkPos(voxelPos))?.SetVoxel(GetLocalPos(voxelPos), voxel);
     }
     
     public static Vector3I GetVoxelPos(Vector3 worldPos)

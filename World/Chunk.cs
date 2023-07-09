@@ -1,5 +1,5 @@
 using Godot;
-using System;
+using voxelgame.World.Voxels;
 
 namespace voxelgame.World;
 
@@ -9,9 +9,7 @@ public partial class Chunk : Node3D
 	
 	private static readonly PackedScene Scene = GD.Load<PackedScene>("res://World/Chunk.tscn");
 
-	// 0 is air, 1 is dirt, 2 is grass
-	// TODO: Use a Voxel class instead of an int
-	private int[] _voxels = new int[Size * Size * Size];
+	private readonly Voxel[] _voxels = new Voxel[Size * Size * Size];
 	private Vector3I _chunkPos;
 	private Dimension? _dimension;
 
@@ -30,10 +28,10 @@ public partial class Chunk : Node3D
 		for (var y = 0; y < 15; y++)
 			for (var x = 0; x < 16; x++)
 				for (var z = 0; z < 16; z++)
-					SetVoxel(new Vector3I(x, y, z), 1);
+					SetVoxel(new Vector3I(x, y, z), Voxel.Dirt);
 		for (var x = 0; x < 16; x++)
 			for (var z = 0; z < 16; z++)
-				SetVoxel(new Vector3I(x, 15, z), 2);
+				SetVoxel(new Vector3I(x, 15, z), Voxel.Grass);
 	}
 
 	public void GenerateMesh()
@@ -42,17 +40,17 @@ public partial class Chunk : Node3D
 		chunkMesh.GenerateMesh(this);
 	}
 	
-	public int GetVoxel(Vector3I localPos)
+	public Voxel GetVoxel(Vector3I localPos)
 	{
 		if (localPos.X is < 0 or >= Size || localPos.Y is < 0 or >= Size || localPos.Z is < 0 or >= Size)
-			return _dimension?.GetVoxel(localPos + _chunkPos * Size) ?? 0;
+			return _dimension!.GetVoxel(localPos + _chunkPos * Size);
 		return _voxels[localPos.X + localPos.Z * Size + localPos.Y * Size * Size];
 	}
 	
-	public void SetVoxel(Vector3I localPos, int value)
+	public void SetVoxel(Vector3I localPos, Voxel voxel)
 	{
 		if (localPos.X is < 0 or >= Size || localPos.Y is < 0 or >= Size || localPos.Z is < 0 or >= Size)
-			_dimension?.SetVoxel(localPos + _chunkPos * Size, value);
-		_voxels[localPos.X + localPos.Z * Size + localPos.Y * Size * Size] = value;
+			_dimension?.SetVoxel(localPos + _chunkPos * Size, voxel);
+		_voxels[localPos.X + localPos.Z * Size + localPos.Y * Size * Size] = voxel;
 	}
 }

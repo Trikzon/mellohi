@@ -1,5 +1,4 @@
 using Godot;
-using System;
 using voxelgame.World;
 
 namespace voxelgame.Overlay;
@@ -28,7 +27,7 @@ public partial class DebugOverlay : Control
 		_positionLabel!.Text = $"XYZ: {pos.X:F3} / {pos.Y:F3} / {pos.Z:F3}";
 
 		var voxelPos = Dimension.GetVoxelPos(pos);
-		_voxelLabel!.Text = $"Voxel: {voxelPos.X} / {voxelPos.Y} / {voxelPos.Z} {{{_dimension!.GetVoxel(voxelPos)}}}";
+		_voxelLabel!.Text = $"Voxel: {voxelPos.X} / {voxelPos.Y} / {voxelPos.Z} {{{_dimension!.GetVoxel(voxelPos).Name}}}";
 		
 		var chunkPos = Dimension.GetChunkPos(voxelPos);
 		_chunkLabel!.Text = $"Chunk: {chunkPos.X} / {chunkPos.Y} / {chunkPos.Z}";
