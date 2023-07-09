@@ -18,8 +18,16 @@ offset_bottom = 40.0
 
 [node name="FpsLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-text = "FPS:"
+text = "fps"
 
 [node name="PositionLabel" type="Label" parent="VBoxContainer"]
 layout_mode = 2
-text = "Position:"
+text = "XYZ:"
+
+[node name="VoxelLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Voxel:"
+
+[node name="ChunkLabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+text = "Chunk:"
