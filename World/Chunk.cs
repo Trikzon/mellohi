@@ -19,19 +19,50 @@ public partial class Chunk : Node3D
 		self!._dimension = dimension;
 		self._chunkPos = chunkPos;
 		self.Position = chunkPos * Size;
+		for (var i = 0; i < self._voxels.Length; i++) self._voxels[i] = Voxel.Air;
 		return self;
 	}
-	
-	public void GenerateChunkDate()
+
+	public void GenerateFirstPhase()
 	{
-		// Create two layers of dirt
-		for (var y = 0; y < 15; y++)
-			for (var x = 0; x < 16; x++)
-				for (var z = 0; z < 16; z++)
-					SetVoxel(new Vector3I(x, y, z), Voxel.Dirt);
-		for (var x = 0; x < 16; x++)
-			for (var z = 0; z < 16; z++)
-				SetVoxel(new Vector3I(x, 15, z), Voxel.Grass);
+		var noise = new FastNoiseLite();
+
+		for (var y = 0; y < Size; y++)
+		{
+			for (var x = 0; x < Size; x++)
+			{
+				for (var z = 0; z < Size; z++)
+				{
+					var localPos = new Vector3I(x, y, z);
+					var voxelPos = GetVoxelPos(localPos);
+					if (noise.GetNoise3Dv(voxelPos) > -0.25)
+						SetVoxel(localPos, Voxel.Stone);
+				}
+			}
+		}
+	}
+	public void GenerateSecondPhase() {
+		for (var y = Size - 1; y >= 0; y--)
+		{
+			for (var x = 0; x < Size; x++)
+			{
+				for (var z = 0; z < Size; z++)
+				{
+					var localPos = new Vector3I(x, y, z);
+					if (GetVoxel(localPos) == Voxel.Air) continue;
+					
+					if (GetVoxel(localPos + Vector3I.Up) == Voxel.Air)
+					{
+						SetVoxel(localPos, Voxel.Grass);
+					}
+					
+					if (GetVoxel(localPos + Vector3I.Up) == Voxel.Grass || GetVoxel(localPos + Vector3I.Up * 2) == Voxel.Grass)
+					{
+						SetVoxel(localPos, Voxel.Dirt);
+					}
+				}
+			}
+		}
 	}
 
 	public void GenerateMesh()
@@ -40,17 +71,22 @@ public partial class Chunk : Node3D
 		chunkMesh.GenerateMesh(this);
 	}
 	
+	public Vector3I GetVoxelPos(Vector3I localPos)
+	{
+		return localPos + _chunkPos * Size;
+	}
+	
 	public Voxel GetVoxel(Vector3I localPos)
 	{
 		if (localPos.X is < 0 or >= Size || localPos.Y is < 0 or >= Size || localPos.Z is < 0 or >= Size)
-			return _dimension!.GetVoxel(localPos + _chunkPos * Size);
+			return _dimension!.GetVoxel(GetVoxelPos(localPos));
 		return _voxels[localPos.X + localPos.Z * Size + localPos.Y * Size * Size];
 	}
 	
 	public void SetVoxel(Vector3I localPos, Voxel voxel)
 	{
 		if (localPos.X is < 0 or >= Size || localPos.Y is < 0 or >= Size || localPos.Z is < 0 or >= Size)
-			_dimension?.SetVoxel(localPos + _chunkPos * Size, voxel);
+			_dimension?.SetVoxel(GetVoxelPos(localPos), voxel);
 		_voxels[localPos.X + localPos.Z * Size + localPos.Y * Size * Size] = voxel;
 	}
 }

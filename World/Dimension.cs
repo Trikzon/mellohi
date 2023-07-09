@@ -7,19 +7,21 @@ namespace voxelgame.World;
 
 public partial class Dimension : Node3D
 {
+    private const int ChunkRadius = 4;
+    
     private readonly Dictionary<Vector3I, Chunk> _chunks = new();
 
     public override void _Ready()
     {
-        for (var x = -2; x < 2; x++)
+        for (var x = -ChunkRadius; x < ChunkRadius; x++)
         {
-            for (var y = -2; y < 2; y++)
+            for (var y = -ChunkRadius; y < ChunkRadius; y++)
             {
-                for (var z = -2; z < 2; z++)
+                for (var z = -ChunkRadius; z < ChunkRadius; z++)
                 {
                     var chunkPos = new Vector3I(x, y, z);
                     var chunk = Chunk.Create(this, chunkPos);
-                    chunk.GenerateChunkDate();
+                    chunk.GenerateFirstPhase();
                     AddChild(chunk);
                     _chunks.Add(chunkPos, chunk);
                 }
@@ -28,6 +30,7 @@ public partial class Dimension : Node3D
         
         foreach (var chunk in _chunks.Values)
         {
+            chunk.GenerateSecondPhase();
             chunk.GenerateMesh();
         }
     }
