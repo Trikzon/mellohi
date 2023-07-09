@@ -13,12 +13,12 @@ public partial class Chunk : Node3D
 	// TODO: Use a Voxel class instead of an int
 	private int[] _voxels = new int[Size * Size * Size];
 	private Vector3I _chunkPos;
-	private World? _world;
+	private Dimension? _dimension;
 
-	public static Chunk Create(World world, Vector3I chunkPos)
+	public static Chunk Create(Dimension dimension, Vector3I chunkPos)
 	{
 		var self = Scene.Instantiate() as Chunk;
-		self!._world = world;
+		self!._dimension = dimension;
 		self._chunkPos = chunkPos;
 		self.Position = chunkPos * Size;
 		return self;
@@ -45,7 +45,7 @@ public partial class Chunk : Node3D
 	public int GetVoxel(Vector3I localPos)
 	{
 		if (localPos.X is < 0 or >= Size || localPos.Y is < 0 or >= Size || localPos.Z is < 0 or >= Size)
-			return _world?.GetVoxel(localPos + _chunkPos * Size) ?? 0;
+			return _dimension?.GetVoxel(localPos + _chunkPos * Size) ?? 0;
 		return _voxels[localPos.X + localPos.Z * Size + localPos.Y * Size * Size];
 	}
 	

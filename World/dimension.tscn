@@ -1,0 +1,17 @@
+[gd_scene load_steps=4 format=3 uid="uid://bgni4i74n4cpu"]
+
+[ext_resource type="Script" path="res://World/Dimension.cs" id="1_u21rw"]
+[ext_resource type="Script" path="res://FreeLookCamera.cs" id="2_sleyf"]
+[ext_resource type="PackedScene" uid="uid://cbvfnqm1cyd0r" path="res://Overlay/debug_overlay.tscn" id="3_2qpcl"]
+
+[node name="Dimension" type="Node3D"]
+script = ExtResource("1_u21rw")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.87462, -0.468508, -0.12466, -8.96845e-17, -0.257133, 0.966376, -0.48481, -0.845212, -0.224893, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2.08165e-12, 20, -60)
+script = ExtResource("2_sleyf")
+
+[node name="DebugOverlay" parent="." instance=ExtResource("3_2qpcl")]

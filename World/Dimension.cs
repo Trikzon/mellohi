@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace voxelgame.World;
 
-public partial class World : Node3D
+public partial class Dimension : Node3D
 {
     private readonly Dictionary<Vector3I, Chunk> _chunks = new();
 

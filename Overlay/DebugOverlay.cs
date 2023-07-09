@@ -11,7 +11,7 @@ public partial class DebugOverlay : Control
 	
 	public override void _Ready()
 	{
-		_camera3D = GetNode<Camera3D>("/root/World/Camera3D");
+		_camera3D = GetNode<Camera3D>("/root/Dimension/Camera3D");
 		_fpsLabel = GetNode<Label>("VBoxContainer/FpsLabel");
 		_positionLabel = GetNode<Label>("VBoxContainer/PositionLabel");
 	}
