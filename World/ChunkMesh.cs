@@ -122,7 +122,10 @@ public partial class ChunkMesh : MeshInstance3D
         surface[(int)Mesh.ArrayType.Index] = _indices.ToArray();
 
         var arrayMesh = new ArrayMesh();
-        arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surface);
+        if (_vertices.Count > 0)
+        {
+            arrayMesh.AddSurfaceFromArrays(Mesh.PrimitiveType.Triangles, surface);
+        }
         Mesh = arrayMesh;
 
         var material = new StandardMaterial3D();
