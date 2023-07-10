@@ -27,10 +27,21 @@ public partial class Dimension : Node3D
                 }
             }
         }
+
+        // {
+        //     var chunk = Chunk.Create(this, Vector3I.Zero);
+        //     chunk.GenerateFirstPhase();
+        //     AddChild(chunk);
+        //     _chunks.Add(Vector3I.Zero, chunk);
+        // }
         
         foreach (var chunk in _chunks.Values)
         {
             chunk.GenerateSecondPhase();
+        }
+
+        foreach (var chunk in _chunks.Values)
+        {
             chunk.GenerateMesh();
         }
     }

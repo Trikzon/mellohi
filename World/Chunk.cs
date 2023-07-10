@@ -8,16 +8,17 @@ public partial class Chunk : Node3D
 	public const int Size = 16;
 	
 	private static readonly PackedScene Scene = GD.Load<PackedScene>("res://World/Chunk.tscn");
+	
+	public Vector3I ChunkPos { get; private set; }
 
 	private readonly Voxel[] _voxels = new Voxel[Size * Size * Size];
-	private Vector3I _chunkPos;
 	private Dimension? _dimension;
 
 	public static Chunk Create(Dimension dimension, Vector3I chunkPos)
 	{
 		var self = Scene.Instantiate() as Chunk;
 		self!._dimension = dimension;
-		self._chunkPos = chunkPos;
+		self.ChunkPos = chunkPos;
 		self.Position = chunkPos * Size;
 		for (var i = 0; i < self._voxels.Length; i++) self._voxels[i] = Voxel.Air;
 		return self;
@@ -68,12 +69,13 @@ public partial class Chunk : Node3D
 	public void GenerateMesh()
 	{
 		var chunkMesh = GetNode<ChunkMesh>("Mesh");
-		chunkMesh.GenerateMesh(this);
+		chunkMesh.GenerateMesh(_dimension!, this);
+		// chunkMesh.OldGenerateMesh(this);
 	}
 	
 	public Vector3I GetVoxelPos(Vector3I localPos)
 	{
-		return localPos + _chunkPos * Size;
+		return localPos + ChunkPos * Size;
 	}
 	
 	public Voxel GetVoxel(Vector3I localPos)

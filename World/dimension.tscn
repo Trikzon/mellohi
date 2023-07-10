@@ -9,8 +9,6 @@ script = ExtResource("1_u21rw")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.612907, -0.763587, -0.203175, 2.24793e-08, -0.257133, 0.966376, -0.790155, -0.592299, -0.157598, 0, 0, 0)
-shadow_enabled = true
-directional_shadow_max_distance = 250.0
 
 [node name="Camera3D" type="Camera3D" parent="."]
 transform = Transform3D(-1, 0, -8.74228e-08, 0, 1, 0, 8.74228e-08, 0, -1, 2.08165e-12, 20, -60)
