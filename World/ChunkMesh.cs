@@ -56,6 +56,7 @@ public partial class ChunkMesh : MeshInstance3D
 
         var length = 0;
         var hiddenLength = 0;
+        var width = 1;
         var visitingPos = localPos;
         if (!_faceTracker!.VisitedUp[access] && !IsVoxelSolidUp(localPos + Vector3I.Up))  // Up
         {
@@ -78,15 +79,32 @@ public partial class ChunkMesh : MeshInstance3D
                 length -= hiddenLength;
                 for (; visitingPos.Z < localPos.Z + length; visitingPos.Z--)
                 {
-                    _faceTracker.VisitedDown[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = true;
+                    _faceTracker.VisitedUp[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = false;
                 }
             }
 
+            var stop = false;
+            for (visitingPos.X = localPos.X + 1; visitingPos.X < Chunk.Size && !stop; visitingPos.X++)
+            {
+                for (visitingPos.Z = localPos.Z; visitingPos.Z < localPos.Z + length && !stop; visitingPos.Z++)
+                {
+                    stop |= _chunk!.GetVoxel(visitingPos) != voxel;
+                    stop |= _faceTracker.VisitedUp[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size];
+                    stop |= IsVoxelSolidUp(visitingPos + Vector3I.Up);
+                }
+
+                if (stop) continue;
+                
+                width += 1;
+                for (visitingPos.Z = localPos.Z; visitingPos.Z < localPos.Z + length; visitingPos.Z++)
+                    _faceTracker.VisitedUp[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = true;
+            }
+            
             if (length > 0)
             {
                 var v0 = new Vector3(localPos.X, localPos.Y + 1, localPos.Z);
-                var v1 = new Vector3(localPos.X + 1, localPos.Y + 1, localPos.Z);
-                var v2 = new Vector3(localPos.X + 1, localPos.Y + 1, localPos.Z + length);
+                var v1 = new Vector3(localPos.X + width, localPos.Y + 1, localPos.Z);
+                var v2 = new Vector3(localPos.X + width, localPos.Y + 1, localPos.Z + length);
                 var v3 = new Vector3(localPos.X, localPos.Y + 1, localPos.Z + length);
                 AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, voxel.Color, Vector3.Up);
             }
@@ -94,6 +112,7 @@ public partial class ChunkMesh : MeshInstance3D
 
         length = 0;
         hiddenLength = 0;
+        width = 1;
         visitingPos = localPos;
         if (!_faceTracker!.VisitedDown[access] && !IsVoxelSolidDown(localPos + Vector3I.Down)) // Down
         {
@@ -116,15 +135,32 @@ public partial class ChunkMesh : MeshInstance3D
                 length -= hiddenLength;
                 for (; visitingPos.Z < localPos.Z + length; visitingPos.Z--)
                 {
-                    _faceTracker.VisitedDown[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = true;
+                    _faceTracker.VisitedDown[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = false;
                 }
+            }
+
+            var stop = false;
+            for (visitingPos.X = localPos.X + 1; visitingPos.X < Chunk.Size && !stop; visitingPos.X++)
+            {
+                for (visitingPos.Z = localPos.Z; visitingPos.Z < localPos.Z + length && !stop; visitingPos.Z++)
+                {
+                    stop |= _chunk!.GetVoxel(visitingPos) != voxel;
+                    stop |= _faceTracker.VisitedDown[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size];
+                    stop |= IsVoxelSolidDown(visitingPos + Vector3I.Down);
+                }
+
+                if (stop) continue;
+                
+                width += 1;
+                for (visitingPos.Z = localPos.Z; visitingPos.Z < localPos.Z + length; visitingPos.Z++)
+                    _faceTracker.VisitedDown[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = true;
             }
 
             if (length > 0)
             {
                 var v0 = new Vector3(localPos.X, localPos.Y, localPos.Z);
-                var v1 = new Vector3(localPos.X + 1, localPos.Y, localPos.Z);
-                var v2 = new Vector3(localPos.X + 1, localPos.Y, localPos.Z + length);
+                var v1 = new Vector3(localPos.X + width, localPos.Y, localPos.Z);
+                var v2 = new Vector3(localPos.X + width, localPos.Y, localPos.Z + length);
                 var v3 = new Vector3(localPos.X, localPos.Y, localPos.Z + length);
                 AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, voxel.Color, Vector3.Down);
             }
@@ -132,6 +168,7 @@ public partial class ChunkMesh : MeshInstance3D
         
         length = 0;
         hiddenLength = 0;
+        width = 1;
         visitingPos = localPos;
         if (!_faceTracker!.VisitedRight[access] && !IsVoxelSolidRight(localPos + Vector3I.Right))  // Right
         {
@@ -158,18 +195,36 @@ public partial class ChunkMesh : MeshInstance3D
                 }
             }
 
+            var stop = false;
+            for (visitingPos.Z = localPos.Z + 1; visitingPos.Z < Chunk.Size && !stop; visitingPos.Z++)
+            {
+                for (visitingPos.Y = localPos.Y; visitingPos.Y < localPos.Y + length && !stop; visitingPos.Y++)
+                {
+                    stop |= _chunk!.GetVoxel(visitingPos) != voxel;
+                    stop |= _faceTracker.VisitedRight[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size];
+                    stop |= IsVoxelSolidRight(visitingPos + Vector3I.Right);
+                }
+
+                if (stop) continue;
+
+                width += 1;
+                for (visitingPos.Y = localPos.Y; visitingPos.Y < localPos.Y + length; visitingPos.Y++)
+                    _faceTracker.VisitedRight[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = true;
+            }
+
             if (length > 0)
             {
                 var v0 = new Vector3(localPos.X + 1, localPos.Y, localPos.Z);
                 var v1 = new Vector3(localPos.X + 1, localPos.Y + length, localPos.Z);
-                var v2 = new Vector3(localPos.X + 1, localPos.Y + length, localPos.Z + 1);
-                var v3 = new Vector3(localPos.X + 1, localPos.Y, localPos.Z + 1);
+                var v2 = new Vector3(localPos.X + 1, localPos.Y + length, localPos.Z + width);
+                var v3 = new Vector3(localPos.X + 1, localPos.Y, localPos.Z + width);
                 AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, voxel.Color, Vector3.Right);
             }
         }
         
         length = 0;
         hiddenLength = 0;
+        width = 1;
         visitingPos = localPos;
         if (!_faceTracker!.VisitedLeft[access] && !IsVoxelSolidLeft(localPos + Vector3I.Left))  // Left
         {
@@ -196,18 +251,37 @@ public partial class ChunkMesh : MeshInstance3D
                 }
             }
 
+            var stop = false;
+            for (visitingPos.Z = localPos.Z + 1; visitingPos.Z < Chunk.Size && !stop; visitingPos.Z++)
+            {
+                for (visitingPos.Y = localPos.Y; visitingPos.Y < localPos.Y + length && !stop; visitingPos.Y++)
+                {
+                    stop |= _chunk!.GetVoxel(visitingPos) != voxel;
+                    stop |= _faceTracker.VisitedLeft[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size];
+                    stop |= IsVoxelSolidLeft(visitingPos + Vector3I.Left);
+                }
+
+                if (stop) continue;
+
+                width += 1;
+                for (visitingPos.Y = localPos.Y; visitingPos.Y < localPos.Y + length; visitingPos.Y++)
+                    _faceTracker.VisitedLeft[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = true;
+            }
+
             if (length > 0)
             {
                 var v0 = new Vector3(localPos.X, localPos.Y, localPos.Z);
                 var v1 = new Vector3(localPos.X, localPos.Y + length, localPos.Z);
-                var v2 = new Vector3(localPos.X, localPos.Y + length, localPos.Z + 1);
-                var v3 = new Vector3(localPos.X, localPos.Y, localPos.Z + 1);
+                var v2 = new Vector3(localPos.X, localPos.Y + length, localPos.Z + width);
+                var v3 = new Vector3(localPos.X, localPos.Y, localPos.Z + width);
                 AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, voxel.Color, Vector3.Left);
             }
         }
+
         
         length = 0;
         hiddenLength = 0;
+        width = 1;
         visitingPos = localPos;
         if (!_faceTracker!.VisitedForward[access] && !IsVoxelSolidForward(localPos + Vector3I.Forward))  // Forward
         {
@@ -234,11 +308,28 @@ public partial class ChunkMesh : MeshInstance3D
                 }
             }
 
+            var stop = false;
+            for (visitingPos.X = localPos.X + 1; visitingPos.X < Chunk.Size && !stop; visitingPos.X++)
+            {
+                for (visitingPos.Y = localPos.Y; visitingPos.Y < localPos.Y + length && !stop; visitingPos.Y++)
+                {
+                    stop |= _chunk!.GetVoxel(visitingPos) != voxel;
+                    stop |= _faceTracker.VisitedForward[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size];
+                    stop |= IsVoxelSolidForward(visitingPos + Vector3I.Forward);
+                }
+
+                if (stop) continue;
+
+                width += 1;
+                for (visitingPos.Y = localPos.Y; visitingPos.Y < localPos.Y + length; visitingPos.Y++)
+                    _faceTracker.VisitedForward[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = true;
+            }
+
             if (length > 0)
             {
                 var v0 = new Vector3(localPos.X, localPos.Y, localPos.Z);
-                var v1 = new Vector3(localPos.X + 1, localPos.Y, localPos.Z);
-                var v2 = new Vector3(localPos.X + 1, localPos.Y + length, localPos.Z);
+                var v1 = new Vector3(localPos.X + width, localPos.Y, localPos.Z);
+                var v2 = new Vector3(localPos.X + width, localPos.Y + length, localPos.Z);
                 var v3 = new Vector3(localPos.X, localPos.Y + length, localPos.Z);
                 AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, voxel.Color, Vector3.Forward);
             }
@@ -246,6 +337,7 @@ public partial class ChunkMesh : MeshInstance3D
         
         length = 0;
         hiddenLength = 0;
+        width = 1;
         visitingPos = localPos;
         if (!_faceTracker!.VisitedBack[access] && !IsVoxelSolidBack(localPos + Vector3I.Back))  // Back
         {
@@ -272,11 +364,28 @@ public partial class ChunkMesh : MeshInstance3D
                 }
             }
 
+            var stop = false;
+            for (visitingPos.X = localPos.X + 1; visitingPos.X < Chunk.Size && !stop; visitingPos.X++)
+            {
+                for (visitingPos.Y = localPos.Y; visitingPos.Y < localPos.Y + length && !stop; visitingPos.Y++)
+                {
+                    stop |= _chunk!.GetVoxel(visitingPos) != voxel;
+                    stop |= _faceTracker.VisitedBack[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size];
+                    stop |= IsVoxelSolidBack(visitingPos + Vector3I.Back);
+                }
+
+                if (stop) continue;
+
+                width += 1;
+                for (visitingPos.Y = localPos.Y; visitingPos.Y < localPos.Y + length; visitingPos.Y++)
+                    _faceTracker.VisitedBack[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Size * Chunk.Size] = true;
+            }
+
             if (length > 0)
             {
                 var v0 = new Vector3(localPos.X, localPos.Y, localPos.Z + 1);
-                var v1 = new Vector3(localPos.X + 1, localPos.Y, localPos.Z + 1);
-                var v2 = new Vector3(localPos.X + 1, localPos.Y + length, localPos.Z + 1);
+                var v1 = new Vector3(localPos.X + width, localPos.Y, localPos.Z + 1);
+                var v2 = new Vector3(localPos.X + width, localPos.Y + length, localPos.Z + 1);
                 var v3 = new Vector3(localPos.X, localPos.Y + length, localPos.Z + 1);
                 AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, voxel.Color, Vector3.Back);
             }
@@ -368,6 +477,7 @@ public partial class ChunkMesh : MeshInstance3D
         for (var i = 0; i < 4; i++)
             Colors.Add(color);
     }
+    
     private void FillArrayMesh()
      {
          var surface = new Godot.Collections.Array();
