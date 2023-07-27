@@ -75,6 +75,7 @@ public partial class ChunkMesh : ArrayMesh
             material.Uv1WorldTriplanar = true;
             material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
             material.AOEnabled = true;
+
             SurfaceSetMaterial(surfaceIndex, material);
         }
     }

@@ -17,6 +17,7 @@ public partial class DebugOverlay : Control
     public override void _Process(double delta)
     {
         var pos = _camera.Position;
-        _label.Text = $"{pos.X:F2}, {pos.Y:F2}, {pos.Z:F2}\n{Engine.GetFramesPerSecond()} fps";
+        _label.Text = $"{pos.X:F2}, {pos.Y:F2}, {pos.Z:F2}\n" +
+                      $"{Engine.GetFramesPerSecond()} fps";
     }
 }

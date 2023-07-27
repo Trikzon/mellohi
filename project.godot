@@ -17,7 +17,9 @@ config/icon="res://icon.svg"
 
 [display]
 
-window/stretch/mode="canvas_items"
+window/stretch/mode="viewport"
+window/stretch/aspect="expand"
+window/vsync/vsync_mode=0
 
 [dotnet]
 
@@ -26,3 +28,8 @@ project/assembly_name="Voxel Game"
 [editor_plugins]
 
 enabled=PackedStringArray("res://addons/blocks/plugin.cfg", "res://addons/plugin_refresher/plugin.cfg", "res://addons/simple_free_look_camera/plugin.cfg")
+
+[rendering]
+
+anti_aliasing/quality/msaa_3d=1
+anti_aliasing/quality/use_debanding=true
