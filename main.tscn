@@ -15,5 +15,6 @@ script = ExtResource("2_ciiji")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 0, 0, 0)
+shadow_enabled = true
 
 [node name="DebugOverlay" parent="." instance=ExtResource("3_l3uiv")]

@@ -147,43 +147,19 @@ public partial class ChunkMesh : ArrayMesh
         var iterAxis = (int)iterDir.MaxAxisIndex();
         var maxPos = iterDir * Chunk.Size;
 
-        // Keeps track of the number of neighboring blocks that are the same, but hidden.
-        // If this number is greater than 0 at the end, we need to remove the hidden faces.
-        // We do this because some hidden faces will still be rendered, but as a part of a larger face.
-        var hiddenLength = 0;
-
         while (visitingPos[iterAxis] < maxPos[iterAxis])
         {
             // If the block at the visiting position is not the same as the block who's face we're building, stop.
             if (_data.Blocks[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Area] != block) break;
             if (facesVisited[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Area]) break;
-
-            // If the block is hidden, increment the hidden length. Otherwise, reset the counter.
-            hiddenLength = IsFaceHidden(visitingPos.X, visitingPos.Y, visitingPos.Z, dir) ? hiddenLength + 1 : 0;
+            if (IsFaceHidden(visitingPos.X, visitingPos.Y, visitingPos.Z, dir)) break;
 
             // Mark the face as visited.
             facesVisited[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Area] = true;
 
             length++;
 
-            if (y == 11)
-            {
-                GD.Print("");
-            }
-
             visitingPos += iterDir;
-        }
-
-        var localPos = new Vector3I(x, y, z);
-        if (hiddenLength > 0)
-        {
-            length -= hiddenLength;
-            visitingPos[iterAxis] -= 1;
-            while (visitingPos[iterAxis] >= localPos[iterAxis] + length)
-            {
-                facesVisited[visitingPos.X + visitingPos.Z * Chunk.Size + visitingPos.Y * Chunk.Area] = false;
-                visitingPos -= iterDir;
-            }
         }
 
         // ===== 2D Greedy Mesh Pass =====
@@ -205,7 +181,6 @@ public partial class ChunkMesh : ArrayMesh
             _ => new Vector3I(0, 1, 0)
         };
         var secondIterAxis = (int)secondIterDir.MaxAxisIndex();
-        var secondMaxPos = secondIterDir * Chunk.Size;
 
         // Start at the first block in the new direction.
         visitingPos = new Vector3I(x, y, z) + firstIterDir;

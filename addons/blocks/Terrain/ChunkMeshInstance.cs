@@ -32,7 +32,7 @@ public partial class ChunkMeshInstance : MeshInstance3D
         material.VertexColorUseAsAlbedo = true;
         MaterialOverride = material;
 
-        // _collisionShape.CallDeferred("set_shape", Mesh.CreateTrimeshShape());
+        _collisionShape.CallDeferred("set_shape", Mesh.CreateTrimeshShape());
 
         CallDeferred(Node.MethodName.SetName, $"Mesh ({Time.GetTicksMsec()})");
     }
