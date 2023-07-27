@@ -27,11 +27,6 @@ public partial class ChunkMeshInstance : MeshInstance3D
         GD.Print("Updating chunk mesh at " + Data.ChunkPos);
         Mesh = new ChunkMesh(data, _manager);
 
-        // TODO: Use textures instead
-        var material = new StandardMaterial3D();
-        material.VertexColorUseAsAlbedo = true;
-        MaterialOverride = material;
-
         _collisionShape.CallDeferred("set_shape", Mesh.CreateTrimeshShape());
 
         CallDeferred(Node.MethodName.SetName, $"Mesh ({Time.GetTicksMsec()})");

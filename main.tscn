@@ -1,14 +1,17 @@
-[gd_scene load_steps=4 format=3 uid="uid://dx6e5slpyhqn5"]
+[gd_scene load_steps=5 format=3 uid="uid://dx6e5slpyhqn5"]
 
 [ext_resource type="Script" path="res://addons/simple_free_look_camera/camera.gd" id="1_2415e"]
 [ext_resource type="Script" path="res://addons/blocks/Terrain/Terrain.cs" id="2_ciiji"]
 [ext_resource type="PackedScene" uid="uid://byok8wn02ay1b" path="res://Debug/debug_overlay.tscn" id="3_l3uiv"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_62mok"]
 
 [node name="Main" type="Node3D"]
 
 [node name="SimpleFreeLookCamera" type="Camera3D" parent="."]
 transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 2.08165e-12, 100, 2.08165e-12)
 script = ExtResource("1_2415e")
+speed_multiplier = 5.0
 
 [node name="Terrain" type="Node3D" parent="."]
 script = ExtResource("2_ciiji")
@@ -18,3 +21,6 @@ transform = Transform3D(1, 0, 0, 0, 0.258819, 0.965926, 0, -0.965926, 0.258819, 
 shadow_enabled = true
 
 [node name="DebugOverlay" parent="." instance=ExtResource("3_l3uiv")]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_62mok")

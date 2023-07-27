@@ -6,10 +6,9 @@ namespace Blocks.Terrain;
 
 public partial class ChunkMesh : ArrayMesh
 {
-    private readonly List<Vector3> _vertices = new();
-    private readonly List<Vector3> _normals = new();
-    private readonly List<int> _indices = new();
-    private readonly List<Color> _colors = new();
+    private readonly List<List<Vector3>> _vertices = new();
+    private readonly List<List<Vector3>> _normals = new();
+    private readonly List<List<int>> _indices = new();
 
     private readonly ChunkData _data;
     private readonly ChunkData _dataUp;
@@ -22,6 +21,14 @@ public partial class ChunkMesh : ArrayMesh
 
     public ChunkMesh(ChunkData data, ChunkMeshManager manager)
     {
+        // TODO: Get number of registered blocks, or resize the array when needed instead.
+        for (var block = 0; block < 16; block++)
+        {
+            _vertices.Add(new List<Vector3>());
+            _normals.Add(new List<Vector3>());
+            _indices.Add(new List<int>());
+        }
+
         _data = data;
         _dataUp = manager.ChunkMeshes.TryGetValue(data.ChunkPos + Vector3I.Up, out var up) ? up.Data : null;
         _dataDown = manager.ChunkMeshes.TryGetValue(data.ChunkPos + Vector3I.Down, out var down) ? down.Data : null;
@@ -48,17 +55,28 @@ public partial class ChunkMesh : ArrayMesh
             }
         }
 
-        if (_vertices.Count == 0) return;
+        for (var block = 0; block < _vertices.Count; block++)
+        {
+            if (_vertices[block].Count == 0) continue;
 
-        var surface = new Godot.Collections.Array();
-        surface.Resize((int)ArrayType.Max);
+            var surface = new Godot.Collections.Array();
+            surface.Resize((int)ArrayType.Max);
 
-        surface[(int)ArrayType.Vertex] = _vertices.ToArray();
-        surface[(int)ArrayType.Normal] = _normals.ToArray();
-        surface[(int)ArrayType.Index] = _indices.ToArray();
-        surface[(int)ArrayType.Color] = _colors.ToArray();
+            surface[(int)ArrayType.Vertex] = _vertices[block].ToArray();
+            surface[(int)ArrayType.Normal] = _normals[block].ToArray();
+            surface[(int)ArrayType.Index] = _indices[block].ToArray();
 
-        AddSurfaceFromArrays(PrimitiveType.Triangles, surface);
+            var surfaceIndex = GetSurfaceCount();
+            AddSurfaceFromArrays(PrimitiveType.Triangles, surface);
+
+            var material = new StandardMaterial3D();
+            material.AlbedoTexture = ResourceLoader.Load<Texture2D>($"res://assets/block{block}.png");
+            material.Uv1Triplanar = true;
+            material.Uv1WorldTriplanar = true;
+            material.TextureFilter = BaseMaterial3D.TextureFilterEnum.Nearest;
+            material.AOEnabled = true;
+            SurfaceSetMaterial(surfaceIndex, material);
+        }
     }
 
     private void CreateGreedyFaces(int block, int x, int y, int z)
@@ -70,7 +88,7 @@ public partial class ChunkMesh : ArrayMesh
             var v1 = new Vector3(x + width, y + 1, z);
             var v2 = new Vector3(x + width, y + 1, z + length);
             var v3 = new Vector3(x, y + 1, z + length);
-            AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, GetColor(block), Vector3.Up);
+            AddQuad(block, new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, Vector3.Up);
         }
 
         FindGreedyFaceSize(block, x, y, z, _facesVisited.Down, Vector3I.Down, out length, out width);
@@ -80,7 +98,7 @@ public partial class ChunkMesh : ArrayMesh
             var v1 = new Vector3(x + width, y, z);
             var v2 = new Vector3(x + width, y, z + length);
             var v3 = new Vector3(x, y, z + length);
-            AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, GetColor(block), Vector3.Down);
+            AddQuad(block, new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, Vector3.Down);
         }
 
         FindGreedyFaceSize(block, x, y, z, _facesVisited.Right, Vector3I.Right, out length, out width);
@@ -90,7 +108,7 @@ public partial class ChunkMesh : ArrayMesh
             var v1 = new Vector3(x + 1,y + length, z);
             var v2 = new Vector3(x + 1, y + length, z + width);
             var v3 = new Vector3(x + 1, y, z + width);
-            AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, GetColor(block), Vector3.Right);
+            AddQuad(block, new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, Vector3.Right);
         }
 
         FindGreedyFaceSize(block, x, y, z, _facesVisited.Left, Vector3I.Left, out length, out width);
@@ -100,7 +118,7 @@ public partial class ChunkMesh : ArrayMesh
             var v1 = new Vector3(x, y + length, z);
             var v2 = new Vector3(x, y + length, z + width);
             var v3 = new Vector3(x, y, z + width);
-            AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, GetColor(block), Vector3.Left);
+            AddQuad(block, new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, Vector3.Left);
         }
 
         FindGreedyFaceSize(block, x, y, z, _facesVisited.Forward, Vector3I.Forward, out length, out width);
@@ -110,7 +128,7 @@ public partial class ChunkMesh : ArrayMesh
             var v1 = new Vector3(x + width, y, z);
             var v2 = new Vector3(x + width, y + length, z);
             var v3 = new Vector3(x, y + length, z);
-            AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, GetColor(block), Vector3.Forward);
+            AddQuad(block, new[] {v0, v1, v2, v3}, new[] {0, 1, 2, 0, 2, 3}, Vector3.Forward);
         }
 
         FindGreedyFaceSize(block, x, y, z, _facesVisited.Back, Vector3I.Back, out length, out width);
@@ -120,7 +138,7 @@ public partial class ChunkMesh : ArrayMesh
             var v1 = new Vector3(x + width, y, z + 1);
             var v2 = new Vector3(x + width, y + length, z + 1);
             var v3 = new Vector3(x, y + length, z + 1);
-            AddQuad(new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, GetColor(block), Vector3.Back);
+            AddQuad(block, new[] {v0, v1, v2, v3}, new[] {0, 2, 1, 0, 3, 2}, Vector3.Back);
         }
     }
 
@@ -252,30 +270,15 @@ public partial class ChunkMesh : ArrayMesh
         return _data.Blocks[x + z * Chunk.Size + y * Chunk.Area] != 0;
     }
 
-    private void AddQuad(IEnumerable<Vector3> vertices, IEnumerable<int> indices, Color color, Vector3 normal)
+    private void AddQuad(int block, IEnumerable<Vector3> vertices, IEnumerable<int> indices, Vector3 normal)
     {
-        _vertices.AddRange(vertices);
+        _vertices[block].AddRange(vertices);
 
         for (var i = 0; i < 4; i++)
-            _normals.Add(normal);
+            _normals[block].Add(normal);
 
-        var index = _vertices.Count - 4;
-        _indices.AddRange(indices.Select(i => i + index).ToArray());
-
-        for (var i = 0; i < 4; i++)
-            _colors.Add(color);
-    }
-
-    // TODO: Replace with textures
-    private Color GetColor(int block)
-    {
-        return block switch
-        {
-            1 => Colors.Green,
-            2 => Colors.Brown,
-            3 => Colors.Gray,
-            _ => Colors.Pink
-        };
+        var index = _vertices[block].Count - 4;
+        _indices[block].AddRange(indices.Select(i => i + index).ToArray());
     }
 }
 
