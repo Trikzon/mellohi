@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Blocks.Terrain;
+namespace VoxelGame.addons.blocks.OldTerrain.Terrain;
 
 public partial class Chunk : StaticBody3D
 {

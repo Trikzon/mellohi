@@ -1,6 +1,6 @@
 using Godot;
 
-namespace Blocks.Terrain;
+namespace VoxelGame.addons.blocks.OldTerrain.Terrain;
 
 public class ChunkData
 {

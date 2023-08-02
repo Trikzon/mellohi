@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="Block" load_steps=3 format=3 uid="uid://mk4rpx3ggwu5"]
+
+[ext_resource type="Script" path="res://addons/blocks/block/block.gd" id="1_xeigh"]
+[ext_resource type="Texture2D" uid="uid://dbp4j3pou6ugb" path="res://assets/block2.png" id="2_w4p8s"]
+
+[resource]
+script = ExtResource("1_xeigh")
+id = "dirt"
+render = true
+transparent = false
+texture = ExtResource("2_w4p8s")

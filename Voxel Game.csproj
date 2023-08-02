@@ -4,4 +4,7 @@
         <EnableDynamicLoading>true</EnableDynamicLoading>
         <RootNamespace>VoxelGame</RootNamespace>
     </PropertyGroup>
+    <ItemGroup>
+      <Folder Include="addons\blocks\Registry\" />
+    </ItemGroup>
 </Project>

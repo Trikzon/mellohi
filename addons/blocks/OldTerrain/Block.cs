@@ -1,8 +1,7 @@
 using Godot;
 
-namespace Blocks.Terrain;
+namespace VoxelGame.addons.blocks.OldTerrain.Terrain;
 
-[GlobalClass]
 public partial class Block : Resource
 {
     public Block() : this("", true)

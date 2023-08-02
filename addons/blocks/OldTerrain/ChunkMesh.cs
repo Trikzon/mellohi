@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
-namespace Blocks.Terrain;
+namespace VoxelGame.addons.blocks.OldTerrain.Terrain;
 
 public partial class ChunkMesh : ArrayMesh
 {

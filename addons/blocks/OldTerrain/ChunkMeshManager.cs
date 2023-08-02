@@ -4,7 +4,7 @@ using System.Threading;
 using Godot;
 using Mutex = Godot.Mutex;
 
-namespace Blocks.Terrain;
+namespace VoxelGame.addons.blocks.OldTerrain.Terrain;
 
 public partial class ChunkMeshManager : Node
 {

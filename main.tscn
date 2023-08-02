@@ -1,61 +1,12 @@
-[gd_scene load_steps=8 format=3 uid="uid://dx6e5slpyhqn5"]
+[gd_scene load_steps=3 format=3 uid="uid://dx6e5slpyhqn5"]
 
 [ext_resource type="Script" path="res://addons/simple_free_look_camera/camera.gd" id="1_2415e"]
-[ext_resource type="Script" path="res://addons/blocks/Terrain/Terrain.cs" id="2_ciiji"]
-[ext_resource type="PackedScene" uid="uid://byok8wn02ay1b" path="res://Debug/debug_overlay.tscn" id="3_l3uiv"]
-
-[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_xrk12"]
-sky_top_color = Color(0.215686, 0.470588, 0.8, 1)
-sky_horizon_color = Color(0.690196, 0.788235, 0.921569, 1)
-ground_bottom_color = Color(0.690196, 0.788235, 0.921569, 1)
-ground_horizon_color = Color(0.690196, 0.788235, 0.921569, 1)
-
-[sub_resource type="Sky" id="Sky_sticb"]
-sky_material = SubResource("ProceduralSkyMaterial_xrk12")
-
-[sub_resource type="Environment" id="Environment_l7h0r"]
-background_mode = 2
-sky = SubResource("Sky_sticb")
-ambient_light_color = Color(0.5, 0.5, 0.5, 1)
-ambient_light_sky_contribution = 0.25
-ambient_light_energy = 0.0
-reflected_light_source = 1
-tonemap_mode = 2
-tonemap_white = 16.0
-sdfgi_use_occlusion = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_r2ica"]
+[ext_resource type="Script" path="res://addons/blocks/terrain/terrain.gd" id="4_c81ab"]
 
 [node name="Main" type="Node3D"]
 
-[node name="Sun" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.819152, 0.286788, -0.496732, 3.02058e-16, 0.866025, 0.5, 0.573576, 0.409576, -0.709406, 2.08165e-12, 2.08165e-12, 2.08165e-12)
-light_energy = 1.5
-shadow_enabled = true
-
-[node name="TopDownLight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, -6.97574e-16, -1.5246e-23, -1.5246e-23, -4.37114e-08, 1, -6.97574e-16, -1, -4.37114e-08, 0, 0, 0)
-light_energy = 0.25
-shadow_enabled = true
-sky_mode = 1
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
-environment = SubResource("Environment_l7h0r")
-
 [node name="SimpleFreeLookCamera" type="Camera3D" parent="."]
-transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 2.08165e-12, 100, 2.08165e-12)
 script = ExtResource("1_2415e")
-speed_multiplier = 5.0
 
 [node name="Terrain" type="Node3D" parent="."]
-script = ExtResource("2_ciiji")
-
-[node name="DebugOverlay" parent="." instance=ExtResource("3_l3uiv")]
-
-[node name="OmniLight3D" type="OmniLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16, 32, 21)
-light_energy = 3.0
-omni_range = 10.0
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-material_override = SubResource("StandardMaterial3D_r2ica")
+script = ExtResource("4_c81ab")

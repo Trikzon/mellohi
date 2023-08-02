@@ -15,6 +15,12 @@ run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+BlocksPluginOptions="*res://addons/blocks/plugin_options.gd"
+Blocks="*res://addons/blocks/block/blocks.gd"
+BlockMaterials="*res://addons/blocks/block/block_materials.gd"
+
 [display]
 
 window/stretch/mode="viewport"

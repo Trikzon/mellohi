@@ -1,9 +1,8 @@
 using System.Collections.Generic;
 using Godot;
 
-namespace Blocks.Terrain;
+namespace VoxelGame.addons.blocks.OldTerrain.Terrain;
 
-[GlobalClass]
 public partial class Terrain : Node3D
 {
     private readonly ChunkMeshManager _chunkMeshManager = new();
