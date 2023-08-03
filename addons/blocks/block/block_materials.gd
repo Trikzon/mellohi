@@ -1,18 +1,18 @@
-@tool
+@tool  # Autoloaded Singleton
 extends Node
 
 
-var _shouldRender = PackedByteArray()
+var _should_render = PackedByteArray()
 var _materials: Array[StandardMaterial3D] = []
 
 
 func _invalidate():
-    _shouldRender = PackedByteArray()
+    _should_render = PackedByteArray()
     _materials = []
 
 
 func _add_block(block: Block):
-    _shouldRender.append(block.render)
+    _should_render.append(block.render)
     
     if not block.render:
         _materials.append(null)
@@ -25,9 +25,17 @@ func _add_block(block: Block):
     _materials.append(material)
 
 
-func should_render(block: Block) -> bool:
-    return bool(_shouldRender[block.index])
+func should_render(index: int) -> bool:
+    return !!_should_render[index]
 
 
-func get_material(block: Block) -> StandardMaterial3D:
+func should_block_render(block: Block) -> bool:
+    return !!_should_render[block.index]
+
+
+func get_material(index: int) -> Material:
+    return _materials[index]
+
+
+func get_block_material(block: Block) -> Material:
     return _materials[block.index]

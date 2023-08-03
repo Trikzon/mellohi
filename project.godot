@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Voxel Game"
 run/main_scene="res://main.tscn"
-config/features=PackedStringArray("4.1", "C#", "Forward Plus")
+config/features=PackedStringArray("4.1", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -20,12 +20,12 @@ config/icon="res://icon.svg"
 BlocksPluginOptions="*res://addons/blocks/plugin_options.gd"
 Blocks="*res://addons/blocks/block/blocks.gd"
 BlockMaterials="*res://addons/blocks/block/block_materials.gd"
+ChunkMeshManager="*res://addons/blocks/mesh/chunk_mesh_manager.gd"
 
 [display]
 
 window/stretch/mode="viewport"
 window/stretch/aspect="expand"
-window/vsync/vsync_mode=0
 
 [dotnet]
 

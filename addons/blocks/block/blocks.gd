@@ -1,14 +1,14 @@
-@tool
+@tool  # Autoloaded Singleton
 extends Node
 
 
 var _blocks: Array[Block] = []
-var _idToIndexMap = Dictionary()  # Dictionary[String, int]
+var _id_to_index = Dictionary()  # Dictionary[String, int]
 
 
 func invalidate():
     _blocks = []
-    _idToIndexMap = Dictionary()
+    _id_to_index = Dictionary()
     BlockMaterials._invalidate()
     
 
@@ -23,13 +23,13 @@ func add_block(block: Block):
     
     var id = _sanitize_id(block.id)
     
-    if _idToIndexMap.has(id):
+    if _id_to_index.has(id):
         push_warning("Attempting to register block with duplicate id: " + str(id))
         return
     
     block.index = _blocks.size()
     _blocks.append(block)
-    _idToIndexMap[id] = block.index
+    _id_to_index[id] = block.index
     
     BlockMaterials._add_block(block)
     
@@ -41,12 +41,16 @@ func _sanitize_id(id: String) -> String:
 
 
 func id_to_index(id: String) -> int:
-    return _idToIndexMap.get(_sanitize_id(id), 0)
+    return _id_to_index.get(_sanitize_id(id), 0)
 
 
 func id_to_block(id: String) -> Block:
-    return _blocks[_idToIndexMap[_sanitize_id(id)]]
+    return _blocks[_id_to_index[_sanitize_id(id)]]
 
 
-func get_block(index: int) -> Block:
+func index_to_block(index: int) -> Block:
     return _blocks[index]
+
+
+func get_block_count() -> int:
+    return _blocks.size()
