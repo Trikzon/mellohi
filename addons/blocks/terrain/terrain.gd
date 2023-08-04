@@ -6,7 +6,6 @@ var _chunk_instances = Dictionary()  # Dictionary[Vector3i, ChunkInstance]
 
 
 func _ready():
-    get_viewport().debug_draw = Viewport.DEBUG_DRAW_WIREFRAME
     # TODO: Move block registry somewhere else
     Blocks.invalidate()
     Blocks.add_block(preload("res://data/blocks/air.tres"))
