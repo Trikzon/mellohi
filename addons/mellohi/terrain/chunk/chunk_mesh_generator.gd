@@ -277,9 +277,9 @@ func _build_surfaces(data: MeshData) -> ArrayMesh:
         var surface_index = mesh.get_surface_count()
         mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surface_arrays)
 
-        var material = StandardMaterial3D.new()
-        material.albedo_texture = BlockRegistry.resources[surface].material.texture
-        material.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+        var material = ShaderMaterial.new()
+        material.shader = load("res://addons/mellohi/blocks/block.gdshader")
+        material.set_shader_parameter("texture_albedo", BlockRegistry.resources[surface].material.texture)
         mesh.surface_set_material(surface_index, material)
 
     return mesh
