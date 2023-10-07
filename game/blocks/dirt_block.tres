@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://addons/mellohi/identifier.gd" id="1_4cdp1"]
 [ext_resource type="Script" path="res://addons/mellohi/blocks/block_material.gd" id="2_ag6mx"]
-[ext_resource type="Texture2D" uid="uid://1r1vw2gs6ucw" path="res://game/assets/blocks/dirt.png" id="3_a885f"]
+[ext_resource type="Texture2D" uid="uid://dpnlduxd64ljo" path="res://uv.png" id="3_13a3q"]
 [ext_resource type="Script" path="res://addons/mellohi/blocks/block.gd" id="4_xiar0"]
 
 [sub_resource type="Resource" id="Resource_pqfyu"]
@@ -12,7 +12,7 @@ address = &"dirt"
 
 [sub_resource type="Resource" id="Resource_f7jw1"]
 script = ExtResource("2_ag6mx")
-texture = ExtResource("3_a885f")
+texture = ExtResource("3_13a3q")
 
 [resource]
 script = ExtResource("4_xiar0")

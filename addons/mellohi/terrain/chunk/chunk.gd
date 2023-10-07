@@ -5,17 +5,23 @@ extends Resource
 var blocks: PackedInt32Array = PackedInt32Array()
 
 func _init() -> void:
-    for y in range(MellohiSettings.CHUNK_SIZE):
-        for z in range(MellohiSettings.CHUNK_SIZE):
-            for x in range(MellohiSettings.CHUNK_SIZE):
-                # blocks.append(1)
-                blocks.append(randi_range(1, 3))
+    for y in range(Mellohi.CHUNK_LEN):
+        for z in range(Mellohi.CHUNK_LEN):
+            for x in range(Mellohi.CHUNK_LEN):
+                blocks.append(randi_range(0, 3))
     
 
 func get_block(x: int, y: int, z: int) -> int:
-    return blocks[_local_to_index(x, y, z)]
+    return blocks[local_to_index(x, y, z)]
 
 
-func _local_to_index(x: int, y: int, z: int) -> int:
-    const size = MellohiSettings.CHUNK_SIZE
-    return y + z * size + x * size * size
+func get_blockv(pos: Vector3i) -> int:
+    return get_block(pos.x, pos.y, pos.z)
+
+
+static func local_to_index(x: int, y: int, z: int) -> int:
+    return y + z * Mellohi.CHUNK_LEN + x * Mellohi.CHUNK_AREA
+
+
+static func local_to_indexv(local_pos: Vector3i) -> int:
+    return local_to_index(local_pos.x, local_pos.y, local_pos.z)
