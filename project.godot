@@ -11,9 +11,20 @@ config_version=5
 [application]
 
 config/name="Mellohi"
-config/features=PackedStringArray("4.1", "Forward Plus")
+run/main_scene="res://game/main.tscn"
+config/features=PackedStringArray("4.1", "C#", "Forward Plus")
 config/icon="res://icon.svg"
+
+[autoload]
+
+ChunkMeshGenerator="*res://addons/mellohi/terrain/chunk/chunk_mesh_generator.gd"
+MellohiSettings="*res://addons/mellohi/mellohi_settings.gd"
+BlockRegistry="*res://addons/mellohi/blocks/block_registry.gd"
 
 [dotnet]
 
 project/assembly_name="Mellohi"
+
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/mellohi/plugin.cfg")
