@@ -18,7 +18,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 ChunkMeshGenerator="*res://addons/mellohi/terrain/chunk/chunk_mesh_generator.gd"
-MellohiSettings="*res://addons/mellohi/mellohi_settings.gd"
 BlockRegistry="*res://addons/mellohi/blocks/block_registry.gd"
 Mellohi="*res://addons/mellohi/mellohi.gd"
 

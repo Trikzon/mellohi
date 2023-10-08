@@ -26,9 +26,6 @@ class MeshData:
         faces_visited = PackedByteArray()
         faces_visited.resize(Mellohi.CHUNK_VOL)
 
-        for i in range(Mellohi.CHUNK_VOL):
-            faces_visited.append(0)
-
 
     func clear_faces_visited() -> void:
         for i in range(Mellohi.CHUNK_VOL):
@@ -39,16 +36,16 @@ class MeshData:
         return !!faces_visited[Chunk.local_to_index(x, y, z)]
 
 
-    func is_face_visitedv(pos: Vector3i) -> bool:
-        return is_face_visited(pos.x, pos.y, pos.z)
+    func is_face_visitedv(local_pos: Vector3i) -> bool:
+        return is_face_visited(local_pos.x, local_pos.y, local_pos.z)
     
 
     func set_face_visited(x: int, y: int, z: int) -> void:
         faces_visited[Chunk.local_to_index(x, y, z)] = 1
     
 
-    func set_face_visitedv(pos: Vector3i) -> void:
-        set_face_visited(pos.x, pos.y, pos.z)
+    func set_face_visitedv(local_pos: Vector3i) -> void:
+        set_face_visited(local_pos.x, local_pos.y, local_pos.z)
 
 
     func is_face_hidden(x: int, y: int, z: int, face_dir: Vector3i) -> bool:
@@ -70,11 +67,54 @@ class MeshData:
         return !!block
 
 
-    func is_face_hiddenv(pos: Vector3i, face_dir: Vector3i) -> bool:
-        return is_face_hidden(pos.x, pos.y, pos.z, face_dir)
+    func is_face_hiddenv(local_pos: Vector3i, face_dir: Vector3i) -> bool:
+        return is_face_hidden(local_pos.x, local_pos.y, local_pos.z, face_dir)
+
+
+    func get_face_block_light(x: int, y: int, z: int, face_dir: Vector3i) -> int:
+        x += face_dir.x
+        y += face_dir.y
+        z += face_dir.z
+
+        if y >= Mellohi.CHUNK_LEN or y < 0:
+            return 0
+
+        if x >= Mellohi.CHUNK_LEN or x < 0:
+            return 0
+
+        if z >= Mellohi.CHUNK_LEN or z < 0:
+            return 0
+        
+        return chunk.get_block_light(x, y, z)
+    
+
+    func get_face_block_lightv(local_pos: Vector3i, face_dir: Vector3i) -> int:
+        return get_face_block_light(local_pos.x, local_pos.y, local_pos.z, face_dir)
+
+
+    func get_face_sunlight(x: int, y: int, z: int, face_dir: Vector3i) -> int:
+        x += face_dir.x
+        y += face_dir.y
+        z += face_dir.z
+
+        if y >= Mellohi.CHUNK_LEN or y < 0:
+            return 0
+
+        if x >= Mellohi.CHUNK_LEN or x < 0:
+            return 0
+
+        if z >= Mellohi.CHUNK_LEN or z < 0:
+            return 0
+        
+        return chunk.get_sunlight(x, y, z)
+
+
+    func get_face_sunlightv(local_pos: Vector3i, face_dir: Vector3i) -> int:
+        return get_face_sunlight(local_pos.x, local_pos.y, local_pos.z, face_dir)
 
 
 func generate_mesh(chunk: Chunk) -> Mesh:
+    var start = Time.get_ticks_usec()
     var data = MeshData.new(chunk)
 
     _create_greedy_face(data, Vector3i.FORWARD)
@@ -84,7 +124,11 @@ func generate_mesh(chunk: Chunk) -> Mesh:
     _create_greedy_face(data, Vector3i.UP)
     _create_greedy_face(data, Vector3i.DOWN)
 
-    return _build_surfaces(data)
+    var mesh = _build_surfaces(data)
+
+    print((Time.get_ticks_usec() - start) / 1000000.0)
+
+    return mesh
 
 
 func _create_greedy_face(data: MeshData, face_dir: Vector3i) -> void:
@@ -127,10 +171,19 @@ func _find_greedy_quad_size(data: MeshData, block: int, x: int, y: int, z: int, 
     var iter_axis = iter_dir.max_axis_index()
     var max_pos = iter_dir * Mellohi.CHUNK_LEN
 
+    var block_light = data.get_face_block_light(x, y, z, face_dir)
+    var sunlight = data.get_face_sunlight(x, y, z, face_dir)
+
     while visiting_pos[iter_axis] < max_pos[iter_axis]:
         # If the block at the visiting position is not the same as the block who's face we're building, stop.
         # TODO: Also check if the block has the same rotation, light level, etc.
         if data.chunk.get_blockv(visiting_pos) != block:
+            break
+        
+        if data.get_face_block_lightv(visiting_pos, face_dir) != block_light:
+            break
+        
+        if data.get_face_sunlightv(visiting_pos, face_dir) != sunlight:
             break
         
         if data.is_face_visitedv(visiting_pos):
@@ -174,6 +227,8 @@ func _find_greedy_quad_size(data: MeshData, block: int, x: int, y: int, z: int, 
         visiting_pos[second_iter_axis] = initial_second_iter_value
         while visiting_pos[second_iter_axis] < initial_second_iter_value + length and not stop:
             stop = stop or data.chunk.get_blockv(visiting_pos) != block
+            stop = stop or data.get_face_block_lightv(visiting_pos, face_dir) != block_light
+            stop = stop or data.get_face_sunlightv(visiting_pos, face_dir) != sunlight
             stop = stop or data.is_face_visitedv(visiting_pos)
             stop = stop or data.is_face_hiddenv(visiting_pos, face_dir)
 
