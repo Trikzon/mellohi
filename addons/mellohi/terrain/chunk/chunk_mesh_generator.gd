@@ -7,6 +7,7 @@ class MeshData:
 
     var vertices: Array[PackedVector3Array] = []
     var normals: Array[PackedVector3Array] = []
+    var colors: Array[PackedColorArray] = []
     var tex_uvs: Array[PackedVector2Array] = []
     var indices: Array[PackedInt32Array] = []
 
@@ -20,6 +21,7 @@ class MeshData:
         for i in range(BlockRegistry.resources.size()):
             vertices.append(PackedVector3Array())
             normals.append(PackedVector3Array())
+            colors.append(PackedColorArray())
             tex_uvs.append(PackedVector2Array())
             indices.append(PackedInt32Array())
 
@@ -293,6 +295,12 @@ func _add_quad(data: MeshData, block: int, x: int, y: int, z: int, face_dir: Vec
             v += Vector3(0.5, 0.5, 0.5)  # Unoffset the vertice to move the origin back to 0, 0.
             return v
     ))
+    
+    var block_light = data.get_face_block_light(x, y, z, face_dir)
+    var sunlight = data.get_face_sunlight(x, y, z, face_dir)
+    var max_light = Mellohi.CHUNK_LEN as float
+    for i in range(4):
+        data.colors[block].append(Color(block_light / max_light, sunlight / max_light, 0.0, 0.0))
 
     for i in range(4):
         data.normals[block].append(face_dir)
@@ -326,6 +334,7 @@ func _build_surfaces(data: MeshData) -> ArrayMesh:
 
         surface_arrays[Mesh.ARRAY_VERTEX] = data.vertices[surface]
         surface_arrays[Mesh.ARRAY_NORMAL] = data.normals[surface]
+        surface_arrays[Mesh.ARRAY_COLOR] = data.colors[surface]
         surface_arrays[Mesh.ARRAY_TEX_UV] = data.tex_uvs[surface]
         surface_arrays[Mesh.ARRAY_INDEX] = data.indices[surface]
 
