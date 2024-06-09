@@ -84,7 +84,7 @@ class SandboxApp final : public App
         m_shader = std::make_unique<Shader>(vertexShader, fragmentShader);
         m_shader->bind();
 
-        m_texture = std::make_unique<Texture>("resources/Tiles/table.png");
+        m_texture = std::make_unique<Texture>("resources/sandbox/voxels/table.png");
         m_texture->bind(0);
         m_shader->set_uniform_i32("u_Texture", 0);
 

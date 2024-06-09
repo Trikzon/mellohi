@@ -8,6 +8,18 @@ file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 add_library(Mellohi STATIC ${SOURCE_FILES} ${HEADER_FILES})
 target_include_directories(Mellohi PUBLIC include)
 
+add_custom_target(remove_mellohi_resources ALL
+        COMMAND ${CMAKE_COMMAND} -E remove_directory
+        ${CMAKE_BINARY_DIR}/resources/mellohi
+)
+add_custom_target(copy_mellohi_resources ALL
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/resources/mellohi
+        ${CMAKE_BINARY_DIR}/resources/mellohi
+)
+add_dependencies(copy_mellohi_resources remove_mellohi_resources)
+add_dependencies(Mellohi copy_mellohi_resources)
+
 add_subdirectory(vendor/glad)
 target_link_libraries(Mellohi PRIVATE glad)
 
