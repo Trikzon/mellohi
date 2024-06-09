@@ -1,7 +1,6 @@
 #pragma once
 
-#include <string>
-
+#include "mellohi/asset_id.h"
 #include "mellohi/types.h"
 
 namespace mellohi
@@ -9,7 +8,7 @@ namespace mellohi
     class Texture
     {
     public:
-        explicit Texture(const std::string& path);
+        explicit Texture(const AssetId& asset_id);
         ~Texture();
 
         void bind(u32 slot = 0) const;

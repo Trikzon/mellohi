@@ -10,6 +10,7 @@
 #include <mellohi/types.h>
 
 #include "debug_overlay_node.h"
+#include "mellohi/asset_id.h"
 
 using namespace mellohi;
 
@@ -25,40 +26,12 @@ constexpr u32 indices[] = {
     2, 3, 0,
 };
 
-// TODO: Load shaders from files.
-const std::string vertexShader =
-    "#version 330 core\n"
-    "\n"
-    "uniform mat4 u_MVP;\n"
-    "\n"
-    "layout(location = 0) in vec4 position;\n"
-    "layout(location = 1) in vec2 texCoord;\n"
-    "\n"
-    "out vec2 v_TexCoord;\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = u_MVP * position;\n"
-    "   v_TexCoord = texCoord;\n"
-    "}\n";
-
-const std::string fragmentShader =
-    "#version 330 core\n"
-    "\n"
-    "layout(location = 0) out vec4 color;\n"
-    "\n"
-    "uniform sampler2D u_Texture;\n"
-    "\n"
-    "in vec2 v_TexCoord;\n"
-    "\n"
-    "void main()\n"
-    "{\n"
-    "   vec4 tex = texture(u_Texture, v_TexCoord);\n"
-    "   color = tex;\n"
-    "}\n";
-
 class SandboxApp final : public App
 {
+public:
+    SandboxApp() : App("sandbox") { }
+
+private:
     std::unique_ptr<VertexArray> m_vertex_array;
     std::unique_ptr<Shader> m_shader;
     std::unique_ptr<Texture> m_texture;
@@ -81,10 +54,10 @@ class SandboxApp final : public App
         }
 
         m_vertex_array->bind();
-        m_shader = std::make_unique<Shader>(vertexShader, fragmentShader);
+        m_shader = std::make_unique<Shader>(AssetId{"shaders/test.frag"}, AssetId{"shaders/test.vert"});
         m_shader->bind();
 
-        m_texture = std::make_unique<Texture>("resources/sandbox/voxels/table.png");
+        m_texture = std::make_unique<Texture>(AssetId{"voxels/dirt.png"});
         m_texture->bind(0);
         m_shader->set_uniform_i32("u_Texture", 0);
 

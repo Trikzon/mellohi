@@ -1,8 +1,13 @@
 #include "mellohi/app.h"
 
+#include "mellohi/asset_id.h"
+
 namespace mellohi
 {
-    App::App() : m_root_node("RootNode") { }
+    App::App(const std::string_view& app_name) : m_root_node("RootNode")
+    {
+        AssetId::set_default_namespace(app_name);
+    }
 
     void App::run()
     {

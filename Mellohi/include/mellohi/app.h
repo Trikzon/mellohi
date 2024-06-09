@@ -8,7 +8,7 @@ namespace mellohi
     class App
     {
     public:
-        App();
+        explicit App(const std::string_view& app_name);
         virtual ~App() = default;
 
         void run();

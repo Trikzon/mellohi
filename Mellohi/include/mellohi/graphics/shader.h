@@ -3,6 +3,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "mellohi/asset_id.h"
 #include "mellohi/types.h"
 #include "mellohi/math/mat4.h"
 #include "mellohi/math/vec2.h"
@@ -14,7 +15,7 @@ namespace mellohi
     class Shader
     {
     public:
-        Shader(const std::string& vertex_shader_source, const std::string& fragment_shader_source);
+        Shader(const AssetId& fragment_asset_id, const AssetId& vertex_asset_id);
         ~Shader();
 
         void bind() const;

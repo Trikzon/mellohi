@@ -7,15 +7,17 @@
 namespace mellohi
 {
     // Requires that the vao is bound for validation.
-    Shader::Shader(const std::string& vertex_shader_source, const std::string& fragment_shader_source)
+    Shader::Shader(const AssetId& fragment_asset_id, const AssetId& vertex_asset_id)
     {
         m_program_id = glCreateProgram();
 
-        const u32 vertex_shader_id = compile_shader(GL_VERTEX_SHADER, vertex_shader_source);
-        const u32 fragment_shader_id = compile_shader(GL_FRAGMENT_SHADER, fragment_shader_source);
+        MH_ASSERT(vertex_asset_id.file_exists(), "Attempted to create a shader with an invalid asset id ({}).", vertex_asset_id);
+        const u32 vertex_id = compile_shader(GL_VERTEX_SHADER, vertex_asset_id.read_file_to_string());
+        MH_ASSERT(fragment_asset_id.file_exists(), "Attempted to create a shader with an invalid asset id ({}).", fragment_asset_id);
+        const u32 fragment_id = compile_shader(GL_FRAGMENT_SHADER, fragment_asset_id.read_file_to_string());
 
-        glAttachShader(m_program_id, vertex_shader_id);
-        glAttachShader(m_program_id, fragment_shader_id);
+        glAttachShader(m_program_id, vertex_id);
+        glAttachShader(m_program_id, fragment_id);
         glLinkProgram(m_program_id);
 
         i32 link_status;
@@ -50,10 +52,10 @@ namespace mellohi
             delete [] info_log;
         }
 
-        glDetachShader(m_program_id, vertex_shader_id);
-        glDetachShader(m_program_id, fragment_shader_id);
-        glDeleteShader(vertex_shader_id);
-        glDeleteShader(fragment_shader_id);
+        glDetachShader(m_program_id, vertex_id);
+        glDetachShader(m_program_id, fragment_id);
+        glDeleteShader(vertex_id);
+        glDeleteShader(fragment_id);
     }
 
     Shader::~Shader()
