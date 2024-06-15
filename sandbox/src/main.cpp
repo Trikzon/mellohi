@@ -1,5 +1,6 @@
 #include <cassert>
 #include <iostream>
+#include <string>
 
 #include <GLFW/glfw3.h>
 #include <glfw3webgpu.h>
@@ -103,8 +104,86 @@ int main()
     ImGui_ImplGlfw_InitForOther(window, true);
     ImGui_ImplWGPU_InitInfo init_info;
     init_info.Device = device;
-    init_info.RenderTargetFormat = surface.getPreferredFormat(adapter);
+    init_info.RenderTargetFormat = surface_format;
     ImGui_ImplWGPU_Init(&init_info);
+
+    std::string shader_code = R"(
+        @vertex
+        fn vs_main(@builtin(vertex_index) in_vertex_index: u32) -> @builtin(position) vec4f {
+            var p = vec2f(0.0, 0.0);
+            if (in_vertex_index == 0u) {
+                p = vec2f(-0.5, -0.5);
+            } else if (in_vertex_index == 1u) {
+                p = vec2f(0.5, -0.5);
+            } else {
+                p = vec2f(0.0, 0.5);
+            }
+            return vec4f(p, 0.0, 1.0);
+        }
+
+        @fragment
+        fn fs_main() -> @location(0) vec4f {
+            return vec4f(0.0, 0.4, 1.0, 1.0);
+        }
+    )";
+
+    wgpu::ShaderModuleDescriptor shader_module_descriptor;
+    wgpu::ShaderModuleWGSLDescriptor shader_module_wgsl_descriptor;
+    shader_module_wgsl_descriptor.chain.next = nullptr;
+    shader_module_wgsl_descriptor.chain.sType = wgpu::SType::ShaderModuleWGSLDescriptor;
+    shader_module_wgsl_descriptor.code = shader_code.c_str();
+    shader_module_descriptor.nextInChain = &shader_module_wgsl_descriptor.chain;
+
+    wgpu::ShaderModule shader_module = device.createShaderModule(shader_module_descriptor);
+
+    wgpu::RenderPipelineDescriptor pipeline_descriptor;
+
+    pipeline_descriptor.vertex.bufferCount = 0;
+    pipeline_descriptor.vertex.buffers = nullptr;
+    pipeline_descriptor.vertex.module = shader_module;
+    pipeline_descriptor.vertex.entryPoint = "vs_main";
+    pipeline_descriptor.vertex.constantCount = 0;
+    pipeline_descriptor.vertex.constants = nullptr;
+
+    pipeline_descriptor.primitive.topology = wgpu::PrimitiveTopology::TriangleList;
+    pipeline_descriptor.primitive.stripIndexFormat = wgpu::IndexFormat::Undefined;
+    pipeline_descriptor.primitive.frontFace = wgpu::FrontFace::CCW;
+    pipeline_descriptor.primitive.cullMode = wgpu::CullMode::None;
+
+    wgpu::FragmentState fragment_state;
+    fragment_state.module = shader_module;
+    fragment_state.entryPoint = "fs_main";
+    fragment_state.constantCount = 0;
+    fragment_state.constants = nullptr;
+
+    wgpu::BlendState blend_state;
+    blend_state.color.srcFactor = wgpu::BlendFactor::SrcAlpha;
+    blend_state.color.dstFactor = wgpu::BlendFactor::OneMinusSrcAlpha;
+    blend_state.color.operation = wgpu::BlendOperation::Add;
+    blend_state.alpha.srcFactor = wgpu::BlendFactor::Zero;
+    blend_state.alpha.dstFactor = wgpu::BlendFactor::One;
+    blend_state.alpha.operation = wgpu::BlendOperation::Add;
+
+    wgpu::ColorTargetState color_target;
+    color_target.format = surface_format;
+    color_target.blend = &blend_state;
+    color_target.writeMask = wgpu::ColorWriteMask::All;
+
+    fragment_state.targetCount = 1;
+    fragment_state.targets = &color_target;
+
+    pipeline_descriptor.fragment = &fragment_state;
+
+    pipeline_descriptor.depthStencil = nullptr;
+
+    pipeline_descriptor.multisample.count = 1;
+    pipeline_descriptor.multisample.mask = ~0u;
+    pipeline_descriptor.multisample.alphaToCoverageEnabled = false;
+
+    pipeline_descriptor.layout = nullptr;
+
+    wgpu::RenderPipeline pipeline = device.createRenderPipeline(pipeline_descriptor);
+    shader_module.release();
 
     // ===== Main Loop =====
     while (!glfwWindowShouldClose(window))
@@ -139,7 +218,9 @@ int main()
 
         wgpu::RenderPassEncoder render_pass = encoder.beginRenderPass(render_pass_descriptor);
 
-        // TODO: imgui update
+        render_pass.setPipeline(pipeline);
+        render_pass.draw(3, 1, 0, 0);
+
         ImGui_ImplWGPU_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
@@ -171,6 +252,7 @@ int main()
     ImGui_ImplGlfw_Shutdown();
     ImGui_ImplWGPU_Shutdown();
 
+    pipeline.release();
     surface.unconfigure();
     queue.release();
     surface.release();
