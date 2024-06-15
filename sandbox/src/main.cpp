@@ -56,7 +56,18 @@ int main()
     wgpu::DeviceDescriptor device_descriptor = {};
     device_descriptor.label = "My Device";
     device_descriptor.requiredFeatureCount = 0;
+
+    wgpu::SupportedLimits supported_limits;
+    adapter.getLimits(&supported_limits);
+    std::cout << "adapter.maxVertexAttributes: " << supported_limits.limits.maxVertexAttributes << std::endl;
+
     wgpu::RequiredLimits required_limits = wgpu::Default;
+    required_limits.limits.maxVertexAttributes = 2;
+    required_limits.limits.maxVertexBuffers = 1;
+    required_limits.limits.maxBufferSize = 6 * 5 * sizeof(float);
+    required_limits.limits.maxVertexBufferArrayStride = 5 * sizeof(float);
+    required_limits.limits.minStorageBufferOffsetAlignment = supported_limits.limits.minStorageBufferOffsetAlignment;
+    required_limits.limits.maxInterStageShaderComponents = 3;
     required_limits.limits.maxBindGroups = 2;
     device_descriptor.requiredLimits = &required_limits;
     device_descriptor.defaultQueue.nextInChain = nullptr;
@@ -69,6 +80,10 @@ int main()
     };
     wgpu::Device device = adapter.requestDevice(device_descriptor);
     std::cout << "Got device: " << device << std::endl;
+
+    device.getLimits(&supported_limits);
+    std::cout << "device.maxVertexAttributes: " << supported_limits.limits.maxVertexAttributes << std::endl;
+
     adapter.release();
 
     std::unique_ptr<wgpu::ErrorCallback> uncaptured_error_callback_handle = device.setUncapturedErrorCallback(
@@ -107,23 +122,75 @@ int main()
     init_info.RenderTargetFormat = surface_format;
     ImGui_ImplWGPU_Init(&init_info);
 
+    std::vector<float> vertex_data = {
+        -0.5, -0.5,     1.0, 0.0, 0.0,
+        +0.5, -0.5,     0.0, 1.0, 0.0,
+        +0.5, +0.5,     0.0, 0.0, 1.0,
+        -0.5, +0.5,     1.0, 1.0, 0.0,
+    };
+
+    std::vector<uint16_t> index_data = {
+        0, 1, 2,  // Triangle 0
+        0, 2, 3,  // Triangle 1
+    };
+    auto index_count = static_cast<uint32_t>(index_data.size());
+
+    wgpu::BufferDescriptor buffer_descriptor;
+    buffer_descriptor.size = vertex_data.size() * sizeof(float);
+    buffer_descriptor.size = (buffer_descriptor.size + 3) & ~3;  // round up to the next multiple of 4
+    buffer_descriptor.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Vertex;
+    buffer_descriptor.mappedAtCreation = false;
+    wgpu::Buffer vertex_buffer = device.createBuffer(buffer_descriptor);
+
+    queue.writeBuffer(vertex_buffer, 0, vertex_data.data(), buffer_descriptor.size);
+
+    buffer_descriptor.size = index_data.size() * sizeof(uint16_t);
+    buffer_descriptor.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index;
+    wgpu::Buffer index_buffer = device.createBuffer(buffer_descriptor);
+
+    queue.writeBuffer(index_buffer, 0, index_data.data(), buffer_descriptor.size);
+
+    wgpu::VertexBufferLayout vertex_buffer_layout;
+    std::vector<wgpu::VertexAttribute> vertex_attributes(2);
+
+    // Position attribute
+    vertex_attributes[0].shaderLocation = 0;
+    vertex_attributes[0].format = wgpu::VertexFormat::Float32x2;
+    vertex_attributes[0].offset = 0;
+
+    // Color attribute
+    vertex_attributes[1].shaderLocation = 1;
+    vertex_attributes[1].format = wgpu::VertexFormat::Float32x3;
+    vertex_attributes[1].offset = 2 * sizeof(float);
+
+    vertex_buffer_layout.attributeCount = static_cast<uint32_t>(vertex_attributes.size());
+    vertex_buffer_layout.attributes = vertex_attributes.data();
+    vertex_buffer_layout.arrayStride = 5 * sizeof(float);
+    vertex_buffer_layout.stepMode = wgpu::VertexStepMode::Vertex;
+
     std::string shader_code = R"(
+        struct VertexInput {
+            @location(0) position: vec2f,
+            @location(1) color: vec3f,
+        }
+
+        struct FragmentInput {
+            @builtin(position) position: vec4f,
+            @location(0) color: vec3f,
+        }
+
         @vertex
-        fn vs_main(@builtin(vertex_index) in_vertex_index: u32) -> @builtin(position) vec4f {
-            var p = vec2f(0.0, 0.0);
-            if (in_vertex_index == 0u) {
-                p = vec2f(-0.5, -0.5);
-            } else if (in_vertex_index == 1u) {
-                p = vec2f(0.5, -0.5);
-            } else {
-                p = vec2f(0.0, 0.5);
-            }
-            return vec4f(p, 0.0, 1.0);
+        fn vs_main(in: VertexInput) -> FragmentInput {
+            var out: FragmentInput;
+            let ratio = 640.0 / 480.0;
+            out.position += vec4f(in.position.x, in.position.y * ratio, 0.0, 1.0);
+            out.color = in.color;
+            return out;
         }
 
         @fragment
-        fn fs_main() -> @location(0) vec4f {
-            return vec4f(0.0, 0.4, 1.0, 1.0);
+        fn fs_main(in: FragmentInput) -> @location(0) vec4f {
+            return vec4f(in.color, 1.0);
         }
     )";
 
@@ -138,8 +205,8 @@ int main()
 
     wgpu::RenderPipelineDescriptor pipeline_descriptor;
 
-    pipeline_descriptor.vertex.bufferCount = 0;
-    pipeline_descriptor.vertex.buffers = nullptr;
+    pipeline_descriptor.vertex.bufferCount = 1;
+    pipeline_descriptor.vertex.buffers = &vertex_buffer_layout;
     pipeline_descriptor.vertex.module = shader_module;
     pipeline_descriptor.vertex.entryPoint = "vs_main";
     pipeline_descriptor.vertex.constantCount = 0;
@@ -208,7 +275,7 @@ int main()
         render_pass_color_attachment.resolveTarget = nullptr;
         render_pass_color_attachment.loadOp = wgpu::LoadOp::Clear;
         render_pass_color_attachment.storeOp = wgpu::StoreOp::Store;
-        render_pass_color_attachment.clearValue = wgpu::Color{0.1, 0.1, 0.3, 1.0};
+        render_pass_color_attachment.clearValue = wgpu::Color{0.05, 0.05, 0.05, 1.0};
         render_pass_color_attachment.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED;
 
         render_pass_descriptor.colorAttachmentCount = 1;
@@ -219,7 +286,11 @@ int main()
         wgpu::RenderPassEncoder render_pass = encoder.beginRenderPass(render_pass_descriptor);
 
         render_pass.setPipeline(pipeline);
-        render_pass.draw(3, 1, 0, 0);
+
+        render_pass.setVertexBuffer(0, vertex_buffer, 0, vertex_data.size() * sizeof(float));
+        render_pass.setIndexBuffer(index_buffer, wgpu::IndexFormat::Uint16, 0, index_data.size() * sizeof(uint16_t));
+
+        render_pass.drawIndexed(index_count, 1, 0, 0, 0);
 
         ImGui_ImplWGPU_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -251,6 +322,8 @@ int main()
     // ===== Terminate =====
     ImGui_ImplGlfw_Shutdown();
     ImGui_ImplWGPU_Shutdown();
+
+    vertex_buffer.release();
 
     pipeline.release();
     surface.unconfigure();
