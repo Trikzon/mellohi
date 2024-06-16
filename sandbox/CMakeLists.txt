@@ -21,7 +21,7 @@ target_include_directories(sandbox PUBLIC include)
 #    target_compile_options(sandbox PRIVATE -Wall -Wextra -pedantic)
 #endif()
 
-target_link_libraries(sandbox PRIVATE voxelfi)
+target_link_libraries(sandbox PRIVATE mellohi)
 
 add_custom_target(remove_sandbox_assets ALL
         COMMAND ${CMAKE_COMMAND} -E remove_directory

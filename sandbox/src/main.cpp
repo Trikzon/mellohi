@@ -2,125 +2,18 @@
 #include <iostream>
 #include <string>
 
-#include <GLFW/glfw3.h>
-#include <glfw3webgpu.h>
 #include <imgui.h>
-#include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_wgpu.h>
-#define WEBGPU_CPP_IMPLEMENTATION
-#include <webgpu/webgpu.hpp>
 
-wgpu::TextureView get_next_surface_texture_view(wgpu::Surface& surface)
-{
-    wgpu::SurfaceTexture surface_texture;
-    surface.getCurrentTexture(&surface_texture);
-    if (surface_texture.status != wgpu::SurfaceGetCurrentTextureStatus::Success)
-    {
-        return nullptr;
-    }
-    wgpu::Texture texture = surface_texture.texture;
-
-    wgpu::TextureViewDescriptor view_descriptor;
-    view_descriptor.label = "Surface texture view";
-    view_descriptor.format = texture.getFormat();
-    view_descriptor.dimension = wgpu::TextureViewDimension::_2D;
-    view_descriptor.baseMipLevel = 0;
-    view_descriptor.mipLevelCount = 1;
-    view_descriptor.baseArrayLayer = 0;
-    view_descriptor.arrayLayerCount = 1;
-    view_descriptor.aspect = wgpu::TextureAspect::All;
-    wgpu::TextureView target_view = texture.createView(view_descriptor);
-
-    return target_view;
-}
+#include "mellohi/graphics/window.h"
 
 int main()
 {
-    glfwInit();
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-    GLFWwindow* window = glfwCreateWindow(640, 480, "Voxelfi", nullptr, nullptr);
+    mellohi::Window window;
+    mellohi::Device& device = window.get_device();
 
-    wgpu::Instance instance = wgpuCreateInstance(nullptr);
-
-    wgpu::Surface surface = glfwGetWGPUSurface(instance, window);
-
-    std::cout << "Requesting adapter..." << std::endl;
-    wgpu::RequestAdapterOptions adapter_options = {};
-    adapter_options.compatibleSurface = surface;
-    wgpu::Adapter adapter = instance.requestAdapter(adapter_options);
-    std::cout << "Got adapter: " << adapter << std::endl;
-    instance.release();
-
-    std::cout << "Requesting device..." << std::endl;
-    wgpu::DeviceDescriptor device_descriptor = {};
-    device_descriptor.label = "My Device";
-    device_descriptor.requiredFeatureCount = 0;
-
-    wgpu::SupportedLimits supported_limits;
-    adapter.getLimits(&supported_limits);
-    std::cout << "adapter.maxVertexAttributes: " << supported_limits.limits.maxVertexAttributes << std::endl;
-
-    wgpu::RequiredLimits required_limits = wgpu::Default;
-    required_limits.limits.maxVertexAttributes = 2;
-    required_limits.limits.maxVertexBuffers = 1;
-    required_limits.limits.maxBufferSize = 6 * 5 * sizeof(float);
-    required_limits.limits.maxVertexBufferArrayStride = 5 * sizeof(float);
-    required_limits.limits.minStorageBufferOffsetAlignment = supported_limits.limits.minStorageBufferOffsetAlignment;
-    required_limits.limits.maxInterStageShaderComponents = 3;
-    required_limits.limits.maxBindGroups = 2;
-    device_descriptor.requiredLimits = &required_limits;
-    device_descriptor.defaultQueue.nextInChain = nullptr;
-    device_descriptor.defaultQueue.label = "The default queue";
-    device_descriptor.deviceLostCallback = [](WGPUDeviceLostReason reason, const char* message, void*)
-    {
-        std::cout << "Device lost: reason " << reason;
-        if (message) std::cout << " (" << message << ")";
-        std::cout << std::endl;
-    };
-    wgpu::Device device = adapter.requestDevice(device_descriptor);
-    std::cout << "Got device: " << device << std::endl;
-
-    device.getLimits(&supported_limits);
-    std::cout << "device.maxVertexAttributes: " << supported_limits.limits.maxVertexAttributes << std::endl;
-
-    adapter.release();
-
-    std::unique_ptr<wgpu::ErrorCallback> uncaptured_error_callback_handle = device.setUncapturedErrorCallback(
-        [](wgpu::ErrorType type, const char* message)
-        {
-            std::cout << "Uncaptured device error: type " << type;
-            if (message) std::cout << " (" << message << ")";
-            std::cout << std::endl;
-        }
-    );
-
-    wgpu::Queue queue = device.getQueue();
-
-    wgpu::SurfaceConfiguration surface_config = {};
-    surface_config.width = 640;
-    surface_config.height = 480;
-    surface_config.usage = wgpu::TextureUsage::RenderAttachment;
-    wgpu::TextureFormat surface_format = surface.getPreferredFormat(adapter);
-    surface_config.format = surface_format;
-
-    surface_config.viewFormatCount = 0;
-    surface_config.viewFormats = nullptr;
-    surface_config.device = device;
-    surface_config.presentMode = wgpu::PresentMode::Fifo;
-    surface_config.alphaMode = wgpu::CompositeAlphaMode::Auto;
-
-    surface.configure(surface_config);
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::GetIO();
-
-    ImGui_ImplGlfw_InitForOther(window, true);
-    ImGui_ImplWGPU_InitInfo init_info;
-    init_info.Device = device;
-    init_info.RenderTargetFormat = surface_format;
-    ImGui_ImplWGPU_Init(&init_info);
+    // wgpu::Queue queue = window.get_queue();
+    wgpu::Queue queue = device.get_queue_unsafe();
 
     std::vector<float> vertex_data = {
         -0.5, -0.5,     1.0, 0.0, 0.0,
@@ -140,13 +33,15 @@ int main()
     buffer_descriptor.size = (buffer_descriptor.size + 3) & ~3;  // round up to the next multiple of 4
     buffer_descriptor.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Vertex;
     buffer_descriptor.mappedAtCreation = false;
-    wgpu::Buffer vertex_buffer = device.createBuffer(buffer_descriptor);
+    // wgpu::Buffer vertex_buffer = window.create_buffer(buffer_descriptor);
+    wgpu::Buffer vertex_buffer = device.create_buffer_unsafe(buffer_descriptor);
 
     queue.writeBuffer(vertex_buffer, 0, vertex_data.data(), buffer_descriptor.size);
 
     buffer_descriptor.size = index_data.size() * sizeof(uint16_t);
     buffer_descriptor.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index;
-    wgpu::Buffer index_buffer = device.createBuffer(buffer_descriptor);
+    // wgpu::Buffer index_buffer = window.create_buffer(buffer_descriptor);
+    wgpu::Buffer index_buffer = device.create_buffer_unsafe(buffer_descriptor);
 
     queue.writeBuffer(index_buffer, 0, index_data.data(), buffer_descriptor.size);
 
@@ -201,7 +96,7 @@ int main()
     shader_module_wgsl_descriptor.code = shader_code.c_str();
     shader_module_descriptor.nextInChain = &shader_module_wgsl_descriptor.chain;
 
-    wgpu::ShaderModule shader_module = device.createShaderModule(shader_module_descriptor);
+    wgpu::ShaderModule shader_module = device.create_shader_module_unsafe(shader_module_descriptor);
 
     wgpu::RenderPipelineDescriptor pipeline_descriptor;
 
@@ -232,7 +127,7 @@ int main()
     blend_state.alpha.operation = wgpu::BlendOperation::Add;
 
     wgpu::ColorTargetState color_target;
-    color_target.format = surface_format;
+    color_target.format = window.get_surface().get_texture_format();
     color_target.blend = &blend_state;
     color_target.writeMask = wgpu::ColorWriteMask::All;
 
@@ -249,16 +144,16 @@ int main()
 
     pipeline_descriptor.layout = nullptr;
 
-    wgpu::RenderPipeline pipeline = device.createRenderPipeline(pipeline_descriptor);
+    wgpu::RenderPipeline pipeline = device.create_render_pipeline_unsafe(pipeline_descriptor);
     shader_module.release();
 
     // ===== Main Loop =====
-    while (!glfwWindowShouldClose(window))
+    while (!window.should_close())
     {
-        glfwPollEvents();
+        window.begin_frame();
 
-        wgpu::TextureView target_view = get_next_surface_texture_view(surface);
-        if (target_view == nullptr)
+        auto target_view = window.get_surface().get_next_texture_view_unsafe();
+        if (!target_view)
         {
             std::cout << "Skipped frame..." << std::endl;
             continue;
@@ -266,12 +161,12 @@ int main()
 
         wgpu::CommandEncoderDescriptor encoder_descriptor = {};
         encoder_descriptor.label = "My command encoder";
-        wgpu::CommandEncoder encoder = device.createCommandEncoder(encoder_descriptor);
+        wgpu::CommandEncoder encoder = device.create_command_encoder_unsafe(encoder_descriptor);
 
         wgpu::RenderPassDescriptor render_pass_descriptor = {};
 
         wgpu::RenderPassColorAttachment render_pass_color_attachment = {};
-        render_pass_color_attachment.view = target_view;
+        render_pass_color_attachment.view = *target_view;
         render_pass_color_attachment.resolveTarget = nullptr;
         render_pass_color_attachment.loadOp = wgpu::LoadOp::Clear;
         render_pass_color_attachment.storeOp = wgpu::StoreOp::Store;
@@ -292,10 +187,6 @@ int main()
 
         render_pass.drawIndexed(index_count, 1, 0, 0, 0);
 
-        ImGui_ImplWGPU_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-
         ImGui::ShowMetricsWindow();
 
         ImGui::EndFrame();
@@ -313,23 +204,15 @@ int main()
         queue.submit(1, &command_buffer);
         command_buffer.release();
 
-        target_view.release();
+        target_view->release();
 
-        surface.present();
-        device.tick();
+        window.end_frame();
     }
 
     // ===== Terminate =====
-    ImGui_ImplGlfw_Shutdown();
-    ImGui_ImplWGPU_Shutdown();
-
     vertex_buffer.release();
+    index_buffer.release();
 
     pipeline.release();
-    surface.unconfigure();
     queue.release();
-    surface.release();
-    device.release();
-    glfwDestroyWindow(window);
-    glfwTerminate();
 }

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.28)
-project(voxelfi)
+project(mellohi)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_subdirectory(voxelfi)
+add_subdirectory(mellohi)
 add_subdirectory(sandbox)

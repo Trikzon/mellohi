@@ -1,24 +1,24 @@
 cmake_minimum_required(VERSION 3.28)
 
-project(voxelfi)
+project(mellohi)
 
 file(GLOB_RECURSE HEADER_FILES include/*.h include/*.hpp)
 file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
 
-add_library(voxelfi STATIC ${SOURCE_FILES} ${HEADER_FILES})
-target_include_directories(voxelfi PUBLIC include)
+add_library(mellohi STATIC ${SOURCE_FILES} ${HEADER_FILES})
+target_include_directories(mellohi PUBLIC include)
 
-add_custom_target(remove_voxelfi_assets ALL
+add_custom_target(remove_mellohi_assets ALL
         COMMAND ${CMAKE_COMMAND} -E remove_directory
-        ${CMAKE_BINARY_DIR}/assets/voxelfi
+        ${CMAKE_BINARY_DIR}/assets/mellohi
 )
-add_custom_target(copy_voxelfi_assets ALL
+add_custom_target(copy_mellohi_assets ALL
         COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/assets/voxelfi
-        ${CMAKE_BINARY_DIR}/assets/voxelfi
+        ${CMAKE_CURRENT_SOURCE_DIR}/assets/mellohi
+        ${CMAKE_BINARY_DIR}/assets/mellohi
 )
-add_dependencies(copy_voxelfi_assets remove_voxelfi_assets)
-add_dependencies(voxelfi copy_voxelfi_assets)
+add_dependencies(copy_mellohi_assets remove_mellohi_assets)
+add_dependencies(mellohi copy_mellohi_assets)
 
 if (NOT EMSCRIPTEN)
     add_subdirectory(vendor/glfw)
@@ -34,4 +34,4 @@ add_subdirectory(vendor/dawn)
 
 add_subdirectory(vendor/imgui)
 
-target_link_libraries(voxelfi PUBLIC glfw glfw3webgpu webgpu imgui)
+target_link_libraries(mellohi PUBLIC glfw glfw3webgpu webgpu imgui)
