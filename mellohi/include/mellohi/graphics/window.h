@@ -20,8 +20,8 @@ namespace mellohi
         Window& operator=(Window&& other) noexcept;
 
         bool should_close() const;
-        void begin_frame();
-        void end_frame();
+        std::optional<std::tuple<wgpu::CommandEncoder, wgpu::RenderPassEncoder>> begin_frame() const;
+        void end_frame(wgpu::CommandEncoder command_encoder, wgpu::RenderPassEncoder render_pass) const;
 
         Surface& get_surface() const;
         Device& get_device() const;
