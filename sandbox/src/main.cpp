@@ -4,6 +4,7 @@
 #include <imgui.h>
 
 #include "mellohi/game.h"
+#include "mellohi/graphics/buffer.h"
 #include "mellohi/graphics/window.h"
 
 std::vector<float> vertex_data = {
@@ -47,57 +48,19 @@ std::string shader_code = R"(
 
 class Sandbox final : public mellohi::Game
 {
-public:
-    ~Sandbox() override
-    {
-        m_vertex_buffer.destroy();
-        m_vertex_buffer.release();
-
-        m_index_buffer.release();
-        m_index_buffer.destroy();
-    }
-
-private:
-    wgpu::Buffer m_vertex_buffer, m_index_buffer;
+    std::unique_ptr<mellohi::VertexBuffer> m_vertex_buffer;
+    std::unique_ptr<mellohi::IndexBuffer> m_index_buffer;
     wgpu::RenderPipeline m_pipeline;
 
     void on_run() override
     {
         mellohi::Device& device = get_window().get_device();
-        wgpu::Queue queue = device.get_queue_unsafe();
 
-        wgpu::BufferDescriptor buffer_descriptor;
-        buffer_descriptor.size = vertex_data.size() * sizeof(float);
-        buffer_descriptor.size = (buffer_descriptor.size + 3) & ~3;  // round up to the next multiple of 4
-        buffer_descriptor.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Vertex;
-        buffer_descriptor.mappedAtCreation = false;
-        m_vertex_buffer = device.create_buffer_unsafe(buffer_descriptor);
+        m_vertex_buffer = std::make_unique<mellohi::VertexBuffer>(device, vertex_data);
+        m_index_buffer = std::make_unique<mellohi::IndexBuffer>(device, index_data);
 
-        queue.writeBuffer(m_vertex_buffer, 0, vertex_data.data(), buffer_descriptor.size);
-
-        buffer_descriptor.size = index_data.size() * sizeof(uint16_t);
-        buffer_descriptor.usage = wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index;
-        m_index_buffer = device.create_buffer_unsafe(buffer_descriptor);
-
-        queue.writeBuffer(m_index_buffer, 0, index_data.data(), buffer_descriptor.size);
-
-        wgpu::VertexBufferLayout vertex_buffer_layout;
-        std::vector<wgpu::VertexAttribute> vertex_attributes(2);
-
-        // Position attribute
-        vertex_attributes[0].shaderLocation = 0;
-        vertex_attributes[0].format = wgpu::VertexFormat::Float32x2;
-        vertex_attributes[0].offset = 0;
-
-        // Color attribute
-        vertex_attributes[1].shaderLocation = 1;
-        vertex_attributes[1].format = wgpu::VertexFormat::Float32x3;
-        vertex_attributes[1].offset = 2 * sizeof(float);
-
-        vertex_buffer_layout.attributeCount = static_cast<uint32_t>(vertex_attributes.size());
-        vertex_buffer_layout.attributes = vertex_attributes.data();
-        vertex_buffer_layout.arrayStride = 5 * sizeof(float);
-        vertex_buffer_layout.stepMode = wgpu::VertexStepMode::Vertex;
+        m_vertex_buffer->add_attribute_vec2f();  // Position
+        m_vertex_buffer->add_attribute_vec3f();  // Color
 
         wgpu::ShaderModuleDescriptor shader_module_descriptor;
         wgpu::ShaderModuleWGSLDescriptor shader_module_wgsl_descriptor;
@@ -111,6 +74,7 @@ private:
         wgpu::RenderPipelineDescriptor pipeline_descriptor;
 
         pipeline_descriptor.vertex.bufferCount = 1;
+        const wgpu::VertexBufferLayout vertex_buffer_layout = m_vertex_buffer->get_wgpu_layout();
         pipeline_descriptor.vertex.buffers = &vertex_buffer_layout;
         pipeline_descriptor.vertex.module = shader_module;
         pipeline_descriptor.vertex.entryPoint = "vs_main";
@@ -157,14 +121,13 @@ private:
         m_pipeline = device.create_render_pipeline_unsafe(pipeline_descriptor);
 
         shader_module.release();
-        queue.release();
     }
 
     void on_update(wgpu::RenderPassEncoder render_pass) override
     {
         render_pass.setPipeline(m_pipeline);
-        render_pass.setVertexBuffer(0, m_vertex_buffer, 0, vertex_data.size() * sizeof(float));
-        render_pass.setIndexBuffer(m_index_buffer, wgpu::IndexFormat::Uint16, 0, index_data.size() * sizeof(uint16_t));
+        render_pass.setVertexBuffer(0, m_vertex_buffer->get_unsafe(), 0, vertex_data.size() * sizeof(float));
+        render_pass.setIndexBuffer(m_index_buffer->get_unsafe(), m_index_buffer->get_wgpu_format(), 0, index_data.size() * sizeof(uint16_t));
 
         render_pass.drawIndexed(index_count, 1, 0, 0, 0);
 
