@@ -3,6 +3,7 @@
 
 #include <imgui.h>
 
+#include "mellohi/asset_id.h"
 #include "mellohi/game.h"
 #include "mellohi/graphics/buffer.h"
 #include "mellohi/graphics/pipeline.h"
@@ -21,34 +22,12 @@ std::vector<uint16_t> index_data = {
 };
 auto index_count = static_cast<uint32_t>(index_data.size());
 
-std::string shader_code = R"(
-    struct VertexInput {
-        @location(0) position: vec2f,
-        @location(1) color: vec3f,
-    }
-
-    struct FragmentInput {
-        @builtin(position) position: vec4f,
-        @location(0) color: vec3f,
-    }
-
-    @vertex
-    fn vertex_main(in: VertexInput) -> FragmentInput {
-        var out: FragmentInput;
-        let ratio = 640.0 / 480.0;
-        out.position += vec4f(in.position.x, in.position.y * ratio, 0.0, 1.0);
-        out.color = in.color;
-        return out;
-    }
-
-    @fragment
-    fn fragment_main(in: FragmentInput) -> @location(0) vec4f {
-        return vec4f(in.color, 1.0);
-    }
-)";
-
 class Sandbox final : public mellohi::Game
 {
+public:
+    Sandbox() : Game("sandbox") { }
+
+private:
     std::unique_ptr<mellohi::VertexBuffer> m_vertex_buffer;
     std::unique_ptr<mellohi::IndexBuffer> m_index_buffer;
     std::unique_ptr<mellohi::Pipeline> m_pipeline;
@@ -63,7 +42,7 @@ class Sandbox final : public mellohi::Game
 
         m_index_buffer = std::make_unique<mellohi::IndexBuffer>(device, index_data);
 
-        m_pipeline = std::make_unique<mellohi::Pipeline>(device, get_window().get_surface(), shader_code, *m_vertex_buffer);
+        m_pipeline = std::make_unique<mellohi::Pipeline>(device, get_window().get_surface(), mellohi::AssetId::fromGame("square.wgsl"), *m_vertex_buffer);
     }
 
     void on_update(wgpu::RenderPassEncoder render_pass) override

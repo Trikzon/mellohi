@@ -2,8 +2,10 @@
 
 namespace mellohi
 {
-    Pipeline::Pipeline(Device& device, const Surface& surface, const std::string& shader_code, VertexBuffer& vertex_buffer)
+    Pipeline::Pipeline(Device& device, const Surface& surface, const AssetId& shader_asset_id, VertexBuffer& vertex_buffer)
     {
+        std::string shader_code = shader_asset_id.read_file_to_string();
+
         wgpu::ShaderModuleWGSLDescriptor shader_module_wgsl_descriptor;
         shader_module_wgsl_descriptor.chain.next = nullptr;
         shader_module_wgsl_descriptor.chain.sType = wgpu::SType::ShaderModuleWGSLDescriptor;

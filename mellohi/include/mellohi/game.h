@@ -7,7 +7,7 @@ namespace mellohi
     class Game
     {
     public:
-        Game();
+        explicit Game(const std::string_view& game_namespace);
         virtual ~Game() = default;
 
         void run();

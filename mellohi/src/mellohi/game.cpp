@@ -1,9 +1,13 @@
 #include "mellohi/game.h"
 
+#include "mellohi/asset_id.h"
+
 namespace mellohi
 {
-    Game::Game()
+    Game::Game(const std::string_view& game_namespace)
     {
+        AssetId::set_game_namespace(game_namespace);
+
         m_window = std::make_unique<Window>();
     }
 
