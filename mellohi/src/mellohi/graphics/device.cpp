@@ -157,12 +157,6 @@ namespace mellohi
         descriptor.requiredLimits = &required_limits;
         descriptor.defaultQueue.nextInChain = nullptr;
         descriptor.defaultQueue.label = "Default Mellohi Queue";
-        descriptor.deviceLostCallback = [](const WGPUDeviceLostReason reason, const char* message, void*)
-        {
-            std::cout << "Device lost: reason " << reason;
-            if (message) std::cout << " (" << message << ")";
-            std::cout << std::endl;
-        };
 
         m_wgpu_device = adapter.get_unsafe().requestDevice(descriptor);
 
