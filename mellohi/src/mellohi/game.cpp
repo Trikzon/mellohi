@@ -25,13 +25,11 @@ namespace mellohi
 
         while (!m_window->should_close())
         {
-            if (auto frame = m_window->begin_frame())
+            if (auto render_pass = m_window->begin_frame())
             {
-                auto [command_encoder, render_pass] = *frame;
+                on_update(*render_pass);
 
-                on_update(render_pass);
-
-                m_window->end_frame(command_encoder, render_pass);
+                m_window->end_frame(*render_pass);
             }
         }
     }

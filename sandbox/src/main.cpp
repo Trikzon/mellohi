@@ -41,13 +41,13 @@ private:
         m_pipeline = std::make_unique<mellohi::Pipeline>(mellohi::AssetId::fromGame("square.wgsl"), *m_vertex_buffer);
     }
 
-    void on_update(wgpu::RenderPassEncoder render_pass) override
+    void on_update(mellohi::RenderPass &render_pass) override
     {
-        render_pass.setPipeline(m_pipeline->get_unsafe());
-        render_pass.setVertexBuffer(0, m_vertex_buffer->get_unsafe(), 0, vertex_data.size() * sizeof(float));
-        render_pass.setIndexBuffer(m_index_buffer->get_unsafe(), m_index_buffer->get_wgpu_format(), 0, index_data.size() * sizeof(uint16_t));
+        render_pass.set_pipeline(*m_pipeline);
+        render_pass.set_vertex_buffer(0, *m_vertex_buffer);
+        render_pass.set_index_buffer(*m_index_buffer);
 
-        render_pass.drawIndexed(index_count, 1, 0, 0, 0);
+        render_pass.draw_indexed();
 
         ImGui::ShowMetricsWindow();
     }

@@ -52,7 +52,7 @@ namespace mellohi
             blend_state.alpha.operation = wgpu::BlendOperation::Add;
 
             wgpu::ColorTargetState color_target;
-            color_target.format = surface.get_texture_format();
+            color_target.format = surface.get_wgpu_texture_format();
             color_target.blend = &blend_state;
             color_target.writeMask = wgpu::ColorWriteMask::All;
 

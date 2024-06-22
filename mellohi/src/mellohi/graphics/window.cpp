@@ -50,7 +50,7 @@ namespace mellohi
         ImGui_ImplGlfw_InitForOther(m_glfw_window, true);
         ImGui_ImplWGPU_InitInfo init_info;
         init_info.Device = m_device->get_unsafe();
-        init_info.RenderTargetFormat = m_surface->get_texture_format();
+        init_info.RenderTargetFormat = m_surface->get_wgpu_texture_format();
         ImGui_ImplWGPU_Init(&init_info);
     }
 
@@ -90,36 +90,19 @@ namespace mellohi
         return glfwWindowShouldClose(m_glfw_window);
     }
 
-    std::optional<std::tuple<wgpu::CommandEncoder, wgpu::RenderPassEncoder>> Window::begin_frame() const
+    std::unique_ptr<RenderPass> Window::begin_frame() const
     {
         glfwPollEvents();
 
-        auto current_surface_texture = get_surface().get_next_texture_view_unsafe();
+        auto current_surface_texture = get_surface().get_current_wgpu_texture_unsafe();
         if (!current_surface_texture)
         {
             std::cout << "Skipped frame." << std::endl;
 
-            return std::nullopt;
+            return nullptr;
         }
 
-        wgpu::CommandEncoderDescriptor command_encoder_descriptor = {};
-        command_encoder_descriptor.label = "Mellohi Command Encoder";
-        wgpu::CommandEncoder command_encoder = get_device().create_command_encoder_unsafe(command_encoder_descriptor);
-
-        wgpu::RenderPassColorAttachment render_pass_color_attachment = {};
-        render_pass_color_attachment.view = *current_surface_texture;
-        render_pass_color_attachment.resolveTarget = nullptr;
-        render_pass_color_attachment.loadOp = wgpu::LoadOp::Clear;
-        render_pass_color_attachment.storeOp = wgpu::StoreOp::Store;
-        render_pass_color_attachment.clearValue = wgpu::Color(0.05, 0.05, 0.05, 1.0);
-        render_pass_color_attachment.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED;
-
-        wgpu::RenderPassDescriptor render_pass_descriptor = {};
-        render_pass_descriptor.colorAttachmentCount = 1;
-        render_pass_descriptor.colorAttachments = &render_pass_color_attachment;
-        render_pass_descriptor.depthStencilAttachment = nullptr;
-        render_pass_descriptor.timestampWrites = nullptr;
-        wgpu::RenderPassEncoder render_pass = command_encoder.beginRenderPass(render_pass_descriptor);
+        auto render_pass = std::make_unique<RenderPass>(*current_surface_texture, 0.05, 0.05, 0.05);
 
         current_surface_texture->release();
 
@@ -127,27 +110,16 @@ namespace mellohi
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        return std::tuple(command_encoder, render_pass);
+        return render_pass;
     }
 
-    void Window::end_frame(wgpu::CommandEncoder command_encoder, wgpu::RenderPassEncoder render_pass) const
+    void Window::end_frame(RenderPass &render_pass) const
     {
         ImGui::EndFrame();
         ImGui::Render();
-        ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), render_pass);
+        ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), render_pass.get_unsafe());
 
         render_pass.end();
-        render_pass.release();
-
-        wgpu::CommandBufferDescriptor command_buffer_descriptor = {};
-        command_buffer_descriptor.label = "Mellohi Command Buffer";
-        wgpu::CommandBuffer command_buffer = command_encoder.finish(command_buffer_descriptor);
-        command_encoder.release();
-
-        wgpu::Queue queue = get_device().get_queue_unsafe();
-        queue.submit(1, &command_buffer);
-        queue.release();
-        command_buffer.release();
 
         m_surface->present();
         m_device->tick();

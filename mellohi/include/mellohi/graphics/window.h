@@ -2,7 +2,8 @@
 
 #include <webgpu/webgpu.hpp>
 
-#include "device.h"
+#include "mellohi/graphics/device.h"
+#include "mellohi/graphics/render_pass.h"
 
 struct GLFWwindow;
 
@@ -20,8 +21,8 @@ namespace mellohi
         Window & operator=(Window &&other) noexcept;
 
         bool should_close() const;
-        std::optional<std::tuple<wgpu::CommandEncoder, wgpu::RenderPassEncoder>> begin_frame() const;
-        void end_frame(wgpu::CommandEncoder command_encoder, wgpu::RenderPassEncoder render_pass) const;
+        std::unique_ptr<RenderPass> begin_frame() const;
+        void end_frame(RenderPass &render_pass) const;
 
         Surface & get_surface() const;
         Device & get_device() const;

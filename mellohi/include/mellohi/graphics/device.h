@@ -56,8 +56,8 @@ namespace mellohi
         Surface & operator=(Surface &&other) noexcept;
 
         void configure(uint32_t width, uint32_t height, const Device &device, bool vsync);
-        wgpu::TextureFormat get_texture_format() const;
-        std::optional<wgpu::TextureView> get_next_texture_view_unsafe();
+        wgpu::TextureFormat get_wgpu_texture_format() const;
+        std::optional<wgpu::TextureView> get_current_wgpu_texture_unsafe();
         void present();
 
         wgpu::Surface get_unsafe() const;

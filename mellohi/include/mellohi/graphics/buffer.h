@@ -18,10 +18,13 @@ namespace mellohi
         Buffer & operator=(const Buffer &other) = delete;
         Buffer & operator=(Buffer &&other) noexcept;
 
+        size_t get_size_bytes() const;
+
         wgpu::Buffer get_unsafe() const;
 
     private:
         wgpu::Buffer m_wgpu_buffer;
+        size_t m_size_bytes;
 
         void create_buffer(const void *data, size_t size, wgpu::BufferUsageFlags wgpu_usage_flags);
     };
@@ -29,7 +32,11 @@ namespace mellohi
     template<typename T>
     Buffer::Buffer(const std::vector<T> &data, const wgpu::BufferUsageFlags wgpu_usage_flags)
     {
-        const size_t size = ((data.size() * sizeof(T)) + 3) & ~3;
+        m_size_bytes = data.size() * sizeof(T);
+
+        // The number of bytes copied must be a multiple of 4.
+        // So we round up to the next multiple.
+        const size_t size = (m_size_bytes + 3) & ~3;
         create_buffer(data.data(), size, wgpu_usage_flags);
     }
 
@@ -75,8 +82,10 @@ namespace mellohi
         IndexBuffer & operator=(IndexBuffer &&other) noexcept;
 
         wgpu::IndexFormat get_wgpu_format() const;
+        size_t get_index_count() const;
 
     private:
         wgpu::IndexFormat m_wgpu_format;
+        size_t m_index_count;
     };
 }

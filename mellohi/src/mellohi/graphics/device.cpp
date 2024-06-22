@@ -50,12 +50,12 @@ namespace mellohi
         m_wgpu_surface.configure(configuration);
     }
 
-    wgpu::TextureFormat Surface::get_texture_format() const
+    wgpu::TextureFormat Surface::get_wgpu_texture_format() const
     {
         return m_wgpu_texture_format;
     }
 
-    std::optional<wgpu::TextureView> Surface::get_next_texture_view_unsafe()
+    std::optional<wgpu::TextureView> Surface::get_current_wgpu_texture_unsafe()
     {
         wgpu::SurfaceTexture surface_texture;
         m_wgpu_surface.getCurrentTexture(&surface_texture);

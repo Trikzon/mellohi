@@ -13,9 +13,10 @@ namespace mellohi
         }
     }
 
-    Buffer::Buffer(Buffer &&other) noexcept
+    Buffer::Buffer(Buffer &&other) noexcept : m_size_bytes(0)
     {
         std::swap(m_wgpu_buffer, other.m_wgpu_buffer);
+        std::swap(m_size_bytes, other.m_size_bytes);
     }
 
     Buffer & Buffer::operator=(Buffer &&other) noexcept
@@ -23,9 +24,15 @@ namespace mellohi
         if (this != &other)
         {
             std::swap(m_wgpu_buffer, other.m_wgpu_buffer);
+            std::swap(m_size_bytes, other.m_size_bytes);
         }
 
         return *this;
+    }
+
+    size_t Buffer::get_size_bytes() const
+    {
+        return m_size_bytes;
     }
 
     wgpu::Buffer Buffer::get_unsafe() const
@@ -103,14 +110,15 @@ namespace mellohi
 
     IndexBuffer::IndexBuffer(const std::vector<uint16_t> &data)
         : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
-          m_wgpu_format(wgpu::IndexFormat::Uint16) { }
+          m_wgpu_format(wgpu::IndexFormat::Uint16), m_index_count(data.size()) { }
 
     IndexBuffer::IndexBuffer(const std::vector<uint32_t> &data)
         : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
-          m_wgpu_format(wgpu::IndexFormat::Uint32) { }
+          m_wgpu_format(wgpu::IndexFormat::Uint32), m_index_count(data.size()) { }
 
     IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept
-        : Buffer(std::move(other)), m_wgpu_format(other.m_wgpu_format) { }
+        : Buffer(std::move(other)),
+          m_wgpu_format(other.m_wgpu_format), m_index_count(other.m_index_count) { }
 
     IndexBuffer & IndexBuffer::operator=(IndexBuffer &&other) noexcept
     {
@@ -118,6 +126,7 @@ namespace mellohi
         {
             Buffer::operator=(std::move(other));
             std::swap(m_wgpu_format, other.m_wgpu_format);
+            std::swap(m_index_count, other.m_index_count);
         }
 
         return *this;
@@ -126,5 +135,10 @@ namespace mellohi
     wgpu::IndexFormat IndexBuffer::get_wgpu_format() const
     {
         return m_wgpu_format;
+    }
+
+    size_t IndexBuffer::get_index_count() const
+    {
+        return m_index_count;
     }
 }

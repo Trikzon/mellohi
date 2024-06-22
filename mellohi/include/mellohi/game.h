@@ -1,6 +1,7 @@
 #pragma once
 
-#include "graphics/window.h"
+#include "mellohi/graphics/render_pass.h"
+#include "mellohi/graphics/window.h"
 
 namespace mellohi
 {
@@ -22,6 +23,6 @@ namespace mellohi
         std::unique_ptr<Window> m_window;
 
         virtual void on_run() { };
-        virtual void on_update(wgpu::RenderPassEncoder render_pass) { };
+        virtual void on_update(RenderPass &render_pass) { };
     };
 }
