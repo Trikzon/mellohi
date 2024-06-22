@@ -24,7 +24,7 @@ namespace mellohi
 
     private:
         const inline static std::string ENGINE_NAMESPACE = "mellohi";
-        inline static std::string GAME_NAMESPACE;
+        inline static std::string s_game_namespace;
 
         const std::string m_namespace, m_path;
 

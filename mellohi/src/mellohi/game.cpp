@@ -4,8 +4,16 @@
 
 namespace mellohi
 {
+    Game& Game::get()
+    {
+        return *s_instance;
+    }
+
     Game::Game(const std::string_view& game_namespace)
     {
+        // TODO: Error if s_instance is not nullptr
+        s_instance = this;
+
         AssetId::set_game_namespace(game_namespace);
 
         m_window = std::make_unique<Window>();

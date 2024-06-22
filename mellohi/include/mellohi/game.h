@@ -7,6 +7,8 @@ namespace mellohi
     class Game
     {
     public:
+        static Game& get();
+
         explicit Game(const std::string_view& game_namespace);
         virtual ~Game() = default;
 
@@ -15,6 +17,8 @@ namespace mellohi
         Window& get_window() const;
 
     private:
+        inline static Game* s_instance;
+
         std::unique_ptr<Window> m_window;
 
         virtual void on_run() { };

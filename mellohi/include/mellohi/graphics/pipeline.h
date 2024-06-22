@@ -4,14 +4,13 @@
 
 #include "mellohi/asset_id.h"
 #include "mellohi/graphics/buffer.h"
-#include "mellohi/graphics/device.h"
 
 namespace mellohi
 {
     class Pipeline
     {
     public:
-        Pipeline(Device& device, const Surface& surface, const AssetId& shader_asset_id, VertexBuffer& vertex_buffer);
+        Pipeline(const AssetId& shader_asset_id, VertexBuffer& vertex_buffer);
         ~Pipeline();
 
         wgpu::RenderPipeline get_unsafe() const;

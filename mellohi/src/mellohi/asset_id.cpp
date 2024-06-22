@@ -17,12 +17,12 @@ namespace mellohi
     AssetId AssetId::fromGame(const std::string_view& path)
     {
         // TODO: Log if the game namespace hasn't been set.
-        return { GAME_NAMESPACE, path };
+        return { s_game_namespace, path };
     }
 
     void AssetId::set_game_namespace(const std::string_view& game_namespace)
     {
-        GAME_NAMESPACE = game_namespace;
+        s_game_namespace = game_namespace;
     }
 
     const std::string& AssetId::get_namespace() const

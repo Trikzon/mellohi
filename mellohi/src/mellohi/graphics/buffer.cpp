@@ -1,5 +1,7 @@
 #include "mellohi/graphics/buffer.h"
 
+#include "mellohi/game.h"
+
 namespace mellohi
 {
     Buffer::~Buffer()
@@ -13,9 +15,11 @@ namespace mellohi
         return m_wgpu_buffer;
     }
 
-    void Buffer::create_buffer(Device& device, const void* data, const size_t size,
+    void Buffer::create_buffer(const void* data, const size_t size,
                                const wgpu::BufferUsageFlags wgpu_usage_flags)
     {
+        Device& device = Game::get().get_window().get_device();
+
         wgpu::BufferDescriptor descriptor;
         descriptor.size = size;
         descriptor.usage = wgpu_usage_flags;
@@ -61,12 +65,12 @@ namespace mellohi
         m_wgpu_vertex_attributes.push_back(attribute);
     }
 
-    IndexBuffer::IndexBuffer(Device& device, const std::vector<uint16_t>& data)
-        : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
+    IndexBuffer::IndexBuffer(const std::vector<uint16_t>& data)
+        : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint16) { }
 
-    IndexBuffer::IndexBuffer(Device& device, const std::vector<uint32_t>& data)
-        : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
+    IndexBuffer::IndexBuffer(const std::vector<uint32_t>& data)
+        : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint32) { }
 
     wgpu::IndexFormat IndexBuffer::get_wgpu_format() const

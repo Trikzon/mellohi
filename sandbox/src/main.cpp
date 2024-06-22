@@ -1,5 +1,4 @@
 #include <iostream>
-#include <string>
 
 #include <imgui.h>
 
@@ -7,7 +6,6 @@
 #include "mellohi/game.h"
 #include "mellohi/graphics/buffer.h"
 #include "mellohi/graphics/pipeline.h"
-#include "mellohi/graphics/window.h"
 
 std::vector<float> vertex_data = {
     -0.5, -0.5,     1.0, 0.0, 0.0,
@@ -34,15 +32,13 @@ private:
 
     void on_run() override
     {
-        mellohi::Device& device = get_window().get_device();
-
-        m_vertex_buffer = std::make_unique<mellohi::VertexBuffer>(device, vertex_data);
+        m_vertex_buffer = std::make_unique<mellohi::VertexBuffer>(vertex_data);
         m_vertex_buffer->add_attribute_vec2f();  // Position
         m_vertex_buffer->add_attribute_vec3f();  // Color
 
-        m_index_buffer = std::make_unique<mellohi::IndexBuffer>(device, index_data);
+        m_index_buffer = std::make_unique<mellohi::IndexBuffer>(index_data);
 
-        m_pipeline = std::make_unique<mellohi::Pipeline>(device, get_window().get_surface(), mellohi::AssetId::fromGame("square.wgsl"), *m_vertex_buffer);
+        m_pipeline = std::make_unique<mellohi::Pipeline>(mellohi::AssetId::fromGame("square.wgsl"), *m_vertex_buffer);
     }
 
     void on_update(wgpu::RenderPassEncoder render_pass) override
@@ -59,7 +55,9 @@ private:
 
 int main()
 {
-    Sandbox game;
+    const auto game = new Sandbox();
 
-    game.run();
+    game->run();
+
+    delete game;
 }
