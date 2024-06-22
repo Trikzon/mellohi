@@ -77,7 +77,25 @@ namespace mellohi
 
     Pipeline::~Pipeline()
     {
-        m_wgpu_render_pipeline.release();
+        if (m_wgpu_render_pipeline != nullptr)
+        {
+            m_wgpu_render_pipeline.release();
+        }
+    }
+
+    Pipeline::Pipeline(Pipeline&& other) noexcept
+    {
+        std::swap(m_wgpu_render_pipeline, other.m_wgpu_render_pipeline);
+    }
+
+    Pipeline& Pipeline::operator=(Pipeline&& other) noexcept
+    {
+        if (this != &other)
+        {
+            std::swap(m_wgpu_render_pipeline,m_wgpu_render_pipeline);
+        }
+
+        return *this;
     }
 
     wgpu::RenderPipeline Pipeline::get_unsafe() const

@@ -6,8 +6,26 @@ namespace mellohi
 {
     Buffer::~Buffer()
     {
-        m_wgpu_buffer.release();
-        m_wgpu_buffer.destroy();
+        if (m_wgpu_buffer != nullptr)
+        {
+            m_wgpu_buffer.destroy();
+            m_wgpu_buffer.release();
+        }
+    }
+
+    Buffer::Buffer(Buffer&& other) noexcept
+    {
+        std::swap(m_wgpu_buffer, other.m_wgpu_buffer);
+    }
+
+    Buffer& Buffer::operator=(Buffer&& other) noexcept
+    {
+        if (this != &other)
+        {
+            std::swap(m_wgpu_buffer, other.m_wgpu_buffer);
+        }
+
+        return *this;
     }
 
     wgpu::Buffer Buffer::get_unsafe() const
@@ -31,6 +49,25 @@ namespace mellohi
             queue.writeBuffer(m_wgpu_buffer, 0, data, size);
             queue.release();
         }
+    }
+
+    VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept
+        : Buffer(std::move(other)), m_stride(0)
+    {
+        std::swap(m_wgpu_vertex_attributes, other.m_wgpu_vertex_attributes);
+        std::swap(m_stride, other.m_stride);
+    }
+
+    VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
+    {
+        if (this != &other)
+        {
+            Buffer::operator=(std::move(other));
+            std::swap(m_wgpu_vertex_attributes, other.m_wgpu_vertex_attributes);
+            std::swap(m_stride, other.m_stride);
+        }
+
+        return *this;
     }
 
     void VertexBuffer::add_attribute_vec2f()
@@ -72,6 +109,20 @@ namespace mellohi
     IndexBuffer::IndexBuffer(const std::vector<uint32_t>& data)
         : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint32) { }
+
+    IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept
+        : Buffer(std::move(other)), m_wgpu_format(other.m_wgpu_format) { }
+
+    IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept
+    {
+        if (this != &other)
+        {
+            Buffer::operator=(std::move(other));
+            std::swap(m_wgpu_format, other.m_wgpu_format);
+        }
+
+        return *this;
+    }
 
     wgpu::IndexFormat IndexBuffer::get_wgpu_format() const
     {
