@@ -66,14 +66,14 @@ namespace mellohi
         }
     }
 
-    Window::Window(Window&& other) noexcept : m_glfw_window(nullptr)
+    Window::Window(Window &&other) noexcept : m_glfw_window(nullptr)
     {
         std::swap(m_glfw_window, other.m_glfw_window);
         std::swap(m_surface, other.m_surface);
         std::swap(m_device, other.m_device);
     }
 
-    Window& Window::operator=(Window&& other) noexcept
+    Window & Window::operator=(Window &&other) noexcept
     {
         if (this != &other)
         {
@@ -153,12 +153,12 @@ namespace mellohi
         m_device->tick();
     }
 
-    Surface& Window::get_surface() const
+    Surface & Window::get_surface() const
     {
         return *m_surface;
     }
 
-    Device& Window::get_device() const
+    Device & Window::get_device() const
     {
         return *m_device;
     }

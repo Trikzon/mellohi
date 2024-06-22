@@ -7,17 +7,17 @@ namespace mellohi
     class Game
     {
     public:
-        static Game& get();
+        static Game & get();
 
-        explicit Game(const std::string_view& game_namespace);
+        explicit Game(const std::string_view &game_namespace);
         virtual ~Game() = default;
 
         void run();
 
-        Window& get_window() const;
+        Window & get_window() const;
 
     private:
-        inline static Game* s_instance;
+        inline static Game *s_instance;
 
         std::unique_ptr<Window> m_window;
 

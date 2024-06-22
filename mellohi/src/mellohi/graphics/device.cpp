@@ -5,7 +5,7 @@
 
 namespace mellohi
 {
-    Surface::Surface(wgpu::Instance wgpu_instance, GLFWwindow* glfw_window)
+    Surface::Surface(wgpu::Instance wgpu_instance, GLFWwindow *glfw_window)
     {
         m_wgpu_surface = glfwGetWGPUSurface(wgpu_instance, glfw_window);
     }
@@ -19,12 +19,12 @@ namespace mellohi
         }
     }
 
-    Surface::Surface(Surface&& other) noexcept
+    Surface::Surface(Surface &&other) noexcept
     {
         std::swap(m_wgpu_surface, other.m_wgpu_surface);
     }
 
-    Surface& Surface::operator=(Surface&& other) noexcept
+    Surface & Surface::operator=(Surface &&other) noexcept
     {
         if (this != &other)
         {
@@ -34,7 +34,7 @@ namespace mellohi
         return *this;
     }
 
-    void Surface::configure(const uint32_t width, const uint32_t height, const Device& device, const bool vsync)
+    void Surface::configure(const uint32_t width, const uint32_t height, const Device &device, const bool vsync)
     {
         wgpu::SurfaceConfiguration configuration = {};
         configuration.width = width;
@@ -89,7 +89,7 @@ namespace mellohi
         return m_wgpu_surface;
     }
 
-    Adapter::Adapter(wgpu::Instance wgpu_instance, const Surface& surface)
+    Adapter::Adapter(wgpu::Instance wgpu_instance, const Surface &surface)
     {
         wgpu::RequestAdapterOptions request_adapter_options = {};
         request_adapter_options.compatibleSurface = surface.get_unsafe();
@@ -110,12 +110,12 @@ namespace mellohi
         }
     }
 
-    Adapter::Adapter(Adapter&& other) noexcept
+    Adapter::Adapter(Adapter &&other) noexcept
     {
         std::swap(m_wgpu_adapter, other.m_wgpu_adapter);
     }
 
-    Adapter& Adapter::operator=(Adapter&& other) noexcept
+    Adapter & Adapter::operator=(Adapter &&other) noexcept
     {
         if (this != &other)
         {
@@ -138,7 +138,7 @@ namespace mellohi
         return m_wgpu_adapter;
     }
 
-    Device::Device(Adapter& adapter) : m_hardware_limits(), m_logical_limits()
+    Device::Device(Adapter &adapter) : m_hardware_limits(), m_logical_limits()
     {
         m_hardware_limits = adapter.get_limits();
 
@@ -164,7 +164,7 @@ namespace mellohi
         m_wgpu_device.getLimits(&supported_limits);
         m_logical_limits = *reinterpret_cast<DeviceLimits*>(&supported_limits.limits);
 
-        m_error_callback_handle = m_wgpu_device.setUncapturedErrorCallback([](wgpu::ErrorType type, char const* message) {
+        m_error_callback_handle = m_wgpu_device.setUncapturedErrorCallback([](wgpu::ErrorType type, char const *message) {
             std::cout << "Device error: type " << type;
             if (message) std::cout << " (message: " << message << ")";
             std::cout << std::endl;
@@ -180,7 +180,7 @@ namespace mellohi
         }
     }
 
-    Device::Device(Device&& other) noexcept : m_hardware_limits(), m_logical_limits()
+    Device::Device(Device &&other) noexcept : m_hardware_limits(), m_logical_limits()
     {
         std::swap(m_wgpu_device, other.m_wgpu_device);
         std::swap(m_hardware_limits, other.m_hardware_limits);
@@ -188,7 +188,7 @@ namespace mellohi
         std::swap(m_error_callback_handle, other.m_error_callback_handle);
     }
 
-    Device& Device::operator=(Device&& other) noexcept
+    Device & Device::operator=(Device &&other) noexcept
     {
         if (this != &other)
         {
@@ -201,12 +201,12 @@ namespace mellohi
         return *this;
     }
 
-    const DeviceLimits& Device::get_hardware_limits() const
+    const DeviceLimits & Device::get_hardware_limits() const
     {
         return m_hardware_limits;
     }
 
-    const DeviceLimits& Device::get_logical_limits() const
+    const DeviceLimits & Device::get_logical_limits() const
     {
         return m_logical_limits;
     }
@@ -221,22 +221,22 @@ namespace mellohi
         return m_wgpu_device.getQueue();
     }
 
-    wgpu::Buffer Device::create_buffer_unsafe(const wgpu::BufferDescriptor& descriptor)
+    wgpu::Buffer Device::create_buffer_unsafe(const wgpu::BufferDescriptor &descriptor)
     {
         return m_wgpu_device.createBuffer(descriptor);
     }
 
-    wgpu::ShaderModule Device::create_shader_module_unsafe(const wgpu::ShaderModuleDescriptor& descriptor)
+    wgpu::ShaderModule Device::create_shader_module_unsafe(const wgpu::ShaderModuleDescriptor &descriptor)
     {
         return m_wgpu_device.createShaderModule(descriptor);
     }
 
-    wgpu::RenderPipeline Device::create_render_pipeline_unsafe(const wgpu::RenderPipelineDescriptor& descriptor)
+    wgpu::RenderPipeline Device::create_render_pipeline_unsafe(const wgpu::RenderPipelineDescriptor &descriptor)
     {
         return m_wgpu_device.createRenderPipeline(descriptor);
     }
 
-    wgpu::CommandEncoder Device::create_command_encoder_unsafe(const wgpu::CommandEncoderDescriptor& descriptor)
+    wgpu::CommandEncoder Device::create_command_encoder_unsafe(const wgpu::CommandEncoderDescriptor &descriptor)
     {
         return m_wgpu_device.createCommandEncoder(descriptor);
     }

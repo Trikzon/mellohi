@@ -5,10 +5,10 @@
 
 namespace mellohi
 {
-    Pipeline::Pipeline(const AssetId& shader_asset_id, VertexBuffer& vertex_buffer)
+    Pipeline::Pipeline(const AssetId &shader_asset_id, VertexBuffer &vertex_buffer)
     {
-        Device& device = Game::get().get_window().get_device();
-        Surface& surface = Game::get().get_window().get_surface();
+        Device &device = Game::get().get_window().get_device();
+        Surface &surface = Game::get().get_window().get_surface();
 
         std::string shader_code = shader_asset_id.read_file_to_string();
 
@@ -83,12 +83,12 @@ namespace mellohi
         }
     }
 
-    Pipeline::Pipeline(Pipeline&& other) noexcept
+    Pipeline::Pipeline(Pipeline &&other) noexcept
     {
         std::swap(m_wgpu_render_pipeline, other.m_wgpu_render_pipeline);
     }
 
-    Pipeline& Pipeline::operator=(Pipeline&& other) noexcept
+    Pipeline & Pipeline::operator=(Pipeline &&other) noexcept
     {
         if (this != &other)
         {

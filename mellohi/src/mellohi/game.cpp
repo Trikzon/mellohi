@@ -4,12 +4,12 @@
 
 namespace mellohi
 {
-    Game& Game::get()
+    Game & Game::get()
     {
         return *s_instance;
     }
 
-    Game::Game(const std::string_view& game_namespace)
+    Game::Game(const std::string_view &game_namespace)
     {
         // TODO: Error if s_instance is not nullptr
         s_instance = this;
@@ -36,7 +36,7 @@ namespace mellohi
         }
     }
 
-    Window& Game::get_window() const
+    Window & Game::get_window() const
     {
         return *m_window;
     }

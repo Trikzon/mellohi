@@ -13,12 +13,12 @@ namespace mellohi
         }
     }
 
-    Buffer::Buffer(Buffer&& other) noexcept
+    Buffer::Buffer(Buffer &&other) noexcept
     {
         std::swap(m_wgpu_buffer, other.m_wgpu_buffer);
     }
 
-    Buffer& Buffer::operator=(Buffer&& other) noexcept
+    Buffer & Buffer::operator=(Buffer &&other) noexcept
     {
         if (this != &other)
         {
@@ -33,10 +33,9 @@ namespace mellohi
         return m_wgpu_buffer;
     }
 
-    void Buffer::create_buffer(const void* data, const size_t size,
-                               const wgpu::BufferUsageFlags wgpu_usage_flags)
+    void Buffer::create_buffer(const void *data, const size_t size, const wgpu::BufferUsageFlags wgpu_usage_flags)
     {
-        Device& device = Game::get().get_window().get_device();
+        Device &device = Game::get().get_window().get_device();
 
         wgpu::BufferDescriptor descriptor;
         descriptor.size = size;
@@ -51,14 +50,14 @@ namespace mellohi
         }
     }
 
-    VertexBuffer::VertexBuffer(VertexBuffer&& other) noexcept
+    VertexBuffer::VertexBuffer(VertexBuffer &&other) noexcept
         : Buffer(std::move(other)), m_stride(0)
     {
         std::swap(m_wgpu_vertex_attributes, other.m_wgpu_vertex_attributes);
         std::swap(m_stride, other.m_stride);
     }
 
-    VertexBuffer& VertexBuffer::operator=(VertexBuffer&& other) noexcept
+    VertexBuffer & VertexBuffer::operator=(VertexBuffer &&other) noexcept
     {
         if (this != &other)
         {
@@ -102,18 +101,18 @@ namespace mellohi
         m_wgpu_vertex_attributes.push_back(attribute);
     }
 
-    IndexBuffer::IndexBuffer(const std::vector<uint16_t>& data)
+    IndexBuffer::IndexBuffer(const std::vector<uint16_t> &data)
         : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint16) { }
 
-    IndexBuffer::IndexBuffer(const std::vector<uint32_t>& data)
+    IndexBuffer::IndexBuffer(const std::vector<uint32_t> &data)
         : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint32) { }
 
-    IndexBuffer::IndexBuffer(IndexBuffer&& other) noexcept
+    IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept
         : Buffer(std::move(other)), m_wgpu_format(other.m_wgpu_format) { }
 
-    IndexBuffer& IndexBuffer::operator=(IndexBuffer&& other) noexcept
+    IndexBuffer & IndexBuffer::operator=(IndexBuffer &&other) noexcept
     {
         if (this != &other)
         {

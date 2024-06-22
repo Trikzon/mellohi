@@ -47,15 +47,15 @@ namespace mellohi
     class Surface
     {
     public:
-        Surface(wgpu::Instance wgpu_instance, GLFWwindow* glfw_window);
+        Surface(wgpu::Instance wgpu_instance, GLFWwindow *glfw_window);
         ~Surface();
 
-        Surface(const Surface& other) = delete;
-        Surface(Surface&& other) noexcept;
-        Surface& operator=(const Surface& other) = delete;
-        Surface& operator=(Surface&& other) noexcept;
+        Surface(const Surface &other) = delete;
+        Surface(Surface &&other) noexcept;
+        Surface & operator=(const Surface &other) = delete;
+        Surface & operator=(Surface &&other) noexcept;
 
-        void configure(uint32_t width, uint32_t height, const Device& device, bool vsync);
+        void configure(uint32_t width, uint32_t height, const Device &device, bool vsync);
         wgpu::TextureFormat get_texture_format() const;
         std::optional<wgpu::TextureView> get_next_texture_view_unsafe();
         void present();
@@ -71,13 +71,13 @@ namespace mellohi
     class Adapter
     {
     public:
-        Adapter(wgpu::Instance wgpu_instance, const Surface& surface);
+        Adapter(wgpu::Instance wgpu_instance, const Surface &surface);
         ~Adapter();
 
-        Adapter(const Adapter& other) = delete;
-        Adapter(Adapter&& other) noexcept;
-        Adapter& operator=(const Adapter& other) = delete;
-        Adapter& operator=(Adapter&& other) noexcept;
+        Adapter(const Adapter &other) = delete;
+        Adapter(Adapter &&other) noexcept;
+        Adapter & operator=(const Adapter &other) = delete;
+        Adapter & operator=(Adapter &&other) noexcept;
 
         DeviceLimits get_limits();
 
@@ -90,13 +90,13 @@ namespace mellohi
     class Device
     {
     public:
-        explicit Device(Adapter& adapter);
+        explicit Device(Adapter &adapter);
         ~Device();
 
-        Device(const Device& other) = delete;
-        Device(Device&& other) noexcept;
-        Device& operator=(const Device& other) = delete;
-        Device& operator=(Device&& other) noexcept;
+        Device(const Device &other) = delete;
+        Device(Device &&other) noexcept;
+        Device & operator=(const Device &other) = delete;
+        Device & operator=(Device &&other) noexcept;
 
         const DeviceLimits& get_hardware_limits() const;
         const DeviceLimits& get_logical_limits() const;
@@ -104,10 +104,10 @@ namespace mellohi
         void tick();
 
         wgpu::Queue get_queue_unsafe();
-        wgpu::Buffer create_buffer_unsafe(const wgpu::BufferDescriptor& descriptor);
-        wgpu::ShaderModule create_shader_module_unsafe(const wgpu::ShaderModuleDescriptor& descriptor);
-        wgpu::RenderPipeline create_render_pipeline_unsafe(const wgpu::RenderPipelineDescriptor& descriptor);
-        wgpu::CommandEncoder create_command_encoder_unsafe(const wgpu::CommandEncoderDescriptor& descriptor);
+        wgpu::Buffer create_buffer_unsafe(const wgpu::BufferDescriptor &descriptor);
+        wgpu::ShaderModule create_shader_module_unsafe(const wgpu::ShaderModuleDescriptor &descriptor);
+        wgpu::RenderPipeline create_render_pipeline_unsafe(const wgpu::RenderPipelineDescriptor &descriptor);
+        wgpu::CommandEncoder create_command_encoder_unsafe(const wgpu::CommandEncoderDescriptor &descriptor);
 
         wgpu::Device get_unsafe() const;
 
