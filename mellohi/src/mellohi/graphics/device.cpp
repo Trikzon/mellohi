@@ -133,6 +133,14 @@ namespace mellohi
         return *reinterpret_cast<DeviceLimits*>(&supported_limits.limits);
     }
 
+    wgpu::AdapterProperties Adapter::get_wgpu_properties()
+    {
+        wgpu::AdapterProperties properties;
+        m_wgpu_adapter.getProperties(&properties);
+
+        return properties;
+    }
+
     wgpu::Adapter Adapter::get_unsafe() const
     {
         return m_wgpu_adapter;
@@ -141,6 +149,7 @@ namespace mellohi
     Device::Device(Adapter &adapter) : m_hardware_limits(), m_logical_limits()
     {
         m_hardware_limits = adapter.get_limits();
+        m_wgpu_properties = adapter.get_wgpu_properties();
 
         wgpu::RequiredLimits required_limits = wgpu::Default;
         required_limits.limits.maxVertexAttributes = 2;
@@ -209,6 +218,11 @@ namespace mellohi
     const DeviceLimits & Device::get_logical_limits() const
     {
         return m_logical_limits;
+    }
+
+    const wgpu::AdapterProperties & Device::get_wgpu_properties() const
+    {
+        return m_wgpu_properties;
     }
 
     void Device::tick()

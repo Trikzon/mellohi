@@ -80,6 +80,7 @@ namespace mellohi
         Adapter & operator=(Adapter &&other) noexcept;
 
         DeviceLimits get_limits();
+        wgpu::AdapterProperties get_wgpu_properties();
 
         wgpu::Adapter get_unsafe() const;
 
@@ -98,8 +99,9 @@ namespace mellohi
         Device & operator=(const Device &other) = delete;
         Device & operator=(Device &&other) noexcept;
 
-        const DeviceLimits& get_hardware_limits() const;
-        const DeviceLimits& get_logical_limits() const;
+        const DeviceLimits & get_hardware_limits() const;
+        const DeviceLimits & get_logical_limits() const;
+        const wgpu::AdapterProperties & get_wgpu_properties() const;
 
         void tick();
 
@@ -115,6 +117,7 @@ namespace mellohi
         wgpu::Device m_wgpu_device;
         DeviceLimits m_hardware_limits;
         DeviceLimits m_logical_limits;
+        wgpu::AdapterProperties m_wgpu_properties;
 
         std::unique_ptr<wgpu::ErrorCallback> m_error_callback_handle;
     };

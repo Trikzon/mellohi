@@ -1,7 +1,9 @@
 #include "mellohi/game.h"
 
-#include "GLFW/glfw3.h"
+#include <GLFW/glfw3.h>
+
 #include "mellohi/asset_id.h"
+#include "mellohi/nodes/performance_hud_node.h"
 
 namespace mellohi
 {
@@ -14,6 +16,8 @@ namespace mellohi
 
         m_window = std::make_unique<Window>();
         m_root_node = std::make_shared<Node>("Root");
+
+        m_root_node->add_child(std::make_shared<PerformanceHudNode>());
     }
 
     Game & Game::get()
