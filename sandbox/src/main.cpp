@@ -20,17 +20,10 @@ std::vector<uint16_t> index_data = {
 };
 auto index_count = static_cast<uint32_t>(index_data.size());
 
-class Sandbox final : public mellohi::Game
+class TestNode final : public mellohi::Node
 {
 public:
-    Sandbox() : Game("sandbox") { }
-
-private:
-    std::unique_ptr<mellohi::VertexBuffer> m_vertex_buffer;
-    std::unique_ptr<mellohi::IndexBuffer> m_index_buffer;
-    std::unique_ptr<mellohi::Pipeline> m_pipeline;
-
-    void on_run() override
+    TestNode() : Node("TestNode")
     {
         m_vertex_buffer = std::make_unique<mellohi::VertexBuffer>(vertex_data);
         m_vertex_buffer->add_attribute_vec2f();  // Position
@@ -41,7 +34,12 @@ private:
         m_pipeline = std::make_unique<mellohi::Pipeline>(mellohi::AssetId::fromGame("square.wgsl"), *m_vertex_buffer);
     }
 
-    void on_update(mellohi::RenderPass &render_pass) override
+private:
+    std::unique_ptr<mellohi::VertexBuffer> m_vertex_buffer;
+    std::unique_ptr<mellohi::IndexBuffer> m_index_buffer;
+    std::unique_ptr<mellohi::Pipeline> m_pipeline;
+
+    void on_render(mellohi::RenderPass &render_pass, double delta_time) override
     {
         render_pass.set_pipeline(*m_pipeline);
         render_pass.set_vertex_buffer(0, *m_vertex_buffer);
@@ -50,6 +48,15 @@ private:
         render_pass.draw_indexed();
 
         ImGui::ShowMetricsWindow();
+    }
+};
+
+class Sandbox final : public mellohi::Game
+{
+public:
+    Sandbox() : Game("sandbox")
+    {
+        get_root_node().add_child(std::make_shared<TestNode>());
     }
 };
 
