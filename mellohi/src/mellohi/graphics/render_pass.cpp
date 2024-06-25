@@ -1,6 +1,7 @@
 #include "mellohi/graphics/render_pass.h"
 
 #include "mellohi/game.h"
+#include "mellohi/graphics/bind_group.h"
 
 namespace mellohi
 {
@@ -73,6 +74,11 @@ namespace mellohi
     {
         m_index_count = index_buffer.get_index_count();
         m_render_pass.setIndexBuffer(index_buffer.get_unsafe(), index_buffer.get_wgpu_format(), 0, index_buffer.get_size_bytes());
+    }
+
+    void RenderPass::set_bind_group(const BindGroup &bind_group)
+    {
+        m_render_pass.setBindGroup(0, bind_group.get_unsafe(), 0, nullptr);
     }
 
     void RenderPass::draw_indexed()

@@ -110,6 +110,9 @@ namespace mellohi
         wgpu::ShaderModule create_shader_module_unsafe(const wgpu::ShaderModuleDescriptor &descriptor);
         wgpu::RenderPipeline create_render_pipeline_unsafe(const wgpu::RenderPipelineDescriptor &descriptor);
         wgpu::CommandEncoder create_command_encoder_unsafe(const wgpu::CommandEncoderDescriptor &descriptor);
+        wgpu::BindGroupLayout create_bind_group_layout_unsafe(const wgpu::BindGroupLayoutDescriptor &descriptor);
+        wgpu::PipelineLayout create_pipeline_layout_unsafe(const wgpu::PipelineLayoutDescriptor &descriptor);
+        wgpu::BindGroup create_bind_group_unsafe(const wgpu::BindGroupDescriptor &descriptor);
 
         wgpu::Device get_unsafe() const;
 

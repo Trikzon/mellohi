@@ -25,6 +25,8 @@ namespace mellohi
 
             const auto vertex_buffer_layout = vertex_buffer.get_wgpu_layout();
             wgpu::RenderPipelineDescriptor descriptor;
+            descriptor.label = "Mellohi Pipeline";
+
             descriptor.vertex.bufferCount = 1;
             descriptor.vertex.buffers = &vertex_buffer_layout;
             descriptor.vertex.module = shader_module;
@@ -92,7 +94,7 @@ namespace mellohi
     {
         if (this != &other)
         {
-            std::swap(m_wgpu_render_pipeline,m_wgpu_render_pipeline);
+            std::swap(m_wgpu_render_pipeline,other.m_wgpu_render_pipeline);
         }
 
         return *this;
@@ -101,5 +103,10 @@ namespace mellohi
     wgpu::RenderPipeline Pipeline::get_unsafe() const
     {
         return m_wgpu_render_pipeline;
+    }
+
+    wgpu::BindGroupLayout Pipeline::get_wgpu_bind_group_layout_unsafe(const uint32_t group_idx)
+    {
+        return m_wgpu_render_pipeline.getBindGroupLayout(group_idx);
     }
 }

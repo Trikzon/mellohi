@@ -2,10 +2,12 @@
 
 #include <sstream>
 
+#include <GLFW/glfw3.h>
+
 LearnMeshNode::LearnMeshNode(const std::string_view &name) : LearnMeshNode(std::nullopt, name) { }
 
 LearnMeshNode::LearnMeshNode(const std::optional<AssetId> &learn_mesh_asset_id, const std::string_view &name)
-    : Node(name)
+    : Node(name), m_color{0.0, 0.0, 0.0, 1.0}
 {
     if (learn_mesh_asset_id)
     {
@@ -26,7 +28,7 @@ void LearnMeshNode::load_mesh(const AssetId &learn_mesh_asset_id)
         Points,
         Indices,
     };
-    Section current_section = Section::None;
+    auto current_section = Section::None;
 
     float value;
     uint16_t index;
@@ -79,19 +81,37 @@ void LearnMeshNode::load_mesh(const AssetId &learn_mesh_asset_id)
 
     m_index_buffer = std::make_unique<IndexBuffer>(index_data);
 
+    MyUniforms my_uniforms{};
+    my_uniforms.color = m_color;
+    m_uniform_buffer = std::make_unique<UniformBuffer>(0, my_uniforms);
+
     m_pipeline = std::make_unique<Pipeline>(AssetId::fromGame("learn.wgsl"), *m_vertex_buffer);
+
+    m_bind_group = std::make_unique<BindGroup>(*m_pipeline, *m_uniform_buffer);
+}
+
+void LearnMeshNode::set_color(const std::array<float, 4> &color)
+{
+    m_color = color;
 }
 
 void LearnMeshNode::on_render(RenderPass &render_pass, double delta_time)
 {
-    if (m_pipeline == nullptr || m_vertex_buffer == nullptr || m_index_buffer == nullptr)
+    if (!m_vertex_buffer || !m_index_buffer || !m_uniform_buffer || !m_pipeline || !m_bind_group)
     {
         return;
     }
 
+    MyUniforms my_uniforms{};
+    my_uniforms.color = m_color;
+    my_uniforms.time = static_cast<float>(glfwGetTime()) + offset;
+
+    m_uniform_buffer->write(my_uniforms);
+
     render_pass.set_pipeline(*m_pipeline);
     render_pass.set_vertex_buffer(0, *m_vertex_buffer);
     render_pass.set_index_buffer(*m_index_buffer);
+    render_pass.set_bind_group(*m_bind_group);
 
     render_pass.draw_indexed();
 }

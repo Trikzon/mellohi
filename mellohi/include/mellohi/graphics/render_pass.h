@@ -2,6 +2,7 @@
 
 #include <webgpu/webgpu.hpp>
 
+#include "mellohi/graphics/bind_group.h"
 #include "mellohi/graphics/buffer.h"
 #include "mellohi/graphics/pipeline.h"
 
@@ -23,6 +24,7 @@ namespace mellohi
         void set_pipeline(const Pipeline &pipeline);
         void set_vertex_buffer(size_t slot, const VertexBuffer &vertex_buffer);
         void set_index_buffer(const IndexBuffer &index_buffer);
+        void set_bind_group(const BindGroup &bind_group);
 
         void draw_indexed();
         void end();

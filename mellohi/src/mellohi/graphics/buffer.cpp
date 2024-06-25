@@ -40,21 +40,26 @@ namespace mellohi
         return m_wgpu_buffer;
     }
 
-    void Buffer::create_buffer(const void *data, const size_t size, const wgpu::BufferUsageFlags wgpu_usage_flags)
+    void Buffer::create_buffer(const void *data, const wgpu::BufferUsageFlags wgpu_usage_flags)
     {
         Device &device = Game::get().get_window().get_device();
 
         wgpu::BufferDescriptor descriptor;
-        descriptor.size = size;
+        descriptor.size = m_size_bytes;
         descriptor.usage = wgpu_usage_flags;
         descriptor.mappedAtCreation = false;
         m_wgpu_buffer = device.create_buffer_unsafe(descriptor);
 
-        {
-            wgpu::Queue queue = device.get_queue_unsafe();
-            queue.writeBuffer(m_wgpu_buffer, 0, data, size);
-            queue.release();
-        }
+        write(data);
+    }
+
+    void Buffer::write(const void *data) const
+    {
+        Device &device = Game::get().get_window().get_device();
+
+        wgpu::Queue queue = device.get_queue_unsafe();
+        queue.writeBuffer(m_wgpu_buffer, 0, data, m_size_bytes);
+        queue.release();
     }
 
     VertexBuffer::VertexBuffer(VertexBuffer &&other) noexcept
@@ -140,5 +145,10 @@ namespace mellohi
     size_t IndexBuffer::get_index_count() const
     {
         return m_index_count;
+    }
+
+    wgpu::BindGroupEntry UniformBuffer::get_wgpu_bind_group_entry() const
+    {
+        return m_wgpu_bind_group_entry;
     }
 }

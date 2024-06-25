@@ -18,6 +18,8 @@ namespace mellohi
         Pipeline &operator=(const Pipeline &other) = delete;
         Pipeline &operator=(Pipeline &&other) noexcept;
 
+        wgpu::BindGroupLayout get_wgpu_bind_group_layout_unsafe(uint32_t group_idx);
+
         wgpu::RenderPipeline get_unsafe() const;
 
     private:
