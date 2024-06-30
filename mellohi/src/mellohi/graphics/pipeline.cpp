@@ -3,7 +3,7 @@
 
 namespace mellohi
 {
-    Pipeline::Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer)
+    Pipeline::Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer, BindGroup &bind_group)
     {
         std::string shader_code = shader_asset_id.read_file_to_string();
 
@@ -64,11 +64,19 @@ namespace mellohi
             descriptor.multisample.mask = ~0u;
             descriptor.multisample.alphaToCoverageEnabled = false;
 
-            descriptor.layout = nullptr;
+            wgpu::BindGroupLayout bind_group_layout = bind_group.get_layout_unsafe();
+
+            wgpu::PipelineLayoutDescriptor layout_descriptor;
+            layout_descriptor.bindGroupLayoutCount = 1;
+            layout_descriptor.bindGroupLayouts = reinterpret_cast<WGPUBindGroupLayout *>(&bind_group_layout);
+            wgpu::PipelineLayout layout = device.create_pipeline_layout_unsafe(layout_descriptor);
+
+            descriptor.layout = layout;
 
             m_wgpu_render_pipeline = device.create_render_pipeline_unsafe(descriptor);
 
             shader_module.release();
+            layout.release();
         }
     }
 
@@ -98,10 +106,5 @@ namespace mellohi
     wgpu::RenderPipeline Pipeline::get_unsafe() const
     {
         return m_wgpu_render_pipeline;
-    }
-
-    wgpu::BindGroupLayout Pipeline::get_wgpu_bind_group_layout_unsafe(const uint32_t group_idx)
-    {
-        return m_wgpu_render_pipeline.getBindGroupLayout(group_idx);
     }
 }

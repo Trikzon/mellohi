@@ -79,9 +79,9 @@ namespace learn_mesh
 
         uniform_buffer = std::make_unique<UniformBuffer>(device, 0, MyUniforms{});
 
-        pipeline = std::make_unique<Pipeline>(device, surface, AssetId::fromGame("learn.wgsl"), *vertex_buffer);
+        bind_group = std::make_unique<BindGroup>(device, *uniform_buffer);
 
-        bind_group = std::make_unique<BindGroup>(device, *pipeline, *uniform_buffer);
+        pipeline = std::make_unique<Pipeline>(device, surface, AssetId::fromGame("learn.wgsl"), *vertex_buffer, *bind_group);
     }
 
     void init_systems(const flecs::world &world)

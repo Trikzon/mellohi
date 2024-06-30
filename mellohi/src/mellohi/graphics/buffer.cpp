@@ -141,8 +141,13 @@ namespace mellohi
         return m_index_count;
     }
 
-    wgpu::BindGroupEntry UniformBuffer::get_wgpu_bind_group_entry() const
+    wgpu::BindGroupEntry UniformBuffer::get_wgpu_entry() const
     {
-        return m_wgpu_bind_group_entry;
+        return m_wgpu_entry;
+    }
+
+    wgpu::BindGroupLayoutEntry UniformBuffer::get_wgpu_layout() const
+    {
+        return m_wgpu_layout;
     }
 }

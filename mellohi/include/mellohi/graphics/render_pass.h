@@ -2,7 +2,6 @@
 
 #include <webgpu/webgpu.hpp>
 
-#include "mellohi/graphics/bind_group.h"
 #include "mellohi/graphics/buffer.h"
 #include "mellohi/graphics/device.h"
 #include "mellohi/graphics/pipeline.h"

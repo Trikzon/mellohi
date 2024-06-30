@@ -40,38 +40,6 @@ namespace mellohi
         void write(Device &device, const void *data) const;
     };
 
-    template<typename T>
-    Buffer::Buffer(Device &device, const T &data, const wgpu::BufferUsageFlags wgpu_usage_flags)
-    {
-        m_size_bytes = sizeof(T);
-        // The number of bytes copied must be a multiple of 4.
-        m_size_bytes = (m_size_bytes + 3) & ~3;
-
-        create_buffer(device, &data, wgpu_usage_flags);
-    }
-
-    template<typename T>
-    Buffer::Buffer(Device &device, const std::vector<T> &data, const wgpu::BufferUsageFlags wgpu_usage_flags)
-    {
-        m_size_bytes = data.size() * sizeof(T);
-        // The number of bytes copied must be a multiple of 4.
-        m_size_bytes = (m_size_bytes + 3) & ~3;
-
-        create_buffer(device, data.data(), wgpu_usage_flags);
-    }
-
-    template<typename T>
-    void Buffer::write(Device &device, const T &data) const
-    {
-        write(device, static_cast<const void *>(&data));
-    }
-
-    template<typename T>
-    void Buffer::write(Device &device, const std::vector<T> &data) const
-    {
-        write(device, data.data());
-    }
-
     class VertexBuffer final : public Buffer
     {
     public:
@@ -95,12 +63,6 @@ namespace mellohi
         void add_attribute(wgpu::VertexFormat wgpu_format, size_t size);
     };
 
-    template<typename T>
-    VertexBuffer::VertexBuffer(Device &device, const std::vector<T> &data)
-        : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Vertex),
-          m_stride(0) { }
-
-
     class IndexBuffer final : public Buffer
     {
     public:
@@ -120,27 +82,19 @@ namespace mellohi
         size_t m_index_count;
     };
 
-
     class UniformBuffer final : public Buffer
     {
     public:
         template<typename T>
         explicit UniformBuffer(Device &device, uint32_t binding, const T &data);
 
-        wgpu::BindGroupEntry get_wgpu_bind_group_entry() const;
+        wgpu::BindGroupEntry get_wgpu_entry() const;
+        wgpu::BindGroupLayoutEntry get_wgpu_layout() const;
 
     private:
-        wgpu::BindGroupEntry m_wgpu_bind_group_entry;
+        wgpu::BindGroupEntry m_wgpu_entry;
+        wgpu::BindGroupLayoutEntry m_wgpu_layout;
     };
-
-    template<typename T>
-    UniformBuffer::UniformBuffer(Device &device, const uint32_t binding, const T &data)
-        : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Uniform)
-    {
-        m_wgpu_bind_group_entry = wgpu::Default;
-        m_wgpu_bind_group_entry.binding = binding;
-        m_wgpu_bind_group_entry.buffer = m_wgpu_buffer;
-        m_wgpu_bind_group_entry.offset = 0;
-        m_wgpu_bind_group_entry.size = m_size_bytes;
-    }
 }
+
+#include "buffer.hpp"
