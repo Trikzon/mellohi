@@ -21,7 +21,7 @@ namespace mellohi
         Window & operator=(Window &&other) noexcept;
 
         bool should_close() const;
-        std::unique_ptr<RenderPass> begin_frame() const;
+        std::optional<RenderPass> begin_frame() const;
         void end_frame(RenderPass &render_pass) const;
 
         Surface & get_surface() const;

@@ -1,15 +1,10 @@
 #include "mellohi/graphics/pipeline.h"
 
-#include "mellohi/game.h"
-#include "mellohi/graphics/device.h"
 
 namespace mellohi
 {
-    Pipeline::Pipeline(const AssetId &shader_asset_id, VertexBuffer &vertex_buffer)
+    Pipeline::Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer)
     {
-        Device &device = Game::get().get_window().get_device();
-        Surface &surface = Game::get().get_window().get_surface();
-
         std::string shader_code = shader_asset_id.read_file_to_string();
 
         wgpu::ShaderModuleWGSLDescriptor shader_module_wgsl_descriptor;

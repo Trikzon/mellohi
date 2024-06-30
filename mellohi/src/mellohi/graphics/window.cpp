@@ -90,7 +90,7 @@ namespace mellohi
         return glfwWindowShouldClose(m_glfw_window);
     }
 
-    std::unique_ptr<RenderPass> Window::begin_frame() const
+    std::optional<RenderPass> Window::begin_frame() const
     {
         glfwPollEvents();
 
@@ -99,10 +99,10 @@ namespace mellohi
         {
             std::cout << "Skipped frame." << std::endl;
 
-            return nullptr;
+            return std::nullopt;
         }
 
-        auto render_pass = std::make_unique<RenderPass>(*current_surface_texture, 0.05, 0.05, 0.05);
+        RenderPass render_pass(*m_device, *current_surface_texture, 0.05, 0.05, 0.05);
 
         current_surface_texture->release();
 
@@ -119,7 +119,7 @@ namespace mellohi
         ImGui::Render();
         ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), render_pass.get_unsafe());
 
-        render_pass.end();
+        render_pass.end(*m_device);
 
         m_surface->present();
         m_device->tick();

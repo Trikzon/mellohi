@@ -4,13 +4,14 @@
 
 #include "mellohi/asset_id.h"
 #include "mellohi/graphics/buffer.h"
+#include "mellohi/graphics/device.h"
 
 namespace mellohi
 {
     class Pipeline
     {
     public:
-        Pipeline(const AssetId &shader_asset_id, VertexBuffer &vertex_buffer);
+        Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer);
         ~Pipeline();
 
         Pipeline(const Pipeline &other) = delete;

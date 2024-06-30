@@ -1,15 +1,9 @@
 #include "mellohi/graphics/render_pass.h"
 
-#include "mellohi/game.h"
-#include "mellohi/graphics/bind_group.h"
-
 namespace mellohi
 {
-    RenderPass::RenderPass(wgpu::TextureView wgpu_texture_view, const float r, const float g, const float b)
-        : m_index_count(0)
+    RenderPass::RenderPass(Device &device, wgpu::TextureView wgpu_texture_view, const float r, const float g, const float b)
     {
-        Device &device = Game::get().get_window().get_device();
-
         wgpu::CommandEncoderDescriptor command_encoder_descriptor = {};
         command_encoder_descriptor.label = "Mellohi Command Encoder";
         m_command_encoder = device.create_command_encoder_unsafe(command_encoder_descriptor);
@@ -43,10 +37,33 @@ namespace mellohi
         }
     }
 
-    RenderPass::RenderPass(RenderPass &&other) noexcept : m_index_count(0)
+    RenderPass::RenderPass(const RenderPass &other)
+    {
+        m_command_encoder = other.m_command_encoder;
+        m_command_encoder.addRef();
+        m_render_pass = other.m_render_pass;
+        m_render_pass.addRef();
+    }
+
+    RenderPass::RenderPass(RenderPass &&other) noexcept
     {
         std::swap(m_command_encoder, other.m_command_encoder);
         std::swap(m_render_pass, other.m_render_pass);
+    }
+
+    RenderPass & RenderPass::operator=(const RenderPass &other)
+    {
+        if (this != &other)
+        {
+            this->~RenderPass();
+
+            m_command_encoder = other.m_command_encoder;
+            m_command_encoder.addRef();
+            m_render_pass = other.m_render_pass;
+            m_render_pass.addRef();
+        }
+
+        return *this;
     }
 
     RenderPass & RenderPass::operator=(RenderPass &&other) noexcept
@@ -72,7 +89,6 @@ namespace mellohi
 
     void RenderPass::set_index_buffer(const IndexBuffer &index_buffer)
     {
-        m_index_count = index_buffer.get_index_count();
         m_render_pass.setIndexBuffer(index_buffer.get_unsafe(), index_buffer.get_wgpu_format(), 0, index_buffer.get_size_bytes());
     }
 
@@ -81,12 +97,12 @@ namespace mellohi
         m_render_pass.setBindGroup(0, bind_group.get_unsafe(), 0, nullptr);
     }
 
-    void RenderPass::draw_indexed()
+    void RenderPass::draw_indexed(const size_t index_count)
     {
-        m_render_pass.drawIndexed(m_index_count, 1, 0, 0, 0);
+        m_render_pass.drawIndexed(index_count, 1, 0, 0, 0);
     }
 
-    void RenderPass::end()
+    void RenderPass::end(Device &device)
     {
         m_render_pass.end();
 
@@ -94,7 +110,7 @@ namespace mellohi
         command_buffer_descriptor.label = "Mellohi Command Buffer";
         wgpu::CommandBuffer command_buffer = m_command_encoder.finish(command_buffer_descriptor);
 
-        wgpu::Queue queue = Game::get().get_window().get_device().get_queue_unsafe();
+        wgpu::Queue queue = device.get_queue_unsafe();
         queue.submit(1, &command_buffer);
         queue.release();
         command_buffer.release();

@@ -1,62 +1,44 @@
 #include "mellohi/game.h"
 
-#include <GLFW/glfw3.h>
-
 #include "mellohi/asset_id.h"
-#include "mellohi/nodes/performance_hud_node.h"
+#include "mellohi/graphics/window.h"
 
 namespace mellohi
 {
     Game::Game(const std::string_view &game_namespace)
     {
-        // TODO: Error if s_instance is not nullptr
-        s_instance = this;
-
         AssetId::set_game_namespace(game_namespace);
 
-        m_window = std::make_unique<Window>();
-        m_root_node = std::make_shared<Node>("Root");
-
-        m_root_node->add_child(std::make_shared<PerformanceHudNode>());
+        m_world.add<Window>();
     }
 
-    Game & Game::get()
+    void Game::run() const
     {
-        return *s_instance;
-    }
+        const auto window = m_world.get<Window>();
 
-    void Game::run()
-    {
-        on_run();
-
-        double previous_time = glfwGetTime();
-
-        while (!m_window->should_close())
+        bool should_run = true;
+        while (!window->should_close() && should_run)
         {
-            if (auto render_pass = m_window->begin_frame())
+            std::optional<RenderPass> render_pass = window->begin_frame();
+
+            if (render_pass)
             {
-                const double current_time = glfwGetTime();
-                const double delta_time = current_time - previous_time;
-                previous_time = current_time;
+                m_world.emplace<RenderPass>(*render_pass);
+            }
 
-                on_update(delta_time);
-                m_root_node->update(delta_time);
+            should_run &= m_world.progress();
 
-                on_render(*render_pass, delta_time);
-                m_root_node->render(*render_pass, delta_time);
+            if (render_pass)
+            {
+                window->end_frame(*render_pass);
 
-                m_window->end_frame(*render_pass);
+                m_world.remove<RenderPass>();
             }
         }
     }
 
-    Window & Game::get_window() const
+    const flecs::world & Game::get_world() const
     {
-        return *m_window;
-    }
-
-    Node & Game::get_root_node() const
-    {
-        return *m_root_node;
+        return m_world;
     }
 }

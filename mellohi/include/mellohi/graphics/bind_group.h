@@ -10,7 +10,7 @@ namespace mellohi
     class BindGroup
     {
     public:
-        BindGroup(Pipeline &pipeline, const UniformBuffer &uniform_buffer);
+        BindGroup(Device &device, Pipeline &pipeline, const UniformBuffer &uniform_buffer);
         ~BindGroup();
 
         wgpu::BindGroup get_unsafe() const;

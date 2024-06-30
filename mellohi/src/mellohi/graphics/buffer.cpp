@@ -1,7 +1,5 @@
 #include "mellohi/graphics/buffer.h"
 
-#include "mellohi/game.h"
-
 namespace mellohi
 {
     Buffer::~Buffer()
@@ -40,23 +38,19 @@ namespace mellohi
         return m_wgpu_buffer;
     }
 
-    void Buffer::create_buffer(const void *data, const wgpu::BufferUsageFlags wgpu_usage_flags)
+    void Buffer::create_buffer(Device &device, const void *data, const wgpu::BufferUsageFlags wgpu_usage_flags)
     {
-        Device &device = Game::get().get_window().get_device();
-
         wgpu::BufferDescriptor descriptor;
         descriptor.size = m_size_bytes;
         descriptor.usage = wgpu_usage_flags;
         descriptor.mappedAtCreation = false;
         m_wgpu_buffer = device.create_buffer_unsafe(descriptor);
 
-        write(data);
+        write(device, data);
     }
 
-    void Buffer::write(const void *data) const
+    void Buffer::write(Device &device, const void *data) const
     {
-        Device &device = Game::get().get_window().get_device();
-
         wgpu::Queue queue = device.get_queue_unsafe();
         queue.writeBuffer(m_wgpu_buffer, 0, data, m_size_bytes);
         queue.release();
@@ -113,12 +107,12 @@ namespace mellohi
         m_wgpu_vertex_attributes.push_back(attribute);
     }
 
-    IndexBuffer::IndexBuffer(const std::vector<uint16_t> &data)
-        : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
+    IndexBuffer::IndexBuffer(Device &device, const std::vector<uint16_t> &data)
+        : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint16), m_index_count(data.size()) { }
 
-    IndexBuffer::IndexBuffer(const std::vector<uint32_t> &data)
-        : Buffer(data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
+    IndexBuffer::IndexBuffer(Device &device, const std::vector<uint32_t> &data)
+        : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint32), m_index_count(data.size()) { }
 
     IndexBuffer::IndexBuffer(IndexBuffer &&other) noexcept

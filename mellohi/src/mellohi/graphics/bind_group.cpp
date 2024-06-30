@@ -1,13 +1,9 @@
 #include "mellohi/graphics/bind_group.h"
 
-#include "mellohi/game.h"
-
 namespace mellohi
 {
-    BindGroup::BindGroup(Pipeline &pipeline, const UniformBuffer &uniform_buffer)
+    BindGroup::BindGroup(Device &device, Pipeline &pipeline, const UniformBuffer &uniform_buffer)
     {
-        Device &device = Game::get().get_window().get_device();
-
         auto bind_group_layout = pipeline.get_wgpu_bind_group_layout_unsafe(0);
         const auto bind_group_entry = uniform_buffer.get_wgpu_bind_group_entry();
 
