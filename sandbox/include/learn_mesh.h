@@ -5,7 +5,7 @@
 
 using namespace mellohi;
 
-namespace learn_mesh
+struct LearnMesh
 {
     struct Time
     {
@@ -27,7 +27,7 @@ namespace learn_mesh
         Renderer(Device &device, Surface &surface);
     };
 
-    void init_systems(const flecs::world &world);
+    explicit LearnMesh(const flecs::world &world);
 
-    flecs::entity create(const flecs::world &world, float time, float r, float g, float b, float a);
-}
+    static flecs::entity create(const flecs::world &world, float time, float r, float g, float b, float a);
+};

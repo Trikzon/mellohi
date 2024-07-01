@@ -12,11 +12,12 @@ int main()
 
     world.import<PerformanceHud>();
 
-    learn_mesh::init_systems(world);
+    world.import<LearnMesh>();
 
-    learn_mesh::create(world, 0.0, 1.0, 0.0, 0.0, 0.75);
-    learn_mesh::create(world, 2.0, 0.0, 1.0, 0.0, 0.75);
-    learn_mesh::create(world, 4.0, 0.0, 0.0, 1.0, 0.75);
+    LearnMesh::create(world, 0.0, 1.0, 0.0, 0.0, 0.75);
+    LearnMesh::create(world, 1.5, 0.0, 1.0, 0.0, 0.75);
+    LearnMesh::create(world, 3.0, 0.0, 0.0, 1.0, 0.75);
+    LearnMesh::create(world, 4.5, 1.0, 1.0, 1.0, 0.75);
 
     game.run();
 }
