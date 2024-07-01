@@ -38,22 +38,4 @@ namespace mellohi
     VertexBuffer::VertexBuffer(Device &device, const std::vector<T> &data)
         : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Vertex),
           m_stride(0) { }
-
-    template<typename T>
-    UniformBuffer::UniformBuffer(Device &device, const uint32_t binding, const T &data)
-        : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Uniform)
-    {
-        m_wgpu_entry = wgpu::Default;
-        m_wgpu_entry.binding = binding;
-        m_wgpu_entry.buffer = m_wgpu_buffer;
-        m_wgpu_entry.offset = 0;
-        m_wgpu_entry.size = m_size_bytes;
-
-        m_wgpu_layout = wgpu::Default;
-        m_wgpu_layout.binding = binding;
-        m_wgpu_layout.visibility = wgpu::ShaderStage::Vertex | wgpu::ShaderStage::Fragment;
-        m_wgpu_layout.buffer.type = wgpu::BufferBindingType::Uniform;
-        m_wgpu_layout.buffer.hasDynamicOffset = false;
-        m_wgpu_layout.buffer.minBindingSize = m_size_bytes;
-    }
 }

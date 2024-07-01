@@ -8,4 +8,5 @@
 #include "mellohi/graphics/device.h"
 #include "mellohi/graphics/pipeline.h"
 #include "mellohi/graphics/render_pass.h"
+#include "mellohi/graphics/uniform_buffer.h"
 #include "mellohi/graphics/window.h"

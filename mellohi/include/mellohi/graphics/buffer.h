@@ -81,20 +81,6 @@ namespace mellohi
         wgpu::IndexFormat m_wgpu_format;
         size_t m_index_count;
     };
-
-    class UniformBuffer final : public Buffer
-    {
-    public:
-        template<typename T>
-        explicit UniformBuffer(Device &device, uint32_t binding, const T &data);
-
-        wgpu::BindGroupEntry get_wgpu_entry() const;
-        wgpu::BindGroupLayoutEntry get_wgpu_layout() const;
-
-    private:
-        wgpu::BindGroupEntry m_wgpu_entry;
-        wgpu::BindGroupLayoutEntry m_wgpu_layout;
-    };
 }
 
 #include "buffer.hpp"

@@ -77,49 +77,72 @@ namespace learn_mesh
 
         index_buffer = std::make_unique<IndexBuffer>(device, index_data);
 
-        uniform_buffer = std::make_unique<UniformBuffer>(device, 0, MyUniforms{});
-
-        bind_group = std::make_unique<BindGroup>(device, *uniform_buffer);
+        bind_group = std::make_unique<BindGroup>(device, 1);
+        bind_group->add(device, 0, sizeof(MyUniforms));
 
         pipeline = std::make_unique<Pipeline>(device, surface, AssetId::fromGame("learn.wgsl"), *vertex_buffer, *bind_group);
     }
 
     void init_systems(const flecs::world &world)
     {
+        // world.set<Time>({0.0f});
+
         world.system<Time>()
             .write<Time>()
-            .each([](Time &time)
+            .iter([](const flecs::iter &it, Time *time)
             {
-                time.value += 0.01;
+                for (const auto i : it)
+                {
+                    time[i].value += it.delta_time();
+                }
             });
 
-        world.system<const Window, RenderPass, const Renderer, const Time, const Color>()
-            .term_at(1).singleton()
-            .term_at(2).singleton()
+        // world.system<Time>()
+        //     .term_at(1).singleton()
+        //     .each([](const flecs::iter &it, size_t, Time &time)
+        //     {
+        //         time.value = 0.0f;
+        //
+        //         create(it.world(), 0.0f, 1.0f, 1.0f, 1.0f, 0.75f);
+        //     });
+
+        {
+            const auto window = world.get<Window>();
+            world.emplace<Renderer>(window->get_device(), window->get_surface());
+        }
+
+        world.system<const Time, const Color>()
+            .write<RenderPass>()
+            .read<Renderer>()
             .kind(flecs::OnStore)
-            .each([&](const Window &window, RenderPass &render_pass, const Renderer &renderer, const Time &time, const Color &color)
+            .iter([](const flecs::iter &it, const Time *time, const Color *color)
             {
-                MyUniforms my_uniforms{};
-                my_uniforms.time = time.value;
-                my_uniforms.color = color.color;
+                const auto render_pass = it.world().get_mut<RenderPass>();
+                const auto renderer = it.world().get<Renderer>();
 
-                renderer.uniform_buffer->write(window.get_device(), my_uniforms);
+                render_pass->set_pipeline(*renderer->pipeline);
+                render_pass->set_vertex_buffer(0, *renderer->vertex_buffer);
+                render_pass->set_index_buffer(*renderer->index_buffer);
 
-                render_pass.set_pipeline(*renderer.pipeline);
-                render_pass.set_vertex_buffer(0, *renderer.vertex_buffer);
-                render_pass.set_index_buffer(*renderer.index_buffer);
-                render_pass.set_bind_group(*renderer.bind_group);
-                render_pass.draw_indexed(renderer.index_buffer->get_index_count());
+                auto &device = it.world().get<Window>()->get_device();
+
+                for (const auto i : it)
+                {
+                    MyUniforms my_uniforms{};
+                    my_uniforms.time = time[i].value;
+                    my_uniforms.color = color[i].color;
+
+                    renderer->bind_group->write(device, 0, i, &my_uniforms);
+                    render_pass->set_bind_group(device, *renderer->bind_group, i);
+                    render_pass->draw_indexed(renderer->index_buffer->get_index_count());
+                }
             });
     }
 
     flecs::entity create(const flecs::world &world, const float time, const float r, const float g, const float b,
         const float a)
     {
-        const auto window = world.get<Window>();
-
         return world.entity()
-            .emplace<Renderer>(window->get_device(), window->get_surface())
             .set<Time>({time})
             .set<Color>({r, g, b, a});
     }

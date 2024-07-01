@@ -92,9 +92,10 @@ namespace mellohi
         m_render_pass.setIndexBuffer(index_buffer.get_unsafe(), index_buffer.get_wgpu_format(), 0, index_buffer.get_size_bytes());
     }
 
-    void RenderPass::set_bind_group(const BindGroup &bind_group)
+    void RenderPass::set_bind_group(Device &device, BindGroup &bind_group, const uint32_t dynamic_idx)
     {
-        m_render_pass.setBindGroup(0, bind_group.get_unsafe(), 0, nullptr);
+        const std::vector<uint32_t> dynamic_offsets = bind_group.get_dynamic_offsets(device, dynamic_idx);
+        m_render_pass.setBindGroup(0, bind_group.get_unsafe(), dynamic_offsets.size(), dynamic_offsets.data());
     }
 
     void RenderPass::draw_indexed(const size_t index_count)

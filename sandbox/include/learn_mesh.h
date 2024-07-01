@@ -21,9 +21,8 @@ namespace learn_mesh
     {
         std::unique_ptr<VertexBuffer> vertex_buffer;
         std::unique_ptr<IndexBuffer> index_buffer;
-        std::unique_ptr<UniformBuffer> uniform_buffer;
-        std::unique_ptr<BindGroup> bind_group;
         std::unique_ptr<Pipeline> pipeline;
+        std::unique_ptr<BindGroup> bind_group;
 
         Renderer(Device &device, Surface &surface);
     };
