@@ -155,13 +155,16 @@ namespace mellohi
         required_limits.limits.maxVertexAttributes = 2;
         required_limits.limits.maxVertexBuffers = 1;
         required_limits.limits.maxBufferSize = 6 * 5 * sizeof(float);
-        required_limits.limits.maxVertexBufferArrayStride = 5 * sizeof(float);
+        required_limits.limits.maxVertexBufferArrayStride = 6 * sizeof(float);
         required_limits.limits.minStorageBufferOffsetAlignment = m_hardware_limits.min_storage_buffer_offset_alignment;
         required_limits.limits.maxInterStageShaderComponents = 3;
         required_limits.limits.maxBindGroups = 2;
         required_limits.limits.maxUniformBuffersPerShaderStage = 1;
         required_limits.limits.maxUniformBufferBindingSize = 16 * 4;
         required_limits.limits.maxDynamicUniformBuffersPerPipelineLayout = 1;
+        required_limits.limits.maxTextureDimension1D = 480;
+        required_limits.limits.maxTextureDimension2D = 640;
+        required_limits.limits.maxTextureArrayLayers = 1;
 
         wgpu::DeviceDescriptor descriptor = {};
         descriptor.label = "Mellohi Driver";
@@ -271,6 +274,11 @@ namespace mellohi
     wgpu::BindGroup Device::create_bind_group_unsafe(const wgpu::BindGroupDescriptor &descriptor)
     {
         return m_wgpu_device.createBindGroup(descriptor);
+    }
+
+    wgpu::Texture Device::create_texture_unsafe(const wgpu::TextureDescriptor &descriptor)
+    {
+        return m_wgpu_device.createTexture(descriptor);
     }
 
     wgpu::Device Device::get_unsafe() const

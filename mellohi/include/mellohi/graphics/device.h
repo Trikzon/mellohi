@@ -113,6 +113,7 @@ namespace mellohi
         wgpu::BindGroupLayout create_bind_group_layout_unsafe(const wgpu::BindGroupLayoutDescriptor &descriptor);
         wgpu::PipelineLayout create_pipeline_layout_unsafe(const wgpu::PipelineLayoutDescriptor &descriptor);
         wgpu::BindGroup create_bind_group_unsafe(const wgpu::BindGroupDescriptor &descriptor);
+        wgpu::Texture create_texture_unsafe(const wgpu::TextureDescriptor &descriptor);
 
         wgpu::Device get_unsafe() const;
 

@@ -58,7 +58,14 @@ namespace mellohi
 
             descriptor.fragment = &fragment_state;
 
-            descriptor.depthStencil = nullptr;
+            wgpu::DepthStencilState depth_stencil_state = wgpu::Default;
+            depth_stencil_state.depthCompare = wgpu::CompareFunction::Less;
+            depth_stencil_state.depthWriteEnabled = true;
+            wgpu::TextureFormat depth_texture_format = wgpu::TextureFormat::Depth24Plus;
+            depth_stencil_state.format = depth_texture_format;
+            depth_stencil_state.stencilReadMask = 0;
+            depth_stencil_state.stencilWriteMask = 0;
+            descriptor.depthStencil = &depth_stencil_state;
 
             descriptor.multisample.count = 1;
             descriptor.multisample.mask = ~0u;

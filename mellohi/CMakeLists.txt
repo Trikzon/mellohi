@@ -34,6 +34,9 @@ add_subdirectory(vendor/dawn)
 
 add_subdirectory(vendor/flecs)
 
+add_subdirectory(vendor/glm)
+
 add_subdirectory(vendor/imgui)
 
-target_link_libraries(mellohi PUBLIC glfw glfw3webgpu webgpu flecs imgui)
+target_link_libraries(mellohi PUBLIC glfw glfw3webgpu webgpu flecs glm imgui)
+target_compile_definitions(mellohi PUBLIC GLM_FORCE_DEPTH_ZERO_TO_ONE GLM_FORCE_LEFT_HANDED)

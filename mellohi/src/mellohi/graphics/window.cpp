@@ -51,6 +51,7 @@ namespace mellohi
         ImGui_ImplWGPU_InitInfo init_info;
         init_info.Device = m_device->get_unsafe();
         init_info.RenderTargetFormat = m_surface->get_wgpu_texture_format();
+        init_info.DepthStencilFormat = wgpu::TextureFormat::Depth24Plus;
         ImGui_ImplWGPU_Init(&init_info);
     }
 
