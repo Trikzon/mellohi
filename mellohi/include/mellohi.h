@@ -2,6 +2,7 @@
 
 #include "mellohi/asset_id.h"
 #include "mellohi/game.h"
+#include "mellohi/performance_hud.h"
 
 #include "mellohi/graphics/bind_group.h"
 #include "mellohi/graphics/buffer.h"

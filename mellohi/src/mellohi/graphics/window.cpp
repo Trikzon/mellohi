@@ -41,7 +41,7 @@ namespace mellohi
 
         int width, height;
         glfwGetFramebufferSize(m_glfw_window, &width, &height);
-        m_surface->configure(width, height, *m_device, true);
+        m_surface->configure(width, height, *m_device, false);
 
         IMGUI_CHECKVERSION();
         ImGui::CreateContext();

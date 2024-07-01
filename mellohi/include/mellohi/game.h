@@ -13,7 +13,7 @@ namespace mellohi
 
         void run() const;
 
-        const flecs::world & get_world() const;
+        flecs::world & get_world();
     private:
         flecs::world m_world;
     };
