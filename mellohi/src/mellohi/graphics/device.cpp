@@ -76,7 +76,10 @@ namespace mellohi
         descriptor.arrayLayerCount = 1;
         descriptor.aspect = wgpu::TextureAspect::All;
 
-        return texture.createView(descriptor);
+        wgpu::TextureView texture_view = texture.createView(descriptor);
+        texture.release();
+
+        return texture_view;
     }
 
     void Surface::present()
