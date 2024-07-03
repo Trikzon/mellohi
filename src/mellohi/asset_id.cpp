@@ -37,7 +37,7 @@ namespace mellohi
 
     std::string AssetId::get_file_path() const
     {
-        return "../assets/" + m_namespace + "/" + m_path;
+        return "./assets/" + m_namespace + "/" + m_path;
     }
 
     bool AssetId::file_exists() const
