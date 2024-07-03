@@ -73,7 +73,8 @@ LearnMesh3D::Renderer::Renderer(Device &device, Surface &surface)
     bind_group = std::make_unique<BindGroup>(device, 1);
     bind_group->add(device, 0, sizeof(Uniforms));
 
-    pipeline = std::make_unique<Pipeline>(device, surface, AssetId::fromGame("learn3d.wgsl"), *vertex_buffer, *bind_group);
+    pipeline = std::make_unique<Pipeline>(device, surface, AssetId::fromGame("learn3d.wgsl"),
+        *vertex_buffer, bind_group.get(), 1);
 }
 
 LearnMesh3D::LearnMesh3D(flecs::world &world)

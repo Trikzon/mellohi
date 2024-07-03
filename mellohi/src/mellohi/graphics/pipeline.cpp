@@ -3,7 +3,8 @@
 
 namespace mellohi
 {
-    Pipeline::Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer, BindGroup &bind_group)
+    Pipeline::Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer,
+        const BindGroup *bind_groups, size_t bind_group_count)
     {
         std::string shader_code = shader_asset_id.read_file_to_string();
 
@@ -71,11 +72,16 @@ namespace mellohi
             descriptor.multisample.mask = ~0u;
             descriptor.multisample.alphaToCoverageEnabled = false;
 
-            wgpu::BindGroupLayout bind_group_layout = bind_group.get_layout_unsafe();
+            std::vector<wgpu::BindGroupLayout> bind_group_layouts;
+            bind_group_layouts.reserve(bind_group_count);
+            for (size_t i = 0; i < bind_group_count; ++i)
+            {
+                bind_group_layouts.push_back(bind_groups[i].get_layout_unsafe());
+            }
 
             wgpu::PipelineLayoutDescriptor layout_descriptor;
             layout_descriptor.bindGroupLayoutCount = 1;
-            layout_descriptor.bindGroupLayouts = reinterpret_cast<WGPUBindGroupLayout *>(&bind_group_layout);
+            layout_descriptor.bindGroupLayouts = reinterpret_cast<WGPUBindGroupLayout *>(bind_group_layouts.data());
             wgpu::PipelineLayout layout = device.create_pipeline_layout_unsafe(layout_descriptor);
 
             descriptor.layout = layout;

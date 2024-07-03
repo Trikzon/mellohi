@@ -12,7 +12,8 @@ namespace mellohi
     class Pipeline
     {
     public:
-        Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer, BindGroup &bind_group);
+        Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer,
+            const BindGroup *bind_groups, size_t bind_group_count);
         ~Pipeline();
 
         Pipeline(const Pipeline &other) = delete;
