@@ -26,7 +26,7 @@ namespace mellohi
 
     private:
         GLFWwindow *m_glfw_window;
-        std::unique_ptr<Surface> m_surface;
-        std::unique_ptr<Device> m_device;
+        Surface *m_surface;
+        Device *m_device;
     };
 }

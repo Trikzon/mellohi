@@ -29,12 +29,12 @@ namespace mellohi
             std::cerr << "Failed to create WebGPU instance." << std::endl;
         }
 
-        m_surface = std::make_unique<Surface>(instance, m_glfw_window);
+        m_surface = new Surface{instance, m_glfw_window};
 
-        Adapter adapter(instance, *m_surface);
+        Adapter adapter{instance, *m_surface};
         instance.release();
 
-        m_device = std::make_unique<Device>(adapter);
+        m_device = new Device{adapter};
 
         int width, height;
         glfwGetFramebufferSize(m_glfw_window, &width, &height);
@@ -62,9 +62,12 @@ namespace mellohi
             glfwDestroyWindow(m_glfw_window);
             glfwTerminate();
         }
+
+        delete m_surface;
+        delete m_device;
     }
 
-    Window::Window(Window &&other) noexcept : m_glfw_window(nullptr)
+    Window::Window(Window &&other) noexcept : m_glfw_window(nullptr), m_surface(nullptr), m_device(nullptr)
     {
         std::swap(m_glfw_window, other.m_glfw_window);
         std::swap(m_surface, other.m_surface);
