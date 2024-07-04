@@ -28,7 +28,7 @@ namespace mellohi
         return *this;
     }
 
-    size_t Buffer::get_size_bytes() const
+    usize Buffer::get_size_bytes() const
     {
         return m_size_bytes;
     }
@@ -77,12 +77,12 @@ namespace mellohi
 
     void VertexBuffer::add_attribute_vec2f()
     {
-        add_attribute(wgpu::VertexFormat::Float32x2, 2 * sizeof(float));
+        add_attribute(wgpu::VertexFormat::Float32x2, sizeof(vec2f));
     }
 
     void VertexBuffer::add_attribute_vec3f()
     {
-        add_attribute(wgpu::VertexFormat::Float32x3, 3 * sizeof(float));
+        add_attribute(wgpu::VertexFormat::Float32x3, sizeof(vec3f));
     }
 
     wgpu::VertexBufferLayout VertexBuffer::get_wgpu_layout() const
@@ -96,7 +96,7 @@ namespace mellohi
         return layout;
     }
 
-    void VertexBuffer::add_attribute(const wgpu::VertexFormat wgpu_format, const size_t size)
+    void VertexBuffer::add_attribute(const wgpu::VertexFormat wgpu_format, const usize size)
     {
         wgpu::VertexAttribute attribute;
         attribute.shaderLocation = m_wgpu_vertex_attributes.size();
@@ -107,11 +107,11 @@ namespace mellohi
         m_wgpu_vertex_attributes.push_back(attribute);
     }
 
-    IndexBuffer::IndexBuffer(Device &device, const std::vector<uint16_t> &data)
+    IndexBuffer::IndexBuffer(Device &device, const std::vector<u16> &data)
         : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint16), m_index_count(data.size()) { }
 
-    IndexBuffer::IndexBuffer(Device &device, const std::vector<uint32_t> &data)
+    IndexBuffer::IndexBuffer(Device &device, const std::vector<u32> &data)
         : Buffer(device, data, wgpu::BufferUsage::CopyDst | wgpu::BufferUsage::Index),
           m_wgpu_format(wgpu::IndexFormat::Uint32), m_index_count(data.size()) { }
 
@@ -136,7 +136,7 @@ namespace mellohi
         return m_wgpu_format;
     }
 
-    size_t IndexBuffer::get_index_count() const
+    usize IndexBuffer::get_index_count() const
     {
         return m_index_count;
     }

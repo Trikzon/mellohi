@@ -1,11 +1,8 @@
 #pragma once
 
-#include <webgpu/webgpu.hpp>
-
 #include "mellohi/asset_id.h"
 #include "mellohi/graphics/bind_group.h"
 #include "mellohi/graphics/buffer.h"
-#include "mellohi/graphics/device.h"
 
 namespace mellohi
 {
@@ -13,7 +10,7 @@ namespace mellohi
     {
     public:
         Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer,
-            const BindGroup *bind_groups, size_t bind_group_count);
+            const BindGroup *bind_groups, usize bind_group_count);
         ~Pipeline();
 
         Pipeline(const Pipeline &other) = delete;

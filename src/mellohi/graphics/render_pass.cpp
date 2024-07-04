@@ -2,7 +2,7 @@
 
 namespace mellohi
 {
-    RenderPass::RenderPass(Device &device, wgpu::TextureView wgpu_texture_view, const float r, const float g, const float b)
+    RenderPass::RenderPass(Device &device, wgpu::TextureView wgpu_texture_view, vec3f clear_color)
     {
         wgpu::CommandEncoderDescriptor command_encoder_descriptor = {};
         command_encoder_descriptor.label = "Mellohi Command Encoder";
@@ -13,7 +13,7 @@ namespace mellohi
         color_attachment.resolveTarget = nullptr;
         color_attachment.loadOp = wgpu::LoadOp::Clear;
         color_attachment.storeOp = wgpu::StoreOp::Store;
-        color_attachment.clearValue = wgpu::Color(r, g, b, 1.0);
+        color_attachment.clearValue = wgpu::Color(clear_color.r, clear_color.g, clear_color.b, 1.0);
         color_attachment.depthSlice = WGPU_DEPTH_SLICE_UNDEFINED;
 
         // TODO: Don't make the depth texture here, but instead pass it in.
@@ -122,7 +122,7 @@ namespace mellohi
         m_render_pass.setPipeline(pipeline.get_unsafe());
     }
 
-    void RenderPass::set_vertex_buffer(const size_t slot, const VertexBuffer &vertex_buffer)
+    void RenderPass::set_vertex_buffer(const u32 slot, const VertexBuffer &vertex_buffer)
     {
         m_render_pass.setVertexBuffer(slot, vertex_buffer.get_unsafe(), 0, vertex_buffer.get_size_bytes());
     }
@@ -132,13 +132,13 @@ namespace mellohi
         m_render_pass.setIndexBuffer(index_buffer.get_unsafe(), index_buffer.get_wgpu_format(), 0, index_buffer.get_size_bytes());
     }
 
-    void RenderPass::set_bind_group(Device &device, BindGroup &bind_group, const uint32_t dynamic_idx)
+    void RenderPass::set_bind_group(Device &device, BindGroup &bind_group, const u32 dynamic_idx)
     {
-        const std::vector<uint32_t> dynamic_offsets = bind_group.get_dynamic_offsets(device, dynamic_idx);
+        const std::vector<u32> dynamic_offsets = bind_group.get_dynamic_offsets(device, dynamic_idx);
         m_render_pass.setBindGroup(0, bind_group.get_unsafe(), dynamic_offsets.size(), dynamic_offsets.data());
     }
 
-    void RenderPass::draw_indexed(const size_t index_count)
+    void RenderPass::draw_indexed(const u32 index_count)
     {
         m_render_pass.drawIndexed(index_count, 1, 0, 0, 0);
     }

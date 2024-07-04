@@ -1,5 +1,6 @@
 #include "learn3d_mesh.h"
 
+#include <glm/ext.hpp>
 #include <sstream>
 
 #include "camera.h"
@@ -8,8 +9,8 @@ LearnMesh3D::Renderer::Renderer(Device &device, Surface &surface)
 {
     std::string learn_mesh_contents = AssetId::fromGame("pyramid.learn3d").read_file_to_string();
 
-    std::vector<float> point_data;
-    std::vector<uint16_t> index_data;
+    std::vector<f32> point_data;
+    std::vector<u16> index_data;
 
     enum class Section
     {
@@ -19,8 +20,8 @@ LearnMesh3D::Renderer::Renderer(Device &device, Surface &surface)
     };
     auto current_section = Section::None;
 
-    float value;
-    uint16_t index;
+    f32 value;
+    u16 index;
     std::string line;
     std::istringstream learn_mesh_stream(learn_mesh_contents);
     while (std::getline(learn_mesh_stream, line))
@@ -71,7 +72,7 @@ LearnMesh3D::Renderer::Renderer(Device &device, Surface &surface)
     index_buffer = std::make_unique<IndexBuffer>(device, index_data);
 
     bind_group = std::make_unique<BindGroup>(device, 1);
-    bind_group->add(device, 0, sizeof(Uniforms));
+    bind_group->add_binding(device, 0, sizeof(Uniforms));
 
     pipeline = std::make_unique<Pipeline>(device, surface, AssetId::fromGame("learn3d.wgsl"),
         *vertex_buffer, bind_group.get(), 1);
@@ -120,10 +121,10 @@ LearnMesh3D::LearnMesh3D(flecs::world &world)
 
             for (const auto i : it)
             {
-                const float angle1 = time[i].value;
-                const glm::mat4x4 S = scale(glm::mat4x4(1.0f), glm::vec3(0.3f));
-                const glm::mat4x4 T1 = translate(glm::mat4x4(1.0f), glm::vec3(0.5, 0.0, 0.0));
-                const glm::mat4x4 R1 = rotate(glm::mat4x4(1.0f), angle1, glm::vec3(0.0, 0.0, 1.0));
+                const f32 angle1 = time[i].value;
+                const mat4x4f S = scale(mat4x4f{1.0f}, vec3f{0.3f});
+                const mat4x4f T1 = translate(mat4x4f{1.0f}, vec3f{0.5, 0.0, 0.0});
+                const mat4x4f R1 = rotate(mat4x4f{1.0f}, angle1, vec3f{0.0, 0.0, 1.0});
                 uniforms.model = R1 * T1 * S;
 
                 renderer->bind_group->write(device, 0, i, &uniforms);
@@ -133,7 +134,7 @@ LearnMesh3D::LearnMesh3D(flecs::world &world)
         });
 }
 
-flecs::entity LearnMesh3D::create(const flecs::world &world, const float time)
+flecs::entity LearnMesh3D::create(const flecs::world &world, const f32 time)
 {
     return world.entity()
         .set<Time>({time});

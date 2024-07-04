@@ -2,46 +2,12 @@
 
 #include <webgpu/webgpu.hpp>
 
+#include "mellohi/types.h"
+
 struct GLFWwindow;
 
 namespace mellohi
 {
-    struct DeviceLimits
-    {
-        uint32_t max_texture_dimension_1d;
-        uint32_t max_texture_dimension_2d;
-        uint32_t max_texture_dimension_3d;
-        uint32_t max_texture_array_layers;
-        uint32_t max_bind_groups;
-        uint32_t max_bind_groups_plus_vertex_buffers;
-        uint32_t max_bindings_per_bind_group;
-        uint32_t max_dynamic_uniform_buffers_per_pipeline_layout;
-        uint32_t max_dynamic_storage_buffers_per_pipeline_layout;
-        uint32_t max_sampled_textures_per_shader_stage;
-        uint32_t max_samplers_per_shader_stage;
-        uint32_t max_storage_buffers_per_shader_stage;
-        uint32_t max_storage_textures_per_shader_stage;
-        uint32_t max_uniform_buffers_per_shader_stage;
-        uint64_t max_uniform_buffer_binding_size;
-        uint64_t max_storage_buffer_binding_size;
-        uint32_t min_uniform_buffer_offset_alignment;
-        uint32_t min_storage_buffer_offset_alignment;
-        uint32_t max_vertex_buffers;
-        uint64_t max_buffer_size;
-        uint32_t max_vertex_attributes;
-        uint32_t max_vertex_buffer_array_stride;
-        uint32_t max_interstage_shader_components;
-        uint32_t max_interstage_shader_variables;
-        uint32_t max_color_attachments;
-        uint32_t max_color_atteachment_bytes_per_sample;
-        uint32_t max_compute_workgroup_storage_size;
-        uint32_t max_compute_invocations_per_workgroup;
-        uint32_t max_compute_workgroup_size_x;
-        uint32_t max_compute_workgroup_size_y;
-        uint32_t max_compute_workgroup_size_z;
-        uint32_t max_compute_workgroups_per_dimension;
-    };
-
     class Device;
 
     class Surface
@@ -55,7 +21,7 @@ namespace mellohi
         Surface & operator=(const Surface &other) = delete;
         Surface & operator=(Surface &&other) noexcept;
 
-        void configure(uint32_t width, uint32_t height, const Device &device, bool vsync);
+        void configure(u32 width, u32 height, const Device &device, bool vsync);
         wgpu::TextureFormat get_wgpu_texture_format() const;
         std::optional<wgpu::TextureView> get_current_wgpu_texture_unsafe();
         void present();
@@ -79,7 +45,7 @@ namespace mellohi
         Adapter & operator=(const Adapter &other) = delete;
         Adapter & operator=(Adapter &&other) noexcept;
 
-        DeviceLimits get_limits();
+        wgpu::Limits get_limits();
         wgpu::AdapterProperties get_wgpu_properties();
 
         wgpu::Adapter get_unsafe() const;
@@ -99,8 +65,8 @@ namespace mellohi
         Device & operator=(const Device &other) = delete;
         Device & operator=(Device &&other) noexcept;
 
-        const DeviceLimits & get_hardware_limits() const;
-        const DeviceLimits & get_logical_limits() const;
+        const wgpu::Limits & get_hardware_limits() const;
+        const wgpu::Limits & get_logical_limits() const;
         const wgpu::AdapterProperties & get_wgpu_properties() const;
 
         void tick();
@@ -119,8 +85,8 @@ namespace mellohi
 
     private:
         wgpu::Device m_wgpu_device;
-        DeviceLimits m_hardware_limits;
-        DeviceLimits m_logical_limits;
+        wgpu::Limits m_hardware_limits;
+        wgpu::Limits m_logical_limits;
         wgpu::AdapterProperties m_wgpu_properties;
 
         std::unique_ptr<wgpu::ErrorCallback> m_error_callback_handle;

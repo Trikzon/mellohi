@@ -1,7 +1,5 @@
 #pragma once
 
-#include <webgpu/webgpu.hpp>
-
 #include "mellohi/graphics/device.h"
 
 namespace mellohi
@@ -9,7 +7,7 @@ namespace mellohi
     class UniformBuffer
     {
     public:
-        UniformBuffer(Device &device, uint32_t binding_idx, uint32_t dynamic_size, uint32_t size_bytes);
+        UniformBuffer(Device &device, u32 binding_idx, u32 dynamic_size, u32 size_bytes);
         ~UniformBuffer();
 
         UniformBuffer(const UniformBuffer &other) = delete;
@@ -17,13 +15,13 @@ namespace mellohi
         UniformBuffer & operator=(const UniformBuffer &other) = delete;
         UniformBuffer & operator=(UniformBuffer &&other) noexcept;
 
-        void write(Device &device, uint32_t dynamic_idx, const void *data) const;
+        void write(Device &device, u32 dynamic_idx, const void *data) const;
 
         wgpu::BindGroupEntry get_wgpu_entry() const;
         wgpu::BindGroupLayoutEntry get_wgpu_layout() const;
-        uint32_t get_binding_idx() const;
-        size_t get_size_bytes() const;
-        size_t get_stride_bytes() const;
+        u32 get_binding_idx() const;
+        usize get_size_bytes() const;
+        usize get_stride_bytes() const;
 
         wgpu::Buffer get_unsafe() const;
 
@@ -32,8 +30,8 @@ namespace mellohi
         wgpu::BindGroupEntry m_wgpu_entry;
         wgpu::BindGroupLayoutEntry m_wgpu_layout;
 
-        uint32_t m_binding_idx;
-        size_t m_size_bytes;
-        size_t m_stride_bytes;
+        u32 m_binding_idx;
+        usize m_size_bytes;
+        usize m_stride_bytes;
     };
 }

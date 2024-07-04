@@ -1,6 +1,5 @@
 #include "mellohi/graphics/device.h"
 
-#include <GLFW/glfw3.h>
 #include <glfw3webgpu.h>
 
 namespace mellohi
@@ -34,7 +33,7 @@ namespace mellohi
         return *this;
     }
 
-    void Surface::configure(const uint32_t width, const uint32_t height, const Device &device, const bool vsync)
+    void Surface::configure(const u32 width, const u32 height, const Device &device, const bool vsync)
     {
         wgpu::SurfaceConfiguration configuration = {};
         configuration.width = width;
@@ -128,12 +127,12 @@ namespace mellohi
         return *this;
     }
 
-    DeviceLimits Adapter::get_limits()
+    wgpu::Limits Adapter::get_limits()
     {
         wgpu::SupportedLimits supported_limits;
         m_wgpu_adapter.getLimits(&supported_limits);
 
-        return *reinterpret_cast<DeviceLimits*>(&supported_limits.limits);
+        return supported_limits.limits;
     }
 
     wgpu::AdapterProperties Adapter::get_wgpu_properties()
@@ -157,9 +156,9 @@ namespace mellohi
         wgpu::RequiredLimits required_limits = wgpu::Default;
         required_limits.limits.maxVertexAttributes = 2;
         required_limits.limits.maxVertexBuffers = 1;
-        required_limits.limits.maxBufferSize = 6 * 5 * sizeof(float);
-        required_limits.limits.maxVertexBufferArrayStride = 6 * sizeof(float);
-        required_limits.limits.minStorageBufferOffsetAlignment = m_hardware_limits.min_storage_buffer_offset_alignment;
+        required_limits.limits.maxBufferSize = 6 * 5 * sizeof(f32);
+        required_limits.limits.maxVertexBufferArrayStride = 6 * sizeof(f32);
+        required_limits.limits.minStorageBufferOffsetAlignment = m_hardware_limits.minStorageBufferOffsetAlignment;
         required_limits.limits.maxInterStageShaderComponents = 3;
         required_limits.limits.maxBindGroups = 2;
         required_limits.limits.maxUniformBuffersPerShaderStage = 1;
@@ -180,13 +179,15 @@ namespace mellohi
 
         wgpu::SupportedLimits supported_limits;
         m_wgpu_device.getLimits(&supported_limits);
-        m_logical_limits = *reinterpret_cast<DeviceLimits*>(&supported_limits.limits);
+        m_logical_limits = supported_limits.limits;
 
-        m_error_callback_handle = m_wgpu_device.setUncapturedErrorCallback([](wgpu::ErrorType type, char const *message) {
-            std::cout << "Device error: type " << type;
-            if (message) std::cout << " (message: " << message << ")";
-            std::cout << std::endl;
-        });
+        m_error_callback_handle = m_wgpu_device.setUncapturedErrorCallback([](
+            const wgpu::ErrorType type, char const *message)
+            {
+                std::cout << "Device error: type " << type;
+                if (message) std::cout << " (message: " << message << ")";
+                std::cout << std::endl;
+            });
     }
 
     Device::~Device()
@@ -219,12 +220,12 @@ namespace mellohi
         return *this;
     }
 
-    const DeviceLimits & Device::get_hardware_limits() const
+    const wgpu::Limits & Device::get_hardware_limits() const
     {
         return m_hardware_limits;
     }
 
-    const DeviceLimits & Device::get_logical_limits() const
+    const wgpu::Limits & Device::get_logical_limits() const
     {
         return m_logical_limits;
     }

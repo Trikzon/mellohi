@@ -4,19 +4,21 @@
 
 #include <flecs.h>
 
+#include "mellohi/types.h"
+
 namespace mellohi
 {
     struct PerformanceHud
     {
-        constexpr static float AVERAGING_PERIOD = 1.0;  // 1s averaging period
-        constexpr static float TARGET_DELTA_TIME = 1.0 / 75.0;  // 75 FPS
-        constexpr static float MAX_DELTA_TIME = 1.0 / 60.0;  // 60 FPS
+        constexpr static f32 AVERAGING_PERIOD = 1.0;  // 1s averaging period
+        constexpr static f32 TARGET_DELTA_TIME = 1.0 / 75.0;  // 75 FPS
+        constexpr static f32 MAX_DELTA_TIME = 1.0 / 60.0;  // 60 FPS
 
         struct Data
         {
-            std::deque<float> delta_times;
-            float delta_time_sum;
-            float average_delta_time;
+            std::deque<f32> delta_times;
+            f32 delta_time_sum;
+            f32 average_delta_time;
         };
 
         explicit PerformanceHud(const flecs::world& world);

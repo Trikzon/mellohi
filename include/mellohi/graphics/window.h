@@ -1,8 +1,5 @@
 #pragma once
 
-#include <webgpu/webgpu.hpp>
-
-#include "mellohi/graphics/device.h"
 #include "mellohi/graphics/render_pass.h"
 
 struct GLFWwindow;

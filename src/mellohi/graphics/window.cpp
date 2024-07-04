@@ -1,9 +1,6 @@
 #include "mellohi/graphics/window.h"
 
-#include <iostream>
-
 #include <GLFW/glfw3.h>
-#include <imgui.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_wgpu.h>
 
@@ -103,7 +100,7 @@ namespace mellohi
             return std::nullopt;
         }
 
-        RenderPass render_pass(*m_device, *current_surface_texture, 0.05, 0.05, 0.05);
+        RenderPass render_pass(*m_device, *current_surface_texture, vec3f(0.05f));
 
         current_surface_texture->release();
 

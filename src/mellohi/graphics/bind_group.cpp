@@ -2,9 +2,9 @@
 
 namespace mellohi
 {
-    BindGroup::BindGroup(Device &device, const uint32_t initial_dynamic_size) : m_dynamic_size(initial_dynamic_size)
+    BindGroup::BindGroup(Device &device, const u32 initial_dynamic_size) : m_dynamic_size(initial_dynamic_size)
     {
-        // TODO: Assert that initial_dynamic_count is 0
+        // TODO: Assert that initial_dynamic_count is not 0
         rebuild_bind_group(device);
     }
 
@@ -41,18 +41,18 @@ namespace mellohi
         return *this;
     }
 
-    void BindGroup::add(Device &device, uint32_t binding_idx, uint32_t size_bytes)
+    void BindGroup::add_binding(Device &device, u32 binding_idx, u32 size_bytes)
     {
         m_uniform_buffers.emplace_back(device, binding_idx, m_dynamic_size, size_bytes);
 
         rebuild_bind_group(device);
     }
 
-    void BindGroup::write(Device &device, const uint32_t binding_idx, const uint32_t dynamic_idx, const void *data)
+    void BindGroup::write(Device &device, const u32 binding_idx, const u32 dynamic_idx, const void *data)
     {
         if (dynamic_idx >= m_dynamic_size)
         {
-            grow_dynamic_size(device, static_cast<uint32_t>(m_dynamic_size * 1.5 + 1));
+            grow_dynamic_size(device, static_cast<u32>(m_dynamic_size * 1.5 + 1));
         }
 
         for (UniformBuffer &uniform_buffer : m_uniform_buffers)
@@ -65,14 +65,14 @@ namespace mellohi
         }
     }
 
-    std::vector<uint32_t> BindGroup::get_dynamic_offsets(Device &device, const uint32_t dynamic_idx)
+    std::vector<u32> BindGroup::get_dynamic_offsets(Device &device, const u32 dynamic_idx)
     {
         if (dynamic_idx >= m_dynamic_size)
         {
-            grow_dynamic_size(device, static_cast<uint32_t>(m_dynamic_size * 1.5 + 1));
+            grow_dynamic_size(device, static_cast<u32>(m_dynamic_size * 1.5 + 1));
         }
 
-        std::vector<uint32_t> dynamic_offsets;
+        std::vector<u32> dynamic_offsets;
 
         dynamic_offsets.reserve(m_uniform_buffers.size());
         for (const UniformBuffer &uniform_buffer : m_uniform_buffers)
@@ -129,7 +129,7 @@ namespace mellohi
         m_wgpu_bind_group = device.create_bind_group_unsafe(bind_group_descriptor);
     }
 
-    void BindGroup::grow_dynamic_size(Device &device, const uint32_t new_dynamic_size)
+    void BindGroup::grow_dynamic_size(Device &device, const u32 new_dynamic_size)
     {
         std::cout << "INFO: Growing dynamic size from " << m_dynamic_size << " to " << new_dynamic_size << std::endl;
 

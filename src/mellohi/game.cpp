@@ -2,7 +2,6 @@
 
 #include <GLFW/glfw3.h>
 
-#include "mellohi/asset_id.h"
 #include "mellohi/graphics/window.h"
 
 namespace mellohi
@@ -18,13 +17,13 @@ namespace mellohi
     {
         const auto window = m_world.get<Window>();
 
-        double previous_time = glfwGetTime();
+        f64 previous_time = glfwGetTime();
 
         bool should_run = true;
         while (!window->should_close() && should_run)
         {
-            const double current_time = glfwGetTime();
-            const double delta_time = current_time - previous_time;
+            const f64 current_time = glfwGetTime();
+            const f64 delta_time = current_time - previous_time;
             previous_time = current_time;
 
             std::optional<RenderPass> render_pass = window->begin_frame();
@@ -35,7 +34,7 @@ namespace mellohi
                 m_world.emplace<RenderPass>(*render_pass);
             }
 
-            should_run &= m_world.progress(static_cast<float>(delta_time));
+            should_run &= m_world.progress(static_cast<f32>(delta_time));
 
             if (render_pass)
             {

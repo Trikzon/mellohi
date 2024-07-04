@@ -2,13 +2,13 @@
 
 namespace mellohi
 {
-    UniformBuffer::UniformBuffer(Device &device, const uint32_t binding_idx, const uint32_t dynamic_size,
-        const uint32_t size_bytes) : m_binding_idx(binding_idx), m_size_bytes(size_bytes)
+    UniformBuffer::UniformBuffer(Device &device, const u32 binding_idx, const u32 dynamic_size, const u32 size_bytes)
+        : m_binding_idx(binding_idx), m_size_bytes(size_bytes)
     {
         // The number of bytes copied must be a multiple of 4.
         m_size_bytes = (m_size_bytes + 3) & ~3;
 
-        m_stride_bytes = device.get_hardware_limits().min_uniform_buffer_offset_alignment;
+        m_stride_bytes = device.get_hardware_limits().minUniformBufferOffsetAlignment;
         // The stride must be a multiple the minimum uniform buffer offset alignment.
         m_stride_bytes *= m_size_bytes / m_stride_bytes + (m_size_bytes % m_stride_bytes == 0 ? 0 : 1);
 
@@ -63,7 +63,7 @@ namespace mellohi
         return *this;
     }
 
-    void UniformBuffer::write(Device &device, const uint32_t dynamic_idx, const void *data) const
+    void UniformBuffer::write(Device &device, const u32 dynamic_idx, const void *data) const
     {
         wgpu::Queue queue = device.get_queue_unsafe();
         queue.writeBuffer(m_wgpu_buffer, m_stride_bytes * dynamic_idx, data, m_size_bytes);
@@ -80,17 +80,17 @@ namespace mellohi
         return m_wgpu_layout;
     }
 
-    uint32_t UniformBuffer::get_binding_idx() const
+    u32 UniformBuffer::get_binding_idx() const
     {
         return m_binding_idx;
     }
 
-    size_t UniformBuffer::get_size_bytes() const
+    usize UniformBuffer::get_size_bytes() const
     {
         return m_size_bytes;
     }
 
-    size_t UniformBuffer::get_stride_bytes() const
+    usize UniformBuffer::get_stride_bytes() const
     {
         return m_stride_bytes;
     }

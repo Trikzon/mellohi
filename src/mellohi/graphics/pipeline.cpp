@@ -1,10 +1,9 @@
 #include "mellohi/graphics/pipeline.h"
 
-
 namespace mellohi
 {
     Pipeline::Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer,
-        const BindGroup *bind_groups, size_t bind_group_count)
+        const BindGroup *bind_groups, usize bind_group_count)
     {
         std::string shader_code = shader_asset_id.read_file_to_string();
 
@@ -74,7 +73,7 @@ namespace mellohi
 
             std::vector<wgpu::BindGroupLayout> bind_group_layouts;
             bind_group_layouts.reserve(bind_group_count);
-            for (size_t i = 0; i < bind_group_count; ++i)
+            for (auto i = 0; i < bind_group_count; ++i)
             {
                 bind_group_layouts.push_back(bind_groups[i].get_layout_unsafe());
             }

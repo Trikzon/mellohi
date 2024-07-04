@@ -1,6 +1,5 @@
 #pragma once
 
-#include <flecs.h>
 #include <mellohi.h>
 
 using namespace mellohi;

@@ -28,7 +28,7 @@ namespace mellohi
         world.entity().add<Data>();
 
         world.system<Data>()
-            .each([](const flecs::iter &it, size_t, Data &data)
+            .each([](const flecs::iter &it, usize, Data &data)
             {
                 data.delta_times.push_back(it.delta_time());
                 data.delta_time_sum += it.delta_time();
@@ -40,7 +40,7 @@ namespace mellohi
             {
                 if (!data.delta_times.empty())
                 {
-                    data.average_delta_time = data.delta_time_sum / static_cast<float>(data.delta_times.size());
+                    data.average_delta_time = data.delta_time_sum / static_cast<f32>(data.delta_times.size());
 
                     data.delta_times.clear();
                     data.delta_time_sum = 0.0;
@@ -61,7 +61,7 @@ namespace mellohi
                                                 | ImGuiWindowFlags_NoFocusOnAppearing
                                                 | ImGuiWindowFlags_NoNav
                                                 | ImGuiWindowFlags_NoMouseInputs;
-                constexpr float margin = 10.0f;
+                constexpr f32 margin = 10.0f;
                 const ImGuiViewport *viewport = ImGui::GetMainViewport();
                 const ImVec2 pos = viewport->Pos;
                 const ImVec2 size = viewport->Size;

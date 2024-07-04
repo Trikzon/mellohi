@@ -1,8 +1,5 @@
 #pragma once
 
-#include <flecs.h>
-#include <glm/glm.hpp>
-#include <glm/ext.hpp>
 #include <mellohi.h>
 
 using namespace mellohi;
@@ -11,7 +8,7 @@ struct LearnMesh3D
 {
     struct Time
     {
-        float value;
+        f32 value;
     };
 
     struct Renderer
@@ -26,12 +23,12 @@ struct LearnMesh3D
 
     struct Uniforms
     {
-        glm::mat4x4 projection;
-        glm::mat4x4 view;
-        glm::mat4x4 model;
+        mat4x4f projection;
+        mat4x4f view;
+        mat4x4f model;
     };
 
     explicit LearnMesh3D(flecs::world &world);
 
-    static flecs::entity create(const flecs::world &world, float time);
+    static flecs::entity create(const flecs::world &world, f32 time);
 };

@@ -76,7 +76,7 @@ LearnMesh::Renderer::Renderer(Device &device, Surface &surface)
     index_buffer = std::make_unique<IndexBuffer>(device, index_data);
 
     bind_group = std::make_unique<BindGroup>(device, 1);
-    bind_group->add(device, 0, sizeof(MyUniforms));
+    bind_group->add_binding(device, 0, sizeof(MyUniforms));
 
     pipeline = std::make_unique<Pipeline>(device, surface, AssetId::fromGame("learn.wgsl"),
         *vertex_buffer, bind_group.get(), 1);
