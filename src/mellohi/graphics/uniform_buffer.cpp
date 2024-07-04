@@ -1,4 +1,4 @@
-#include "mellohi/graphics/uniform_buffer.h"
+#include "mellohi/graphics/uniform_buffer.hpp"
 
 namespace mellohi
 {

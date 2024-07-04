@@ -1,4 +1,4 @@
-#include "mellohi/graphics/device.h"
+#include "mellohi/graphics/device.hpp"
 
 #include <glfw3webgpu.h>
 

@@ -1,4 +1,4 @@
-#include "mellohi/graphics/buffer.h"
+#include "mellohi/graphics/buffer.hpp"
 
 namespace mellohi
 {

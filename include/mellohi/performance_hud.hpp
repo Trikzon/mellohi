@@ -4,7 +4,7 @@
 
 #include <flecs.h>
 
-#include "mellohi/types.h"
+#include "mellohi/types.hpp"
 
 namespace mellohi
 {

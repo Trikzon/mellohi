@@ -1,4 +1,4 @@
-#include "mellohi/graphics/window.h"
+#include "mellohi/graphics/window.hpp"
 
 #include <GLFW/glfw3.h>
 #include <backends/imgui_impl_glfw.h>

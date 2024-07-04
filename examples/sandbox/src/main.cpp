@@ -1,6 +1,6 @@
-#include <mellohi.h>
+#include <mellohi.hpp>
 
-#include "learn3d_mesh.h"
+#include "learn3d_mesh.hpp"
 
 using namespace mellohi;
 

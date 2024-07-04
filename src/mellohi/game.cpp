@@ -1,8 +1,8 @@
-#include "mellohi/game.h"
+#include "mellohi/game.hpp"
 
 #include <GLFW/glfw3.h>
 
-#include "mellohi/graphics/window.h"
+#include "mellohi/graphics/window.hpp"
 
 namespace mellohi
 {

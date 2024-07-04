@@ -1,9 +1,9 @@
-#include "learn3d_mesh.h"
+#include "learn3d_mesh.hpp"
 
 #include <glm/ext.hpp>
 #include <sstream>
 
-#include "camera.h"
+#include "camera.hpp"
 
 LearnMesh3D::Renderer::Renderer(Device &device, Surface &surface)
 {

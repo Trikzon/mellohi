@@ -2,7 +2,7 @@
 
 #include <webgpu/webgpu.hpp>
 
-#include "mellohi/types.h"
+#include "mellohi/types.hpp"
 
 struct GLFWwindow;
 

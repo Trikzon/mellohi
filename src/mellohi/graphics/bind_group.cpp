@@ -1,4 +1,4 @@
-#include "mellohi/graphics/bind_group.h"
+#include "mellohi/graphics/bind_group.hpp"
 
 namespace mellohi
 {

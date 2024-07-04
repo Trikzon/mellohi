@@ -1,8 +1,8 @@
 #pragma once
 
-#include "mellohi/asset_id.h"
-#include "mellohi/graphics/bind_group.h"
-#include "mellohi/graphics/buffer.h"
+#include "mellohi/asset_id.hpp"
+#include "mellohi/graphics/bind_group.hpp"
+#include "mellohi/graphics/buffer.hpp"
 
 namespace mellohi
 {

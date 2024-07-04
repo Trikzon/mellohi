@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mellohi/graphics/render_pass.h"
+#include "mellohi/graphics/render_pass.hpp"
 
 struct GLFWwindow;
 

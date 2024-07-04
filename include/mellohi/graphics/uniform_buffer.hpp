@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mellohi/graphics/device.h"
+#include "mellohi/graphics/device.hpp"
 
 namespace mellohi
 {

@@ -1,4 +1,4 @@
-#include "mellohi/asset_id.h"
+#include "mellohi/asset_id.hpp"
 
 #include <fstream>
 

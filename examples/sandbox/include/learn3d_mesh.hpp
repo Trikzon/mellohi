@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mellohi.h>
+#include <mellohi.hpp>
 
 using namespace mellohi;
 

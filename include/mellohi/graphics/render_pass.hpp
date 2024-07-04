@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mellohi/graphics/pipeline.h"
+#include "mellohi/graphics/pipeline.hpp"
 
 namespace mellohi
 {

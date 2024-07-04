@@ -1,10 +1,10 @@
-#include "mellohi/performance_hud.h"
+#include "mellohi/performance_hud.hpp"
 
 #include <format>
 
 #include <imgui.h>
 
-#include "mellohi/graphics/window.h"
+#include "mellohi/graphics/window.hpp"
 
 namespace mellohi
 {
