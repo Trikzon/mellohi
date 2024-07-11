@@ -138,6 +138,11 @@ namespace mellohi
         m_render_pass.setBindGroup(0, bind_group.get_unsafe(), dynamic_offsets.size(), dynamic_offsets.data());
     }
 
+    void RenderPass::draw(const u32 vertex_count)
+    {
+        m_render_pass.draw(vertex_count, 1, 0, 0);
+    }
+
     void RenderPass::draw_indexed(const u32 index_count)
     {
         m_render_pass.drawIndexed(index_count, 1, 0, 0, 0);

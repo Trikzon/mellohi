@@ -1,6 +1,6 @@
 #include <mellohi.hpp>
 
-#include "learn3d_mesh.hpp"
+#include "mesh.hpp"
 
 using namespace mellohi;
 
@@ -12,8 +12,8 @@ int main()
 
     world.import<PerformanceHud>();
 
-    world.import<LearnMesh3D>();
-    LearnMesh3D::create(world, 0.0);
+    world.import<Mesh>();
+    Mesh::create(world, AssetId::fromGame("models/teapot.obj"));
 
     game.run();
 }

@@ -21,6 +21,7 @@ namespace mellohi
         void set_index_buffer(const IndexBuffer &index_buffer);
         void set_bind_group(Device &device, BindGroup &bind_group, u32 dynamic_idx);
 
+        void draw(u32 vertex_count);
         void draw_indexed(u32 index_count);
 
         void end(Device &device);

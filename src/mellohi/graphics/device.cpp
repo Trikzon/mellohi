@@ -148,18 +148,18 @@ namespace mellohi
         return m_wgpu_adapter;
     }
 
-    Device::Device(Adapter &adapter) : m_hardware_limits(), m_logical_limits()
+    Device::Device(Adapter &adapter)
     {
         m_hardware_limits = adapter.get_limits();
         m_wgpu_properties = adapter.get_wgpu_properties();
 
         wgpu::RequiredLimits required_limits = wgpu::Default;
-        required_limits.limits.maxVertexAttributes = 2;
+        required_limits.limits.maxVertexAttributes = 3;
         required_limits.limits.maxVertexBuffers = 1;
-        required_limits.limits.maxBufferSize = 6 * 5 * sizeof(f32);
-        required_limits.limits.maxVertexBufferArrayStride = 6 * sizeof(f32);
+        required_limits.limits.maxBufferSize = 1000000;
+        required_limits.limits.maxVertexBufferArrayStride = 9 * sizeof(f32);
         required_limits.limits.minStorageBufferOffsetAlignment = m_hardware_limits.minStorageBufferOffsetAlignment;
-        required_limits.limits.maxInterStageShaderComponents = 3;
+        required_limits.limits.maxInterStageShaderComponents = 6;
         required_limits.limits.maxBindGroups = 2;
         required_limits.limits.maxUniformBuffersPerShaderStage = 1;
         required_limits.limits.maxUniformBufferBindingSize = 16 * 4;
@@ -199,7 +199,7 @@ namespace mellohi
         }
     }
 
-    Device::Device(Device &&other) noexcept : m_hardware_limits(), m_logical_limits()
+    Device::Device(Device &&other) noexcept
     {
         std::swap(m_wgpu_device, other.m_wgpu_device);
         std::swap(m_hardware_limits, other.m_hardware_limits);
