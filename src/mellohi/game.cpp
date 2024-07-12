@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 
 #include "mellohi/graphics/window.hpp"
+#include "mellohi/input.hpp"
 
 namespace mellohi
 {
@@ -11,6 +12,11 @@ namespace mellohi
         AssetId::set_game_namespace(game_namespace);
 
         m_world.add<Window>();
+
+        const auto window = m_world.get<Window>();
+        glfwSetWindowUserPointer(window->get_raw(), this);
+
+        m_world.import<input::Module>();
     }
 
     void Game::run() const

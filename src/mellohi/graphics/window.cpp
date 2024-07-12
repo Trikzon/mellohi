@@ -135,4 +135,9 @@ namespace mellohi
     {
         return *m_device;
     }
+
+    GLFWwindow * Window::get_raw() const
+    {
+        return m_glfw_window;
+    }
 }

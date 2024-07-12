@@ -24,6 +24,8 @@ namespace mellohi
         Surface & get_surface() const;
         Device & get_device() const;
 
+        GLFWwindow * get_raw() const;
+
     private:
         GLFWwindow *m_glfw_window;
         Surface *m_surface;

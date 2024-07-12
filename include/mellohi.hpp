@@ -1,7 +1,9 @@
 #pragma once
 
 #include "mellohi/asset_id.hpp"
+#include "mellohi/buttons.hpp"
 #include "mellohi/game.hpp"
+#include "mellohi/input.hpp"
 #include "mellohi/performance_hud.hpp"
 #include "mellohi/types.hpp"
 
