@@ -90,28 +90,31 @@ Mesh::RenderData::~RenderData()
 Mesh::Mesh(const flecs::world &world)
 {
     world.system<const RenderData>()
-        .write<RenderPass>()
-        .read<Window>()
         .kind(flecs::OnStore)
-        .each([](const flecs::iter &it, usize, const RenderData &render_data)
+        .run([](flecs::iter &it)
         {
-            auto *render_pass = it.world().get_mut<RenderPass>();
             const auto *window = it.world().get<Window>();
+            auto *render_pass = it.world().get_mut<RenderPass>();
 
-            const mat4x4f S = scale(mat4x4f{1.0f}, vec3f{1.0f});
-            const mat4x4f T1 = translate(mat4x4f{1.0f}, vec3f{0.0, 0.0, 0.0});
-            // const mat4x4f R1 = rotate(mat4x4f{1.0f}, static_cast<float>(glfwGetTime()), vec3f{0.0, 1.0, 0.0});
-            const mat4x4f R1 = rotate(mat4x4f{1.0f}, 0.0f, vec3f{0.0, 1.0, 0.0});
+            while (it.next())
+            {
+                const auto render_data = it.field<const RenderData>(0);
 
-            ModelUniforms model_uniforms{};
-            model_uniforms.transform = R1 * T1 * S;
+                const mat4x4f S = scale(mat4x4f{1.0f}, vec3f{1.0f});
+                const mat4x4f T1 = translate(mat4x4f{1.0f}, vec3f{0.0, 0.0, 0.0});
+                // const mat4x4f R1 = rotate(mat4x4f{1.0f}, static_cast<float>(glfwGetTime()), vec3f{0.0, 1.0, 0.0});
+                const mat4x4f R1 = rotate(mat4x4f{1.0f}, 0.0f, vec3f{0.0, 1.0, 0.0});
 
-            render_data.bind_group->write(window->get_device(), 0, 0, &model_uniforms);
+                ModelUniforms model_uniforms{};
+                model_uniforms.transform = R1 * T1 * S;
 
-            render_pass->set_pipeline(*render_data.pipeline);
-            render_pass->set_vertex_buffer(0, *render_data.vertex_buffer);
-            render_pass->set_bind_group(window->get_device(), 1, *render_data.bind_group, 0);
-            render_pass->draw(render_data.vertex_count);
+                render_data->bind_group->write(window->get_device(), 0, 0, &model_uniforms);
+
+                render_pass->set_pipeline(*render_data->pipeline);
+                render_pass->set_vertex_buffer(0, *render_data->vertex_buffer);
+                render_pass->set_bind_group(window->get_device(), 1, *render_data->bind_group, 0);
+                render_pass->draw(render_data->vertex_count);
+            }
         });
 }
 
