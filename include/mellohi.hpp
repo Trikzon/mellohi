@@ -2,9 +2,11 @@
 
 #include "mellohi/asset_id.hpp"
 #include "mellohi/buttons.hpp"
+#include "mellohi/camera.hpp"
 #include "mellohi/game.hpp"
 #include "mellohi/input.hpp"
 #include "mellohi/performance_hud.hpp"
+#include "mellohi/transform.hpp"
 #include "mellohi/types.hpp"
 
 #include "mellohi/graphics/bind_group.hpp"

@@ -4,7 +4,6 @@
 
 namespace mellohi
 {
-
     namespace input
     {
         Module::Module(const flecs::world &world)
@@ -129,6 +128,19 @@ namespace mellohi
         return it != m_immediate_mouse_state.end() && it->second;
     }
 
+    vec2f Input::get_vector(const KeyboardButton neg_x, const KeyboardButton pos_x, const KeyboardButton neg_y,
+        const KeyboardButton pos_y) const
+    {
+        float x = 0.0f, y = 0.0f;
+
+        if (is_pressed(neg_x)) { x -= 1.0f; }
+        if (is_pressed(pos_x)) { x += 1.0f; }
+        if (is_pressed(neg_y)) { y -= 1.0f; }
+        if (is_pressed(pos_y)) { y += 1.0f; }
+
+        return {x, y};
+    }
+
     vec2f Input::get_mouse_position() const
     {
         return m_mouse_position;
@@ -136,13 +148,13 @@ namespace mellohi
 
     void Input::on_keyboard_input(const input::KeyboardEvent &event)
     {
-        m_keyboard_state[event.button] = event.action == ButtonAction::Press;
+        m_keyboard_state[event.button] = event.action != ButtonAction::Release;
         m_immediate_keyboard_state[event.button] = event.action == ButtonAction::Press;
     }
 
     void Input::on_mouse_input(const input::MouseEvent &event)
     {
-        m_mouse_state[event.button] = event.action == ButtonAction::Press;
+        m_mouse_state[event.button] = event.action != ButtonAction::Release;
         m_immediate_mouse_state[event.button] = event.action == ButtonAction::Press;
     }
 

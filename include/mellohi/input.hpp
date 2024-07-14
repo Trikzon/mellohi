@@ -46,6 +46,7 @@ namespace mellohi
         bool is_pressed(MouseButton button) const;
         bool is_just_pressed(KeyboardButton button) const;
         bool is_just_pressed(MouseButton button) const;
+        vec2f get_vector(KeyboardButton neg_x, KeyboardButton pos_x, KeyboardButton neg_y, KeyboardButton pos_y) const;
         vec2f get_mouse_position() const;
 
     private:

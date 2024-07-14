@@ -14,18 +14,18 @@ struct Mesh
         Pipeline* pipeline;
         BindGroup* bind_group;
 
-        RenderData(Device &device, Surface &surface, const AssetId &obj_asset_id);
+        RenderData(Device &device, Surface &surface, const AssetId &obj_asset_id, BindGroup *camera_bind_group);
         ~RenderData();
+
+        // TODO: Implement the move constructor and move assignment operator.
     };
 
-    struct Uniforms
+    struct ModelUniforms
     {
-        mat4x4f projection;
-        mat4x4f view;
-        mat4x4f model;
+        mat4x4f transform;
     };
 
-    Mesh(const flecs::world &world);
+    explicit Mesh(const flecs::world &world);
 
     static flecs::entity create(const flecs::world &world, const AssetId &obj_asset_id);
 };

@@ -10,7 +10,7 @@ namespace mellohi
     {
     public:
         Pipeline(Device &device, Surface &surface, const AssetId &shader_asset_id, VertexBuffer &vertex_buffer,
-            const BindGroup *bind_groups, usize bind_group_count);
+            const std::vector<BindGroup *> &bind_groups);
         ~Pipeline();
 
         Pipeline(const Pipeline &other) = delete;

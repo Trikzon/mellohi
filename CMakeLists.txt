@@ -38,6 +38,10 @@ add_subdirectory(vendor/imgui)
 add_subdirectory(vendor/tinyobjloader)
 
 target_link_libraries(mellohi PUBLIC glfw glfw3webgpu webgpu flecs glm imgui tinyobjloader)
-target_compile_definitions(mellohi PUBLIC GLM_FORCE_DEPTH_ZERO_TO_ONE GLM_FORCE_LEFT_HANDED)
+target_compile_definitions(mellohi PUBLIC
+        GLM_FORCE_DEPTH_ZERO_TO_ONE
+        GLM_FORCE_LEFT_HANDED
+        GLM_ENABLE_EXPERIMENTAL
+)
 
 add_subdirectory(examples)

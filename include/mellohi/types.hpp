@@ -1,6 +1,7 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace mellohi
 {
@@ -40,4 +41,6 @@ namespace mellohi
     using mat4x2f = glm::fmat4x2;
     using mat4x3f = glm::fmat4x3;
     using mat4x4f = glm::fmat4x4;
+
+    using quat = glm::quat;
 }

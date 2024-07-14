@@ -19,7 +19,7 @@ namespace mellohi
         void set_pipeline(const Pipeline &pipeline);
         void set_vertex_buffer(u32 slot, const VertexBuffer &vertex_buffer);
         void set_index_buffer(const IndexBuffer &index_buffer);
-        void set_bind_group(Device &device, BindGroup &bind_group, u32 dynamic_idx);
+        void set_bind_group(Device &device, u32 group_idx, BindGroup &bind_group, u32 dynamic_idx);
 
         void draw(u32 vertex_count);
         void draw_indexed(u32 index_count);

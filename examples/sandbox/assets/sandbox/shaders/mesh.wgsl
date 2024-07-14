@@ -1,7 +1,10 @@
-struct Uniforms {
+struct CameraUniforms {
     projection: mat4x4f,
     view: mat4x4f,
-    model: mat4x4f,
+}
+
+struct ModelUniforms {
+    transform: mat4x4f,
 }
 
 struct VertexInput {
@@ -16,14 +19,15 @@ struct FragmentInput {
     @location(1) normal: vec3f,
 }
 
-@group(0) @binding(0) var<uniform> uCamera: Uniforms;
+@group(0) @binding(0) var<uniform> uCamera: CameraUniforms;
+@group(1) @binding(0) var<uniform> uModel: ModelUniforms;
 
 @vertex
 fn vertex_main(in: VertexInput) -> FragmentInput {
     var out: FragmentInput;
-    out.position = uCamera.projection * uCamera.view * uCamera.model * vec4f(in.position, 1.0);
+    out.position = uCamera.projection * uCamera.view * uModel.transform * vec4f(in.position, 1.0);
     out.color = in.color;
-    out.normal = (uCamera.model * vec4f(in.normal, 0.0)).xyz;
+    out.normal = (uModel.transform * vec4f(in.normal, 0.0)).xyz;
     return out;
 }
 
