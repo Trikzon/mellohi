@@ -26,10 +26,15 @@ namespace mellohi
 
         void end(Device &device);
 
+        usize get_draw_call_count() const;
+        usize get_triangle_count() const;
+
         wgpu::RenderPassEncoder get_unsafe() const;
 
     private:
         wgpu::CommandEncoder m_command_encoder;
         wgpu::RenderPassEncoder m_render_pass;
+        usize m_draw_call_count{0};
+        usize m_triangle_count{0};
     };
 }

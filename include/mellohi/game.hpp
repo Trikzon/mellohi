@@ -6,6 +6,8 @@
 
 namespace mellohi
 {
+    class PostRender { };
+
     class Game
     {
     public:

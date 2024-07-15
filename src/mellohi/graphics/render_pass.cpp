@@ -141,11 +141,15 @@ namespace mellohi
     void RenderPass::draw(const u32 vertex_count)
     {
         m_render_pass.draw(vertex_count, 1, 0, 0);
+        m_draw_call_count += 1;
+        m_triangle_count += vertex_count / 3;
     }
 
     void RenderPass::draw_indexed(const u32 index_count)
     {
         m_render_pass.drawIndexed(index_count, 1, 0, 0, 0);
+        m_draw_call_count += 1;
+        m_triangle_count += index_count / 3;
     }
 
     void RenderPass::end(Device &device)
@@ -160,6 +164,16 @@ namespace mellohi
         queue.submit(1, &command_buffer);
         queue.release();
         command_buffer.release();
+    }
+
+    usize RenderPass::get_draw_call_count() const
+    {
+        return m_draw_call_count;
+    }
+
+    usize RenderPass::get_triangle_count() const
+    {
+        return m_triangle_count;
     }
 
     wgpu::RenderPassEncoder RenderPass::get_unsafe() const

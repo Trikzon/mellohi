@@ -4,6 +4,7 @@
 
 #include <imgui.h>
 
+#include "mellohi/game.hpp"
 #include "mellohi/graphics/window.hpp"
 
 namespace mellohi
@@ -51,9 +52,10 @@ namespace mellohi
         const char *device_name = properties.name;
         const char *backend_name = backend_type_to_name(properties.backendType);
 
-        world.system<const Data>()
-            .kind(flecs::OnStore)
-            .each([device_name, backend_name](const Data &data)
+        world.system<const Data, const RenderPass>()
+            .term_at(1).singleton()
+            .kind<PostRender>()
+            .each([device_name, backend_name](const Data &data, const RenderPass &render_pass)
             {
                 constexpr ImGuiWindowFlags window_flags = ImGuiWindowFlags_NoDecoration
                                                 | ImGuiWindowFlags_AlwaysAutoResize
@@ -66,7 +68,7 @@ namespace mellohi
                 const ImVec2 pos = viewport->Pos;
                 const ImVec2 size = viewport->Size;
                 ImGui::SetNextWindowPos({ size.x - margin, pos.y + margin }, ImGuiCond_Always, { 1.0, 0.0 });
-                ImGui::SetNextWindowSizeConstraints({175, 0}, {FLT_MAX, FLT_MAX});
+                ImGui::SetNextWindowSizeConstraints({200, 0}, {FLT_MAX, FLT_MAX});
                 ImGui::SetNextWindowBgAlpha(0.35f);
 
                 if (ImGui::Begin("Performance HUD", nullptr, window_flags))
@@ -84,9 +86,17 @@ namespace mellohi
                     const ImVec4 color = data.average_delta_time > TARGET_DELTA_TIME ? red : data.average_delta_time < TARGET_DELTA_TIME ? white : yellow;
                     std::string formatted = std::format("FPS: {:7.2f}", 1 / data.average_delta_time);
                     ImGui::TextColored(color, "%s", formatted.c_str());
+
                     formatted = std::format("{:.2f} ms", data.average_delta_time * 1000);
                     ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::CalcTextSize(formatted.c_str()).x);
                     ImGui::TextColored(color, "%s", formatted.c_str());
+
+                    formatted = std::format("Draw Calls: {:d}", render_pass.get_draw_call_count());
+                    ImGui::TextUnformatted(formatted.c_str());
+
+                    formatted = std::format("{:d} tris", render_pass.get_triangle_count());
+                    ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::CalcTextSize(formatted.c_str()).x);
+                    ImGui::TextUnformatted(formatted.c_str());
                 }
                 ImGui::End();
             });

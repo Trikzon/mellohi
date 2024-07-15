@@ -11,6 +11,11 @@ namespace mellohi
     {
         AssetId::set_game_namespace(game_namespace);
 
+        m_world.entity<PostRender>()
+            .add(flecs::Final)
+            .add(flecs::Phase)
+            .depends_on(flecs::OnStore);
+
         m_world.add<Window>();
 
         const auto window = m_world.get<Window>();
