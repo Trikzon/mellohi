@@ -2,10 +2,9 @@ cmake_minimum_required(VERSION 3.28)
 
 project(sandbox)
 
-file(GLOB_RECURSE HEADER_FILES include/*.h include/*.hpp)
-file(GLOB_RECURSE SOURCE_FILES src/*.cpp)
+file(GLOB_RECURSE SOURCE_FILES src/*.hpp src/*.cpp)
 
-add_executable(sandbox ${HEADER_FILES} ${SOURCE_FILES})
+add_executable(sandbox ${SOURCE_FILES})
 target_include_directories(sandbox PUBLIC include)
 
 target_link_libraries(sandbox PRIVATE mellohi)
