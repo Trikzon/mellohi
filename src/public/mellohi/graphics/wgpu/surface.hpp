@@ -1,6 +1,6 @@
 #pragma once
 
-#include "mellohi/graphics/glfw.hpp"
+#include "mellohi/graphics/glfw/window.hpp"
 #include "mellohi/graphics/wgpu/instance.hpp"
 
 namespace mellohi::wgpu

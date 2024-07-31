@@ -1,5 +1,7 @@
 #pragma once
 
+#include "mellohi/core/types.hpp"
+
 namespace mellohi::glfw
 {
     class Glfw
@@ -12,6 +14,8 @@ namespace mellohi::glfw
         auto operator=(Glfw &&other) -> Glfw & = delete;
 
         static auto get_instance() -> Glfw &;
+
+        auto get_time() const -> f64;
 
         auto poll_events() const -> void;
 

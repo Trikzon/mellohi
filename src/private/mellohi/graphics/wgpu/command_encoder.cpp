@@ -1,5 +1,7 @@
 #include "mellohi/graphics/wgpu/command_encoder.hpp"
 
+#include "mellohi/core/log.hpp"
+
 namespace mellohi::wgpu
 {
     CommandEncoder::CommandEncoder(const Device &device, const string &label)

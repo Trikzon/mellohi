@@ -1,5 +1,7 @@
 #include "mellohi/graphics/wgpu/adapter.hpp"
 
+#include "mellohi/core/log.hpp"
+
 namespace mellohi::wgpu
 {
     Adapter::Adapter(const Instance &instance, const Surface &surface)

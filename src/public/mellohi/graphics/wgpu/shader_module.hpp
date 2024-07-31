@@ -1,5 +1,6 @@
 #pragma once
 
+#include "mellohi/core/asset_id.hpp"
 #include "mellohi/graphics/wgpu/device.hpp"
 
 namespace mellohi::wgpu

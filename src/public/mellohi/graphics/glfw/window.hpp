@@ -2,7 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
-#include "mellohi/core.hpp"
+#include "mellohi/core/types.hpp"
 
 namespace mellohi::glfw
 {
@@ -11,7 +11,7 @@ namespace mellohi::glfw
     public:
         using FramebufferSizeCallback = std::function<void(vec2u)>;
 
-        Window(str title, vec2u size);
+        Window(str title, vec2u initial_size);
 
         auto should_close() const -> bool;
 
@@ -44,7 +44,6 @@ namespace mellohi::glfw
             auto operator=(const Handle &other) -> Handle & = delete;
             auto operator=(Handle &&other) -> Handle & = delete;
 
-            // ReSharper disable once CppNonExplicitConversionOperator
             operator GLFWwindow *() const;
 
             auto set_framebuffer_size_callback(const FramebufferSizeCallback &callback) -> void;

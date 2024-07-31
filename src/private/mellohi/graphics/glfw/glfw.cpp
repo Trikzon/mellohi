@@ -18,6 +18,11 @@ namespace mellohi::glfw
         return instance;
     }
 
+    auto Glfw::get_time() const -> f64
+    {
+        return glfwGetTime();
+    }
+
     auto Glfw::poll_events() const -> void
     {
         glfwPollEvents();

@@ -1,6 +1,6 @@
 #include "mellohi/graphics/wgpu/uniform_buffer.hpp"
 
-#include <webgpu/webgpu.hpp>
+#include "mellohi/core/log.hpp"
 
 namespace mellohi::wgpu
 {

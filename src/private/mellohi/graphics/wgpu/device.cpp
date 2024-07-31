@@ -1,5 +1,7 @@
 #include "mellohi/graphics/wgpu/device.hpp"
 
+#include "mellohi/core/log.hpp"
+
 namespace mellohi::wgpu
 {
     Device::Device(const Adapter &adapter, const WGPULimits &limits)

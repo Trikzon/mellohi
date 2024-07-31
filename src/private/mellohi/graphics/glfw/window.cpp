@@ -1,12 +1,13 @@
 #include "mellohi/graphics/glfw/window.hpp"
 
+#include "mellohi/core/log.hpp"
 #include "mellohi/graphics/glfw/glfw.hpp"
 
 namespace mellohi::glfw
 {
-    Window::Window(const str title, const vec2u size)
+    Window::Window(const str title, const vec2u initial_size)
     {
-        MH_ASSERT(size.x < std::numeric_limits<i32>::max() && size.y < std::numeric_limits<i32>::max(),
+        MH_ASSERT(initial_size.x < std::numeric_limits<i32>::max() && initial_size.y < std::numeric_limits<i32>::max(),
                   "Window size is too large.");
 
         Glfw::get_instance();
@@ -14,7 +15,7 @@ namespace mellohi::glfw
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
         MH_INFO("Creating GLFW window.");
-        GLFWwindow *glfw_window = glfwCreateWindow(static_cast<i32>(size.x), static_cast<i32>(size.y),
+        GLFWwindow *glfw_window = glfwCreateWindow(static_cast<i32>(initial_size.x), static_cast<i32>(initial_size.y),
                                                    string{title}.c_str(), nullptr, nullptr);
 
         MH_ASSERT(glfw_window != nullptr, "Failed to create GLFW window.");

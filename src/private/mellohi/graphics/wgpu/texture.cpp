@@ -1,5 +1,7 @@
 #include "mellohi/graphics/wgpu/texture.hpp"
 
+#include "mellohi/core/log.hpp"
+
 namespace mellohi::wgpu
 {
     Texture::Texture(const Surface &surface) : m_label{"Mellohi Current Surface Texture"}

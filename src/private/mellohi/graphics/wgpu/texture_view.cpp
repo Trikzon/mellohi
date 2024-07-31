@@ -1,5 +1,7 @@
 #include "mellohi/graphics/wgpu/texture_view.hpp"
 
+#include "mellohi/core/log.hpp"
+
 namespace mellohi::wgpu
 {
     TextureView::TextureView(const Texture &texture)
