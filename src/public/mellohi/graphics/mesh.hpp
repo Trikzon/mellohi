@@ -19,11 +19,6 @@ namespace mellohi
             Data(const flecs::world &ecs, const AssetId &obj_file_id);
         };
 
-        struct Uniforms
-        {
-            mat4x4f model;
-        };
-
         s_ptr<wgpu::BindGroup> bind_group;
 
         Mesh(flecs::world &ecs);

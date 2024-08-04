@@ -91,14 +91,27 @@ namespace mellohi::glfw
         m_handle->set_framebuffer_size_callback(callback);
     }
 
+    auto Window::set_keyboard_button_callback(const KeyboardButtonCallback &callback) const -> void
+    {
+        m_handle->set_keyboard_button_callback(callback);
+    }
+
+    auto Window::set_mouse_button_callback(const MouseButtonCallback &callback) const -> void
+    {
+        m_handle->set_mouse_button_callback(callback);
+    }
+
+    auto Window::set_cursor_pos_callback(const CursorPosCallback &callback) const -> void
+    {
+        m_handle->set_cursor_pos_callback(callback);
+    }
+
     auto Window::get_raw_ptr() const -> GLFWwindow *
     {
         return *m_handle;
     }
 
-    Window::Handle::Handle(GLFWwindow *glfw_window) : m_glfw_window{glfw_window}
-    {
-    }
+    Window::Handle::Handle(GLFWwindow *glfw_window) : m_glfw_window{glfw_window} {}
 
     Window::Handle::~Handle()
     {
@@ -106,6 +119,12 @@ namespace mellohi::glfw
         {
             glfwSetFramebufferSizeCallback(m_glfw_window, nullptr);
             m_framebuffer_size_callback = nullptr;
+        }
+
+        if (m_key_callback != nullptr)
+        {
+            glfwSetKeyCallback(m_glfw_window, nullptr);
+            m_key_callback = nullptr;
         }
 
         if (m_glfw_window != nullptr)
@@ -129,6 +148,40 @@ namespace mellohi::glfw
             const auto *handle = static_cast<Handle *>(glfwGetWindowUserPointer(window));
             MH_ASSERT(width >= 0 && height >= 0, "Framebuffer size is negative.");
             handle->m_framebuffer_size_callback({static_cast<u32>(width), static_cast<u32>(height)});
+        });
+    }
+
+    auto Window::Handle::set_keyboard_button_callback(const KeyboardButtonCallback &callback) -> void
+    {
+        m_key_callback = callback;
+        glfwSetKeyCallback(m_glfw_window, [](GLFWwindow *window, const i32 key, const i32 scancode, const i32 action,
+                                             const i32 mods) -> void
+        {
+            const auto *handle = static_cast<Handle *>(glfwGetWindowUserPointer(window));
+            handle->m_key_callback(static_cast<KeyboardButton>(key), static_cast<ButtonAction>(action),
+                                   static_cast<ButtonModifier>(mods));
+        });
+    }
+
+    auto Window::Handle::set_mouse_button_callback(const MouseButtonCallback &callback) -> void
+    {
+        m_mouse_callback = callback;
+        glfwSetMouseButtonCallback(m_glfw_window, [](GLFWwindow *window, const i32 button, const i32 action,
+                                                     const i32 mods) -> void
+        {
+            const auto *handle = static_cast<Handle *>(glfwGetWindowUserPointer(window));
+            handle->m_mouse_callback(static_cast<MouseButton>(button), static_cast<ButtonAction>(action),
+                                     static_cast<ButtonModifier>(mods));
+        });
+    }
+
+    auto Window::Handle::set_cursor_pos_callback(const CursorPosCallback &callback) -> void
+    {
+        m_cursor_pos_callback = callback;
+        glfwSetCursorPosCallback(m_glfw_window, [](GLFWwindow *window, const f64 x, const f64 y) -> void
+        {
+            const auto *handle = static_cast<Handle *>(glfwGetWindowUserPointer(window));
+            handle->m_cursor_pos_callback({static_cast<f32>(x), static_cast<f32>(y)});
         });
     }
 }

@@ -59,6 +59,8 @@ namespace mellohi
     template<typename T>
     using w_ptr = std::weak_ptr<T>;
 
+    template<typename K, typename V>
+    using hash_map = std::unordered_map<K, V>;
     using path = std::filesystem::path;
     template<typename... T>
     using tuple = std::tuple<T...>;

@@ -2,6 +2,7 @@
 
 #include <iostream>
 
+#include "mellohi/core/input.hpp"
 #include "mellohi/core/transform.hpp"
 #include "mellohi/graphics/camera.hpp"
 #include "mellohi/graphics/graphics.hpp"
@@ -29,6 +30,7 @@ namespace mellohi
 
         ecs.import<Transform>();
         ecs.import<Graphics>();
+        ecs.import<Input>();
         ecs.import<Camera>();
         ecs.import<Mesh>();
     }

@@ -2,6 +2,7 @@
 
 #include <GLFW/glfw3.h>
 
+#include "mellohi/core/buttons.hpp"
 #include "mellohi/core/types.hpp"
 
 namespace mellohi::glfw
@@ -10,6 +11,9 @@ namespace mellohi::glfw
     {
     public:
         using FramebufferSizeCallback = std::function<void(vec2u)>;
+        using KeyboardButtonCallback = std::function<void(KeyboardButton, ButtonAction, ButtonModifier)>;
+        using MouseButtonCallback = std::function<void(MouseButton, ButtonAction, ButtonModifier)>;
+        using CursorPosCallback = std::function<void(vec2f)>;
 
         Window(str title, vec2u initial_size);
 
@@ -30,6 +34,9 @@ namespace mellohi::glfw
         auto set_opacity(f32 opacity) const -> void;
 
         auto set_framebuffer_size_callback(const FramebufferSizeCallback &callback) const -> void;
+        auto set_keyboard_button_callback(const KeyboardButtonCallback &callback) const -> void;
+        auto set_mouse_button_callback(const MouseButtonCallback &callback) const -> void;
+        auto set_cursor_pos_callback(const CursorPosCallback &callback) const -> void;
 
         auto get_raw_ptr() const -> GLFWwindow *;
 
@@ -47,10 +54,16 @@ namespace mellohi::glfw
             operator GLFWwindow *() const;
 
             auto set_framebuffer_size_callback(const FramebufferSizeCallback &callback) -> void;
+            auto set_keyboard_button_callback(const KeyboardButtonCallback &callback) -> void;
+            auto set_mouse_button_callback(const MouseButtonCallback &callback) -> void;
+            auto set_cursor_pos_callback(const CursorPosCallback &callback) -> void;
 
         private:
             GLFWwindow *m_glfw_window{nullptr};
             FramebufferSizeCallback m_framebuffer_size_callback{nullptr};
+            KeyboardButtonCallback m_key_callback{nullptr};
+            MouseButtonCallback m_mouse_callback{nullptr};
+            CursorPosCallback m_cursor_pos_callback{nullptr};
         };
 
         s_ptr<Handle> m_handle{nullptr};

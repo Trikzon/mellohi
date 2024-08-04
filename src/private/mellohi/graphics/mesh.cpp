@@ -9,6 +9,11 @@
 
 namespace mellohi
 {
+    struct Uniforms
+    {
+        mat4x4f model;
+    };
+
     Mesh::Data::Data(const flecs::world &ecs, const AssetId &obj_file_id)
     {
         tinyobj::attrib_t attrib;

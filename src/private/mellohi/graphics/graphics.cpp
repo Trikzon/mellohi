@@ -20,7 +20,10 @@ namespace mellohi
         surface.configure(device, window.get_framebuffer_size(), false);
         window.set_framebuffer_size_callback([ecs](const vec2u size) -> void
         {
-            ecs.event<event::WindowResized>().id<glfw::Window>().entity(ecs.singleton<glfw::Window>()).ctx({size})
+            ecs.event<event::WindowResized>()
+                    .id<glfw::Window>()
+                    .entity(ecs.singleton<glfw::Window>())
+                    .ctx({size})
                     .emit();
         });
 
