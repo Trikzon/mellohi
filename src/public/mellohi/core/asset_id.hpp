@@ -1,5 +1,7 @@
 #pragma once
 
+#include <functional>
+
 #include "mellohi/core/types.hpp"
 
 namespace mellohi
@@ -26,3 +28,14 @@ namespace mellohi
         string m_namespace{}, m_path{};
     };
 }
+
+// ===== Template Definitions ===== //
+
+template<>
+struct std::hash<mellohi::AssetId>
+{
+    size_t operator()(const mellohi::AssetId &asset_id) const noexcept
+    {
+        return std::hash<string>{}(asset_id.get_fully_qualified_id());
+    }
+};
