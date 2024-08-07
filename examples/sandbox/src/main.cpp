@@ -16,7 +16,7 @@ auto main() -> int
     world.entity("Mesh").is_a<prefabs::Mesh>()
             .set<Mesh>({.asset_id = AssetId{"sandbox:models/teapot.obj"}})
             .set<Scale>(vec3f{0.25f})
-            .set<Position>({0.0f, 1.5f, 0.0f});
+            .set<Position>({0.0f, -0.5f, 0.0f});
     world.entity("Mesh2").is_a<prefabs::Mesh>().set<Position>({1.0f, 0.0f, 0.0f});
 
     world.system<Rotation>("RotateMesh")

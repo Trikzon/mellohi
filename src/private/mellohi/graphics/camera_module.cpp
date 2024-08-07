@@ -28,9 +28,17 @@ namespace mellohi
         bind_group->add_binding(0, sizeof(CameraUniforms));
 
         world.prefab<prefabs::Camera>("prefabs::Camera")
-                .is_a<prefabs::Transform>()
+                .emplace<Position>()
+                .emplace<Rotation>(1.0f, 0.0f, 0.0f, 0.0f)
+                .emplace<Transform>()
                 .emplace<CameraUniforms>(graphics.window->get_framebuffer_size(), mat4x4f{1.0f})
                 .add<tags::CurrentCamera>();
+
+        world.system<const Position, const Rotation, Transform>("systems::UpdateTransformMatrix")
+                .term_at(2).out()
+                .with<CameraUniforms>()
+                .kind<phases::PreUpdate>()
+                .run(systems::update_camera_transform_matrix);
 
         world.system<const Transform, CameraUniforms>("systems::BindCamera")
                 .with<tags::CurrentCamera>()
@@ -57,6 +65,29 @@ namespace mellohi
 
     namespace systems
     {
+        auto update_camera_transform_matrix(flecs::iter &it) -> void
+        {
+            while (it.next())
+            {
+                if (!it.changed())
+                {
+                    continue;
+                }
+
+                const auto position = it.field<const Position>(0);
+                const auto rotation = it.field<const Rotation>(1);
+                const auto transform = it.field<Transform>(2);
+
+                for (const auto i: it)
+                {
+                    const mat4x4f t = glm::translate(mat4x4f{1.0f}, -position[i]);
+                    const mat4x4f r = glm::toMat4(rotation[i]);
+
+                    transform[i] = r * t;
+                }
+            }
+        }
+
         auto bind_camera(flecs::iter &it) -> void
         {
             const auto &camera = it.world().ensure<CameraModule>();

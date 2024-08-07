@@ -41,11 +41,11 @@ namespace mellohi
 
                 for (const auto i: it)
                 {
-                    const mat4x4f t = glm::translate(mat4x4f{1.0f}, -position[i]);
+                    const mat4x4f t = glm::translate(mat4x4f{1.0f}, position[i]);
                     const mat4x4f r = glm::toMat4(rotation[i]);
                     const mat4x4f s = glm::scale(mat4x4f{1.0f}, scale[i]);
 
-                    transform[i] = s * r * t;
+                    transform[i] = t * r * s;
                 }
             }
         }

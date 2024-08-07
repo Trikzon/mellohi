@@ -37,6 +37,7 @@ namespace mellohi
 
     namespace systems
     {
+        auto update_camera_transform_matrix(flecs::iter &it) -> void;
         auto bind_camera(flecs::iter &it) -> void;
 
         auto on_framebuffer_resized(events::FramebufferResized event, CameraUniforms &camera_uniforms) -> void;
