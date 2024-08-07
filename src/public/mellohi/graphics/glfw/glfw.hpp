@@ -13,7 +13,7 @@ namespace mellohi::glfw
         auto operator=(const Glfw &other) -> Glfw & = delete;
         auto operator=(Glfw &&other) -> Glfw & = delete;
 
-        static auto get_instance() -> Glfw &;
+        static auto get() -> Glfw &;
 
         auto get_time() const -> f64;
 

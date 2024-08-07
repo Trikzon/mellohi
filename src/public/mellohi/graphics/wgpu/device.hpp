@@ -16,11 +16,13 @@ namespace mellohi::wgpu
 
         auto tick() const -> void;
 
+        auto get_adapter() const -> Adapter &;
         auto get_limits() const -> WGPULimits;
 
         auto get_raw_ptr() const -> WGPUDevice;
 
     private:
+        s_ptr<Adapter> m_adapter;
         WGPUDevice m_wgpu_device{nullptr};
     };
 }

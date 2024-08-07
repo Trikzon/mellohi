@@ -4,23 +4,27 @@
 
 namespace mellohi
 {
-    namespace phase
+    namespace phases
     {
         struct PreTick {};
 
         struct PreUpdate {};
 
+        struct Update {};
+
         struct PreRender {};
 
         struct Render {};
+
+        struct RenderImGui {};
 
         struct PostRender {};
 
         struct PostTick {};
     }
 
-    struct Engine
+    struct EngineModule
     {
-        explicit Engine(flecs::world &ecs);
+        explicit EngineModule(flecs::world &world);
     };
 }

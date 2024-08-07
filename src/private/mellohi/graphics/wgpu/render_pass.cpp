@@ -8,6 +8,7 @@ namespace mellohi::wgpu
     RenderPass::RenderPass(const Device &device, const Surface &surface, const vec2u framebuffer_size,
                            const vec3f clear_color)
     {
+        m_stats = std::make_shared<Stats>();
         m_device = std::make_shared<Device>(device);
         m_command_encoder = std::make_shared<CommandEncoder>(device, "Mellohi Render Pass Command Encoder");
 
@@ -101,6 +102,7 @@ namespace mellohi::wgpu
 
     RenderPass::RenderPass(const RenderPass &other)
     {
+        m_stats = other.m_stats;
         m_device = other.m_device;
         m_command_encoder = other.m_command_encoder;
 
@@ -113,6 +115,7 @@ namespace mellohi::wgpu
 
     RenderPass::RenderPass(RenderPass &&other) noexcept
     {
+        std::swap(m_stats, other.m_stats);
         std::swap(m_device, other.m_device);
         std::swap(m_command_encoder, other.m_command_encoder);
         std::swap(m_wgpu_render_pass_encoder, other.m_wgpu_render_pass_encoder);
@@ -122,6 +125,7 @@ namespace mellohi::wgpu
     {
         if (this != &other)
         {
+            m_stats = other.m_stats;
             m_device = other.m_device;
             m_command_encoder = other.m_command_encoder;
 
@@ -144,6 +148,7 @@ namespace mellohi::wgpu
     {
         if (this != &other)
         {
+            std::swap(m_stats, other.m_stats);
             std::swap(m_device, other.m_device);
             std::swap(m_command_encoder, other.m_command_encoder);
             std::swap(m_wgpu_render_pass_encoder, other.m_wgpu_render_pass_encoder);
@@ -154,11 +159,15 @@ namespace mellohi::wgpu
 
     auto RenderPass::draw(const u32 vertex_count) const -> void
     {
+        m_stats->draw_call_count += 1;
+        m_stats->triangle_count += vertex_count / 3;
         wgpuRenderPassEncoderDraw(m_wgpu_render_pass_encoder, vertex_count, 1, 0, 0);
     }
 
     auto RenderPass::draw_indexed(const u32 index_count) const -> void
     {
+        m_stats->draw_call_count += 1;
+        m_stats->triangle_count += index_count / 3;
         wgpuRenderPassEncoderDrawIndexed(m_wgpu_render_pass_encoder, index_count, 1, 0, 0, 0);
     }
 
@@ -194,6 +203,16 @@ namespace mellohi::wgpu
         const CommandBuffer command_buffer{*m_command_encoder, "Mellohi Render Pass Command Buffer"};
         const Queue queue{*m_device};
         queue.submit(command_buffer);
+    }
+
+    auto RenderPass::get_draw_call_count() const -> usize
+    {
+        return m_stats->draw_call_count;
+    }
+
+    auto RenderPass::get_triangle_count() const -> usize
+    {
+        return m_stats->triangle_count;
     }
 
     auto RenderPass::get_raw_ptr() const -> WGPURenderPassEncoder

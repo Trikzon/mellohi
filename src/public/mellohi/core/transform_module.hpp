@@ -11,7 +11,7 @@ namespace mellohi
         using vec3f::vec3f;
         using vec3f::operator=;
 
-        Position(const vec3f &q) : vec3f(q) {};
+        Position(const vec3f &q) : vec3f(q) {}
     };
 
     struct Rotation : quat
@@ -19,7 +19,7 @@ namespace mellohi
         using quat::quat;
         using quat::operator=;
 
-        Rotation(const quat &q) : quat(q) {};
+        Rotation(const quat &q) : quat(q) {}
     };
 
     struct Scale : vec3f
@@ -27,23 +27,29 @@ namespace mellohi
         using vec3f::vec3f;
         using vec3f::operator=;
 
-        Scale(const vec3f &q) : vec3f(q) {};
+        Scale(const vec3f &q) : vec3f(q) {}
     };
 
-    struct TransformMatrix : mat4x4f
+    struct Transform : mat4x4f
     {
         using mat4x4f::mat4x4f;
         using mat4x4f::operator=;
 
-        TransformMatrix(const mat4x4f &q) : mat4x4f(q) {};
+        Transform(const mat4x4f &q) : mat4x4f(q) {}
     };
 
-    struct Transform
+    namespace prefabs
     {
-        struct Prefab {};
+        struct Transform {};
+    }
 
-        Transform(const flecs::world &ecs);
-
-        static auto update_transform_matrix(flecs::iter &it) -> void;
+    struct TransformModule
+    {
+        explicit TransformModule(const flecs::world &world);
     };
+
+    namespace systems
+    {
+        static auto update_transform_matrix(flecs::iter &it) -> void;
+    }
 }

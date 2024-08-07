@@ -10,10 +10,12 @@ namespace mellohi::glfw
     class Window
     {
     public:
-        using FramebufferSizeCallback = std::function<void(vec2u)>;
-        using KeyboardButtonCallback = std::function<void(KeyboardButton, ButtonAction, ButtonModifier)>;
-        using MouseButtonCallback = std::function<void(MouseButton, ButtonAction, ButtonModifier)>;
-        using CursorPosCallback = std::function<void(vec2f)>;
+        using FramebufferSizeCallback = std::function<void(vec2u framebuffer_size)>;
+        using KeyboardButtonCallback = std::function<void(KeyboardButton button, ButtonAction action,
+                                                          ButtonModifier modifier)>;
+        using MouseButtonCallback = std::function<void(MouseButton button, ButtonAction action,
+                                                       ButtonModifier modifier)>;
+        using CursorPosCallback = std::function<void(vec2f cursor_pos)>;
 
         Window(str title, vec2u initial_size);
 
@@ -61,8 +63,8 @@ namespace mellohi::glfw
         private:
             GLFWwindow *m_glfw_window{nullptr};
             FramebufferSizeCallback m_framebuffer_size_callback{nullptr};
-            KeyboardButtonCallback m_key_callback{nullptr};
-            MouseButtonCallback m_mouse_callback{nullptr};
+            KeyboardButtonCallback m_keyboard_button_callback{nullptr};
+            MouseButtonCallback m_mouse_button_callback{nullptr};
             CursorPosCallback m_cursor_pos_callback{nullptr};
         };
 

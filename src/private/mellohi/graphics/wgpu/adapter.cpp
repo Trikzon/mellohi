@@ -1,6 +1,7 @@
 #include "mellohi/graphics/wgpu/adapter.hpp"
 
 #include "mellohi/core/log.hpp"
+#include "mellohi/core/types.hpp"
 
 namespace mellohi::wgpu
 {
@@ -10,7 +11,7 @@ namespace mellohi::wgpu
         {
             .nextInChain = nullptr,
             .compatibleSurface = surface.get_raw_ptr(),
-            .powerPreference = WGPUPowerPreference_HighPerformance,
+            // .powerPreference = WGPUPowerPreference_HighPerformance,
             // .backendType = ,
             // .forceFallbackAdapter = ,
             // .compatibilityMode = ,
@@ -99,6 +100,15 @@ namespace mellohi::wgpu
 
         return supported_limits.limits;
     }
+
+    auto Adapter::get_properties() const -> WGPUAdapterProperties
+    {
+        WGPUAdapterProperties adapter_properties{};
+        wgpuAdapterGetProperties(m_wgpu_adapter, &adapter_properties);
+
+        return adapter_properties;
+    }
+
 
     auto Adapter::get_raw_ptr() const -> WGPUAdapter
     {

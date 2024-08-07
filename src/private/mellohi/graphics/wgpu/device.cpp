@@ -1,11 +1,14 @@
 #include "mellohi/graphics/wgpu/device.hpp"
 
 #include "mellohi/core/log.hpp"
+#include "mellohi/core/types.hpp"
 
 namespace mellohi::wgpu
 {
     Device::Device(const Adapter &adapter, const WGPULimits &limits)
     {
+        m_adapter = std::make_shared<Adapter>(adapter);
+
         const WGPURequiredLimits required_limits
         {
             .nextInChain = nullptr,
@@ -70,6 +73,8 @@ namespace mellohi::wgpu
 
     Device::Device(const Device &other)
     {
+        m_adapter = other.m_adapter;
+
         m_wgpu_device = other.m_wgpu_device;
         if (m_wgpu_device != nullptr)
         {
@@ -79,6 +84,7 @@ namespace mellohi::wgpu
 
     Device::Device(Device &&other) noexcept
     {
+        std::swap(m_adapter, other.m_adapter);
         std::swap(m_wgpu_device, other.m_wgpu_device);
     }
 
@@ -86,6 +92,8 @@ namespace mellohi::wgpu
     {
         if (this != &other)
         {
+            m_adapter = other.m_adapter;
+
             if (m_wgpu_device != nullptr)
             {
                 wgpuDeviceRelease(m_wgpu_device);
@@ -105,6 +113,7 @@ namespace mellohi::wgpu
     {
         if (this != &other)
         {
+            std::swap(m_adapter, other.m_adapter);
             std::swap(m_wgpu_device, other.m_wgpu_device);
         }
 
@@ -114,6 +123,11 @@ namespace mellohi::wgpu
     auto Device::tick() const -> void
     {
         wgpuDeviceTick(m_wgpu_device);
+    }
+
+    auto Device::get_adapter() const -> Adapter &
+    {
+        return *m_adapter;
     }
 
     auto Device::get_limits() const -> WGPULimits

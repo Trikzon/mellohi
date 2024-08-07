@@ -15,6 +15,7 @@ namespace mellohi::wgpu
         auto operator=(Adapter &&other) noexcept -> Adapter &;
 
         auto get_limits() const -> WGPULimits;
+        auto get_properties() const -> WGPUAdapterProperties;
 
         auto get_raw_ptr() const -> WGPUAdapter;
 

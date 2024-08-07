@@ -25,9 +25,19 @@ namespace mellohi::wgpu
 
         auto end() const -> void;
 
+        auto get_draw_call_count() const -> usize;
+        auto get_triangle_count() const -> usize;
+
         auto get_raw_ptr() const -> WGPURenderPassEncoder;
 
     private:
+        struct Stats
+        {
+            usize draw_call_count{0};
+            usize triangle_count{0};
+        };
+
+        s_ptr<Stats> m_stats{nullptr};
         s_ptr<Device> m_device{nullptr};
         s_ptr<CommandEncoder> m_command_encoder{nullptr};
         WGPURenderPassEncoder m_wgpu_render_pass_encoder{nullptr};

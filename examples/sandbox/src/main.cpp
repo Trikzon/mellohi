@@ -4,23 +4,27 @@ using namespace mellohi;
 
 auto main() -> int
 {
-    flecs::world ecs;
+    flecs::world world;
 
-    ecs.import<Engine>();
+    world.import<flecs::stats>();
+    world.set<flecs::Rest>({});
 
-    ecs.entity()
-            .emplace<Mesh::Data>(ecs, AssetId{"mellohi:models/regular_cube.obj"});
+    world.import<EngineModule>();
 
-    ecs.system<const Input>()
-            .term_at(0).singleton()
-            .kind<phase::PreUpdate>()
-            .each([](const Input &input)
+    world.entity("Camera").is_a<prefabs::Camera>().set<Position>({0.0f, 0.0f, -3.0f});
+
+    world.entity("Mesh").is_a<prefabs::Mesh>()
+            .set<Mesh>({.asset_id = AssetId{"sandbox:models/teapot.obj"}})
+            .set<Scale>(vec3f{0.25f})
+            .set<Position>({0.0f, 1.5f, 0.0f});
+    world.entity("Mesh2").is_a<prefabs::Mesh>().set<Position>({1.0f, 0.0f, 0.0f});
+
+    world.system<Rotation>("RotateMesh")
+            .with<Mesh>()
+            .each([](const flecs::iter &it, const usize i, Rotation &rotation)
             {
-                if (input.is_just_pressed(MouseButton::Left))
-                {
-                    MH_INFO("Left Pressed!");
-                }
+                rotation *= glm::angleAxis(glm::radians(10.0f) * it.delta_time(), vec3f{0.0f, 1.0f, 0.0f});
             });
 
-    while (ecs.progress());
+    while (world.progress()) {}
 }

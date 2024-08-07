@@ -10,7 +10,7 @@ namespace mellohi::glfw
         MH_ASSERT(initial_size.x < std::numeric_limits<i32>::max() && initial_size.y < std::numeric_limits<i32>::max(),
                   "Window size is too large.");
 
-        Glfw::get_instance();
+        Glfw::get();
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
@@ -121,10 +121,22 @@ namespace mellohi::glfw
             m_framebuffer_size_callback = nullptr;
         }
 
-        if (m_key_callback != nullptr)
+        if (m_keyboard_button_callback != nullptr)
         {
             glfwSetKeyCallback(m_glfw_window, nullptr);
-            m_key_callback = nullptr;
+            m_keyboard_button_callback = nullptr;
+        }
+
+        if (m_mouse_button_callback != nullptr)
+        {
+            glfwSetMouseButtonCallback(m_glfw_window, nullptr);
+            m_mouse_button_callback = nullptr;
+        }
+
+        if (m_cursor_pos_callback != nullptr)
+        {
+            glfwSetCursorPosCallback(m_glfw_window, nullptr);
+            m_cursor_pos_callback = nullptr;
         }
 
         if (m_glfw_window != nullptr)
@@ -153,25 +165,25 @@ namespace mellohi::glfw
 
     auto Window::Handle::set_keyboard_button_callback(const KeyboardButtonCallback &callback) -> void
     {
-        m_key_callback = callback;
+        m_keyboard_button_callback = callback;
         glfwSetKeyCallback(m_glfw_window, [](GLFWwindow *window, const i32 key, const i32 scancode, const i32 action,
                                              const i32 mods) -> void
         {
             const auto *handle = static_cast<Handle *>(glfwGetWindowUserPointer(window));
-            handle->m_key_callback(static_cast<KeyboardButton>(key), static_cast<ButtonAction>(action),
-                                   static_cast<ButtonModifier>(mods));
+            handle->m_keyboard_button_callback(static_cast<KeyboardButton>(key), static_cast<ButtonAction>(action),
+                                               static_cast<ButtonModifier>(mods));
         });
     }
 
     auto Window::Handle::set_mouse_button_callback(const MouseButtonCallback &callback) -> void
     {
-        m_mouse_callback = callback;
+        m_mouse_button_callback = callback;
         glfwSetMouseButtonCallback(m_glfw_window, [](GLFWwindow *window, const i32 button, const i32 action,
                                                      const i32 mods) -> void
         {
             const auto *handle = static_cast<Handle *>(glfwGetWindowUserPointer(window));
-            handle->m_mouse_callback(static_cast<MouseButton>(button), static_cast<ButtonAction>(action),
-                                     static_cast<ButtonModifier>(mods));
+            handle->m_mouse_button_callback(static_cast<MouseButton>(button), static_cast<ButtonAction>(action),
+                                            static_cast<ButtonModifier>(mods));
         });
     }
 

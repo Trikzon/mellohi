@@ -1,5 +1,6 @@
 #pragma once
 
+#include <deque>
 #include <filesystem>
 #include <string>
 #include <string_view>
@@ -59,11 +60,11 @@ namespace mellohi
     template<typename T>
     using w_ptr = std::weak_ptr<T>;
 
+    using std::deque;
     template<typename K, typename V>
     using hash_map = std::unordered_map<K, V>;
-    using path = std::filesystem::path;
-    template<typename... T>
-    using tuple = std::tuple<T...>;
-    template<typename T>
-    using vector = std::vector<T>;
+    using std::optional;
+    using std::filesystem::path;
+    using std::tuple;
+    using std::vector;
 }

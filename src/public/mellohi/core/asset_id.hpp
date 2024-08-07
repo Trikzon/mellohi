@@ -29,12 +29,12 @@ namespace mellohi
     };
 }
 
-// ===== Template Definitions ===== //
+// ==== Template Definitions ==== //
 
 template<>
 struct std::hash<mellohi::AssetId>
 {
-    size_t operator()(const mellohi::AssetId &asset_id) const noexcept
+    auto operator()(const mellohi::AssetId &asset_id) const noexcept -> size_t
     {
         return std::hash<string>{}(asset_id.get_fully_qualified_id());
     }

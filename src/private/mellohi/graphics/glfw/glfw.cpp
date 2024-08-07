@@ -12,7 +12,7 @@ namespace mellohi::glfw
         glfwTerminate();
     }
 
-    auto Glfw::get_instance() -> Glfw &
+    auto Glfw::get() -> Glfw &
     {
         static Glfw instance;
         return instance;
