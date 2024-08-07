@@ -17,13 +17,9 @@ namespace mellohi
         f32 delta_time_avg{0};
 
         explicit PerformanceHudModule(flecs::world &world);
-    };
 
-    namespace systems
-    {
-        auto track_delta_time(const flecs::iter &it, usize, PerformanceHudModule &performance_hud) -> void;
-        auto calculate_delta_time_avg(PerformanceHudModule &performance_hud) -> void;
-        auto render_performance_hud(const GraphicsModule &graphics,
-                                    const PerformanceHudModule &performance_hud) -> void;
-    }
+        static auto track_delta_time(const flecs::iter &it, usize, PerformanceHudModule &performance_hud) -> void;
+        static auto calculate_delta_time_avg(PerformanceHudModule &performance_hud) -> void;
+        static auto render(const GraphicsModule &graphics, const PerformanceHudModule &performance_hud) -> void;
+    };
 }

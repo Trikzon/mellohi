@@ -33,13 +33,10 @@ namespace mellohi
         s_ptr<wgpu::BindGroup> bind_group;
 
         explicit CameraModule(flecs::world &world);
+
+        static auto update_camera_transform_matrix(flecs::iter &it) -> void;
+        static auto bind_camera(flecs::iter &it) -> void;
+
+        static auto on_framebuffer_resized(events::FramebufferResized event, CameraUniforms &camera_uniforms) -> void;
     };
-
-    namespace systems
-    {
-        auto update_camera_transform_matrix(flecs::iter &it) -> void;
-        auto bind_camera(flecs::iter &it) -> void;
-
-        auto on_framebuffer_resized(events::FramebufferResized event, CameraUniforms &camera_uniforms) -> void;
-    }
 }

@@ -34,23 +34,22 @@ namespace mellohi
         struct Mesh {};
     }
 
-    struct MeshModule
+    class MeshModule
     {
-        s_ptr<wgpu::Device> device{nullptr};
-        s_ptr<wgpu::BindGroup> camera_bind_group{nullptr}, model_bind_group{nullptr};
-        s_ptr<wgpu::ShaderModule> shader_module{nullptr};
-        hash_map<AssetId, MeshData> mesh_data{};
-        usize dynamic_mesh_index{0};
-
+    public:
         explicit MeshModule(flecs::world &world);
 
         auto get_mesh_data(const AssetId &asset_id) -> MeshData &;
-    };
 
-    namespace systems
-    {
-        auto reset_dynamic_mesh_index(MeshModule &mesh) -> void;
-        auto render(const GraphicsModule &graphics, MeshModule &mesh_module, const Transform &transform,
-                    const Mesh &mesh) -> void;
-    }
+    private:
+        s_ptr<wgpu::Device> m_device{nullptr};
+        s_ptr<wgpu::BindGroup> m_camera_bind_group{nullptr}, m_model_bind_group{nullptr};
+        s_ptr<wgpu::ShaderModule> m_shader_module{nullptr};
+        hash_map<AssetId, MeshData> m_mesh_data{};
+        usize m_dynamic_mesh_index{0};
+
+        static auto reset_dynamic_mesh_index(MeshModule &mesh) -> void;
+        static auto render(const GraphicsModule &graphics, MeshModule &mesh_module, const Transform &transform,
+                           const Mesh &mesh) -> void;
+    };
 }

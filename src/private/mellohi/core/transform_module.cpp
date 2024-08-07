@@ -20,33 +20,30 @@ namespace mellohi
         world.system<const Position, const Rotation, const Scale, Transform>("systems::UpdateTransformMatrix")
                 .term_at(3).out()
                 .kind<phases::PreUpdate>()
-                .run(systems::update_transform_matrix);
+                .run(update_transform_matrix);
     }
 
-    namespace systems
+    auto TransformModule::update_transform_matrix(flecs::iter &it) -> void
     {
-        auto update_transform_matrix(flecs::iter &it) -> void
+        while (it.next())
         {
-            while (it.next())
+            if (!it.changed())
             {
-                if (!it.changed())
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                const auto position = it.field<const Position>(0);
-                const auto rotation = it.field<const Rotation>(1);
-                const auto scale = it.field<const Scale>(2);
-                const auto transform = it.field<Transform>(3);
+            const auto position = it.field<const Position>(0);
+            const auto rotation = it.field<const Rotation>(1);
+            const auto scale = it.field<const Scale>(2);
+            const auto transform = it.field<Transform>(3);
 
-                for (const auto i: it)
-                {
-                    const mat4x4f t = glm::translate(mat4x4f{1.0f}, position[i]);
-                    const mat4x4f r = glm::toMat4(rotation[i]);
-                    const mat4x4f s = glm::scale(mat4x4f{1.0f}, scale[i]);
+            for (const auto i: it)
+            {
+                const mat4x4f t = glm::translate(mat4x4f{1.0f}, position[i]);
+                const mat4x4f r = glm::toMat4(rotation[i]);
+                const mat4x4f s = glm::scale(mat4x4f{1.0f}, scale[i]);
 
-                    transform[i] = t * r * s;
-                }
+                transform[i] = t * r * s;
             }
         }
     }

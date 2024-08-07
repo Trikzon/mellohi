@@ -47,46 +47,46 @@ namespace mellohi
         world.system<InputModule>("systems::ClearImmediateState")
                 .term_at(0).singleton()
                 .kind<phases::PostTick>()
-                .each(systems::clear_immediate_state);
+                .each(clear_immediate_state);
 
         world.observer<InputModule>("observers::OnKeyboardButtonPressed")
                 .term_at(0).singleton()
                 .event<events::KeyboardButtonPressed>()
-                .each(systems::on_keyboard_button_pressed);
+                .each(on_keyboard_button_pressed);
 
         world.observer<InputModule>("observers::OnMouseButtonPressed")
                 .term_at(0).singleton()
                 .event<events::MouseButtonPressed>()
-                .each(systems::on_mouse_button_pressed);
+                .each(on_mouse_button_pressed);
 
         world.observer<InputModule>("observers::OnCursorMoved")
                 .term_at(0).singleton()
                 .event<events::CursorMoved>()
-                .each(systems::on_cursor_moved);
+                .each(on_cursor_moved);
     }
 
     auto InputModule::is_pressed(const KeyboardButton button) const -> bool
     {
-        const auto it = keyboard_state.find(button);
-        return it != keyboard_state.end() && it->second;
+        const auto it = m_keyboard_state.find(button);
+        return it != m_keyboard_state.end() && it->second;
     }
 
     auto InputModule::is_pressed(const MouseButton button) const -> bool
     {
-        const auto it = mouse_state.find(button);
-        return it != mouse_state.end() && it->second;
+        const auto it = m_mouse_state.find(button);
+        return it != m_mouse_state.end() && it->second;
     }
 
     auto InputModule::is_just_pressed(const KeyboardButton button) const -> bool
     {
-        const auto it = immediate_keyboard_state.find(button);
-        return it != immediate_keyboard_state.end() && it->second;
+        const auto it = m_immediate_keyboard_state.find(button);
+        return it != m_immediate_keyboard_state.end() && it->second;
     }
 
     auto InputModule::is_just_pressed(const MouseButton button) const -> bool
     {
-        const auto it = immediate_mouse_state.find(button);
-        return it != immediate_mouse_state.end() && it->second;
+        const auto it = m_immediate_mouse_state.find(button);
+        return it != m_immediate_mouse_state.end() && it->second;
     }
 
     auto InputModule::get_vector(const KeyboardButton neg_x, const KeyboardButton pos_x, const KeyboardButton neg_y,
@@ -104,38 +104,35 @@ namespace mellohi
 
     auto InputModule::get_cursor_pos() const -> vec2f
     {
-        return cursor_pos;
+        return m_cursor_pos;
     }
 
-    namespace systems
+    auto InputModule::clear_immediate_state(InputModule &input) -> void
     {
-        auto clear_immediate_state(InputModule &input) -> void
-        {
-            input.immediate_keyboard_state.clear();
-            input.immediate_mouse_state.clear();
-        }
+        input.m_immediate_keyboard_state.clear();
+        input.m_immediate_mouse_state.clear();
+    }
 
-        auto on_keyboard_button_pressed(flecs::iter &it, usize, InputModule &input) -> void
-        {
-            const auto *event = static_cast<events::KeyboardButtonPressed *>(it.param());
+    auto InputModule::on_keyboard_button_pressed(flecs::iter &it, usize, InputModule &input) -> void
+    {
+        const auto *event = static_cast<events::KeyboardButtonPressed *>(it.param());
 
-            input.keyboard_state[event->button] = event->action != ButtonAction::Release;
-            input.immediate_keyboard_state[event->button] = event->action == ButtonAction::Press;
-        }
+        input.m_keyboard_state[event->button] = event->action != ButtonAction::Release;
+        input.m_immediate_keyboard_state[event->button] = event->action == ButtonAction::Press;
+    }
 
-        auto on_mouse_button_pressed(flecs::iter &it, usize, InputModule &input) -> void
-        {
-            const auto *event = static_cast<events::MouseButtonPressed *>(it.param());
+    auto InputModule::on_mouse_button_pressed(flecs::iter &it, usize, InputModule &input) -> void
+    {
+        const auto *event = static_cast<events::MouseButtonPressed *>(it.param());
 
-            input.mouse_state[event->button] = event->action != ButtonAction::Release;
-            input.immediate_mouse_state[event->button] = event->action == ButtonAction::Press;
-        }
+        input.m_mouse_state[event->button] = event->action != ButtonAction::Release;
+        input.m_immediate_mouse_state[event->button] = event->action == ButtonAction::Press;
+    }
 
-        auto on_cursor_moved(flecs::iter &it, usize, InputModule &input) -> void
-        {
-            const auto *event = static_cast<events::CursorMoved *>(it.param());
+    auto InputModule::on_cursor_moved(flecs::iter &it, usize, InputModule &input) -> void
+    {
+        const auto *event = static_cast<events::CursorMoved *>(it.param());
 
-            input.cursor_pos = event->cursor_pos;
-        }
+        input.m_cursor_pos = event->cursor_pos;
     }
 }

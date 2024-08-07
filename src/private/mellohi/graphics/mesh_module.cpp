@@ -101,11 +101,11 @@ namespace mellohi
         const auto &camera = world.ensure<CameraModule>();
         const auto &graphics = world.ensure<GraphicsModule>();
 
-        device = graphics.device;
-        camera_bind_group = camera.bind_group;
-        model_bind_group = std::make_shared<wgpu::BindGroup>(*graphics.device, "Model Bind Group");
-        model_bind_group->add_binding(0, sizeof(MeshUniforms));
-        shader_module = std::make_shared<wgpu::ShaderModule>(*graphics.device, AssetId{"mellohi:shaders/mesh.wgsl"});
+        m_device = graphics.device;
+        m_camera_bind_group = camera.bind_group;
+        m_model_bind_group = std::make_shared<wgpu::BindGroup>(*graphics.device, "Model Bind Group");
+        m_model_bind_group->add_binding(0, sizeof(MeshUniforms));
+        m_shader_module = std::make_shared<wgpu::ShaderModule>(*graphics.device, AssetId{"mellohi:shaders/mesh.wgsl"});
 
         world.prefab<prefabs::Mesh>("prefabs::Mesh")
                 .is_a<prefabs::Transform>()
@@ -113,52 +113,49 @@ namespace mellohi
 
         world.system<MeshModule>("systems::ResetDynamicMeshIndex")
                 .kind<phases::PreRender>()
-                .each(systems::reset_dynamic_mesh_index);
+                .each(reset_dynamic_mesh_index);
 
         world.system<const GraphicsModule, MeshModule, const Transform, const Mesh>("systems::Render")
                 .term_at(0).singleton()
                 .term_at(1).singleton()
                 .kind<phases::Render>()
-                .each(systems::render);
+                .each(render);
     }
 
     auto MeshModule::get_mesh_data(const AssetId &asset_id) -> MeshData &
     {
-        if (!mesh_data.contains(asset_id))
+        if (!m_mesh_data.contains(asset_id))
         {
-            mesh_data.insert({
+            m_mesh_data.insert({
                 asset_id,
-                MeshData{*device, *shader_module, vector{*camera_bind_group, *model_bind_group}, asset_id}
+                MeshData{*m_device, *m_shader_module, vector{*m_camera_bind_group, *m_model_bind_group}, asset_id}
             });
         }
 
-        const auto it = mesh_data.find(asset_id);
+        const auto it = m_mesh_data.find(asset_id);
         return it->second;
     }
 
-    namespace systems
+    auto MeshModule::reset_dynamic_mesh_index(MeshModule &mesh) -> void
     {
-        auto reset_dynamic_mesh_index(MeshModule &mesh) -> void
-        {
-            mesh.dynamic_mesh_index = 0;
-        }
+        mesh.m_dynamic_mesh_index = 0;
+    }
 
-        auto render(const GraphicsModule &graphics, MeshModule &mesh_module, const Transform &transform,
-                    const Mesh &mesh) -> void
-        {
-            const auto &mesh_data = mesh_module.get_mesh_data(mesh.asset_id);
+    auto MeshModule::render(const GraphicsModule &graphics, MeshModule &mesh_module, const Transform &transform,
+                            const Mesh &mesh) -> void
+    {
+        const auto &mesh_data = mesh_module.get_mesh_data(mesh.asset_id);
 
-            const MeshUniforms uniforms{
-                .model = transform
-            };
-            mesh_module.model_bind_group->write(0, mesh_module.dynamic_mesh_index, &uniforms, sizeof(MeshUniforms));
+        const MeshUniforms uniforms{
+            .model = transform
+        };
+        mesh_module.m_model_bind_group->write(0, mesh_module.m_dynamic_mesh_index, &uniforms, sizeof(MeshUniforms));
 
-            graphics.render_pass->set_bind_group(1, *mesh_module.model_bind_group, mesh_module.dynamic_mesh_index);
-            graphics.render_pass->set_pipeline(*mesh_data.render_pipeline);
-            graphics.render_pass->set_vertex_buffer(0, *mesh_data.vertex_buffer);
-            graphics.render_pass->draw(mesh_data.vertex_count);
+        graphics.render_pass->set_bind_group(1, *mesh_module.m_model_bind_group, mesh_module.m_dynamic_mesh_index);
+        graphics.render_pass->set_pipeline(*mesh_data.render_pipeline);
+        graphics.render_pass->set_vertex_buffer(0, *mesh_data.vertex_buffer);
+        graphics.render_pass->draw(mesh_data.vertex_count);
 
-            mesh_module.dynamic_mesh_index += 1;
-        }
+        mesh_module.m_dynamic_mesh_index += 1;
     }
 }

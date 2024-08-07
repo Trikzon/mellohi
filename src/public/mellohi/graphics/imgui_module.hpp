@@ -10,11 +10,8 @@ namespace mellohi
     {
         explicit ImGuiModule(flecs::world &world);
         ~ImGuiModule();
-    };
 
-    namespace systems
-    {
-        auto new_frame() -> void;
-        auto end_frame(const GraphicsModule &graphics) -> void;
-    }
+        static auto new_frame() -> void;
+        static auto end_frame(const GraphicsModule &graphics) -> void;
+    };
 }

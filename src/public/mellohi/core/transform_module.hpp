@@ -46,10 +46,7 @@ namespace mellohi
     struct TransformModule
     {
         explicit TransformModule(const flecs::world &world);
-    };
 
-    namespace systems
-    {
         static auto update_transform_matrix(flecs::iter &it) -> void;
-    }
+    };
 }

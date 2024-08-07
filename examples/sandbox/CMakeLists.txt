@@ -5,7 +5,6 @@ project(sandbox)
 file(GLOB_RECURSE SOURCE_FILES src/*.hpp src/*.cpp)
 
 add_executable(sandbox ${SOURCE_FILES})
-target_include_directories(sandbox PUBLIC include)
 
 target_link_libraries(sandbox PRIVATE mellohi)
 

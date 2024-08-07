@@ -22,15 +22,12 @@ namespace mellohi
         optional<wgpu::RenderPass> render_pass;
 
         explicit GraphicsModule(flecs::world &world);
+
+        static auto poll_events(const flecs::iter &it, usize, const GraphicsModule &graphics) -> void;
+        static auto create_render_pass(GraphicsModule &graphics) -> void;
+        static auto end_render_pass(GraphicsModule &graphics) -> void;
+        static auto present(const GraphicsModule &graphics) -> void;
+
+        static auto on_framebuffer_resized(flecs::iter &it, usize, const GraphicsModule &graphics) -> void;
     };
-
-    namespace systems
-    {
-        auto poll_events(const flecs::iter &it, usize, const GraphicsModule &graphics) -> void;
-        auto create_render_pass(GraphicsModule &graphics) -> void;
-        auto end_render_pass(GraphicsModule &graphics) -> void;
-        auto present(const GraphicsModule &graphics) -> void;
-
-        auto on_framebuffer_resized(flecs::iter &it, usize, const GraphicsModule &graphics) -> void;
-    }
 }

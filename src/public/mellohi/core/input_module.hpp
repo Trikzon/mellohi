@@ -28,14 +28,9 @@ namespace mellohi
         };
     }
 
-    struct InputModule
+    class InputModule
     {
-        hash_map<KeyboardButton, bool> keyboard_state{};
-        hash_map<KeyboardButton, bool> immediate_keyboard_state{};
-        hash_map<MouseButton, bool> mouse_state{};
-        hash_map<MouseButton, bool> immediate_mouse_state{};
-        vec2f cursor_pos{};
-
+    public:
         InputModule(flecs::world &world);
 
         auto is_pressed(KeyboardButton button) const -> bool;
@@ -45,14 +40,18 @@ namespace mellohi
         auto get_vector(KeyboardButton neg_x, KeyboardButton pos_x, KeyboardButton neg_y,
                         KeyboardButton pos_y) const -> vec2f;
         auto get_cursor_pos() const -> vec2f;
+
+    private:
+        hash_map<KeyboardButton, bool> m_keyboard_state{};
+        hash_map<KeyboardButton, bool> m_immediate_keyboard_state{};
+        hash_map<MouseButton, bool> m_mouse_state{};
+        hash_map<MouseButton, bool> m_immediate_mouse_state{};
+        vec2f m_cursor_pos{};
+
+        static auto clear_immediate_state(InputModule &input) -> void;
+
+        static auto on_keyboard_button_pressed(flecs::iter &it, usize, InputModule &input) -> void;
+        static auto on_mouse_button_pressed(flecs::iter &it, usize, InputModule &input) -> void;
+        static auto on_cursor_moved(flecs::iter &it, usize, InputModule &input) -> void;
     };
-
-    namespace systems
-    {
-        auto clear_immediate_state(InputModule &input) -> void;
-
-        auto on_keyboard_button_pressed(flecs::iter &it, usize, InputModule &input) -> void;
-        auto on_mouse_button_pressed(flecs::iter &it, usize, InputModule &input) -> void;
-        auto on_cursor_moved(flecs::iter &it, usize, InputModule &input) -> void;
-    }
 }

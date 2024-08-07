@@ -37,66 +37,63 @@ namespace mellohi
         world.system<const GraphicsModule>("systems::PollEvents")
                 .term_at(0).singleton()
                 .kind<phases::PreTick>()
-                .each(systems::poll_events);
+                .each(poll_events);
 
         world.system<GraphicsModule>("systems::CreateRenderPass")
                 .term_at(0).singleton()
                 .kind(create_render_pass_phase)
-                .each(systems::create_render_pass);
+                .each(create_render_pass);
 
         world.system<GraphicsModule>("systems::EndRenderPass")
                 .term_at(0).singleton()
                 .kind(end_render_pass_phase)
-                .each(systems::end_render_pass);
+                .each(end_render_pass);
 
         world.system<const GraphicsModule>("systems::Present")
                 .term_at(0).singleton()
                 .kind<phases::PostTick>()
-                .each(systems::present);
+                .each(present);
 
         world.observer<const GraphicsModule>("observers::OnFramebufferResized")
                 .term_at(0).singleton()
                 .event<events::FramebufferResized>()
-                .each(systems::on_framebuffer_resized);
+                .each(on_framebuffer_resized);
     }
 
-    namespace systems
+    auto GraphicsModule::poll_events(const flecs::iter &it, usize, const GraphicsModule &graphics) -> void
     {
-        auto poll_events(const flecs::iter &it, usize, const GraphicsModule &graphics) -> void
+        if (graphics.window->should_close())
         {
-            if (graphics.window->should_close())
-            {
-                it.world().quit();
-            }
-
-            glfw::Glfw::get().poll_events();
+            it.world().quit();
         }
 
-        auto create_render_pass(GraphicsModule &graphics) -> void
-        {
-            graphics.render_pass = wgpu::RenderPass{
-                *graphics.device, *graphics.surface, graphics.window->get_framebuffer_size(), vec3f{0.1f, 0.05f, 0.1f}
-            };
-        }
+        glfw::Glfw::get().poll_events();
+    }
 
-        auto end_render_pass(GraphicsModule &graphics) -> void
-        {
-            graphics.render_pass->end();
+    auto GraphicsModule::create_render_pass(GraphicsModule &graphics) -> void
+    {
+        graphics.render_pass = wgpu::RenderPass{
+            *graphics.device, *graphics.surface, graphics.window->get_framebuffer_size(), vec3f{0.1f, 0.05f, 0.1f}
+        };
+    }
 
-            graphics.render_pass.reset();
-        }
+    auto GraphicsModule::end_render_pass(GraphicsModule &graphics) -> void
+    {
+        graphics.render_pass->end();
 
-        auto present(const GraphicsModule &graphics) -> void
-        {
-            graphics.surface->present();
-            graphics.device->tick();
-        }
+        graphics.render_pass.reset();
+    }
 
-        auto on_framebuffer_resized(flecs::iter &it, usize, const GraphicsModule &graphics) -> void
-        {
-            const auto event = static_cast<events::FramebufferResized *>(it.param());
+    auto GraphicsModule::present(const GraphicsModule &graphics) -> void
+    {
+        graphics.surface->present();
+        graphics.device->tick();
+    }
 
-            graphics.surface->configure(*graphics.device, event->framebuffer_size, false);
-        }
+    auto GraphicsModule::on_framebuffer_resized(flecs::iter &it, usize, const GraphicsModule &graphics) -> void
+    {
+        const auto event = static_cast<events::FramebufferResized *>(it.param());
+
+        graphics.surface->configure(*graphics.device, event->framebuffer_size, false);
     }
 }

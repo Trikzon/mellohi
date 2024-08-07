@@ -38,12 +38,12 @@ namespace mellohi
                 .term_at(2).out()
                 .with<CameraUniforms>()
                 .kind<phases::PreUpdate>()
-                .run(systems::update_camera_transform_matrix);
+                .run(update_camera_transform_matrix);
 
         world.system<const Transform, CameraUniforms>("systems::BindCamera")
                 .with<tags::CurrentCamera>()
                 .kind<phases::PreRender>()
-                .run(systems::bind_camera);
+                .run(bind_camera);
 
         const auto camera_query = world.query_builder<CameraUniforms>("queries::CameraQuery")
                 .cached()
@@ -58,57 +58,55 @@ namespace mellohi
 
                     camera_query.each([event](CameraUniforms &camera_uniforms)
                     {
-                        systems::on_framebuffer_resized(*event, camera_uniforms);
+                        on_framebuffer_resized(*event, camera_uniforms);
                     });
                 });
     }
 
-    namespace systems
+    auto CameraModule::update_camera_transform_matrix(flecs::iter &it) -> void
     {
-        auto update_camera_transform_matrix(flecs::iter &it) -> void
+        while (it.next())
         {
-            while (it.next())
+            if (!it.changed())
             {
-                if (!it.changed())
-                {
-                    continue;
-                }
+                continue;
+            }
 
-                const auto position = it.field<const Position>(0);
-                const auto rotation = it.field<const Rotation>(1);
-                const auto transform = it.field<Transform>(2);
+            const auto position = it.field<const Position>(0);
+            const auto rotation = it.field<const Rotation>(1);
+            const auto transform = it.field<Transform>(2);
 
-                for (const auto i: it)
-                {
-                    const mat4x4f t = glm::translate(mat4x4f{1.0f}, -position[i]);
-                    const mat4x4f r = glm::toMat4(rotation[i]);
+            for (const auto i: it)
+            {
+                const mat4x4f t = glm::translate(mat4x4f{1.0f}, -position[i]);
+                const mat4x4f r = glm::toMat4(rotation[i]);
 
-                    transform[i] = r * t;
-                }
+                transform[i] = r * t;
             }
         }
+    }
 
-        auto bind_camera(flecs::iter &it) -> void
+    auto CameraModule::bind_camera(flecs::iter &it) -> void
+    {
+        const auto &camera = it.world().ensure<CameraModule>();
+        const auto &graphics = it.world().ensure<GraphicsModule>();
+
+        while (it.next())
         {
-            const auto &camera = it.world().ensure<CameraModule>();
-            const auto &graphics = it.world().ensure<GraphicsModule>();
+            const auto transform = it.field<const Transform>(0);
+            const auto camera_uniforms = it.field<CameraUniforms>(1);
 
-            while (it.next())
-            {
-                const auto transform = it.field<const Transform>(0);
-                const auto camera_uniforms = it.field<CameraUniforms>(1);
+            camera_uniforms->view = *transform;
 
-                camera_uniforms->view = *transform;
+            camera.bind_group->write(0, 0, &*camera_uniforms, sizeof(CameraUniforms));
 
-                camera.bind_group->write(0, 0, &*camera_uniforms, sizeof(CameraUniforms));
-
-                graphics.render_pass->set_bind_group(0, *camera.bind_group, 0);
-            }
+            graphics.render_pass->set_bind_group(0, *camera.bind_group, 0);
         }
+    }
 
-        auto on_framebuffer_resized(const events::FramebufferResized event, CameraUniforms &camera_uniforms) -> void
-        {
-            camera_uniforms = CameraUniforms(event.framebuffer_size, camera_uniforms.view);
-        }
+    auto CameraModule::on_framebuffer_resized(const events::FramebufferResized event,
+                                              CameraUniforms &camera_uniforms) -> void
+    {
+        camera_uniforms = CameraUniforms(event.framebuffer_size, camera_uniforms.view);
     }
 }

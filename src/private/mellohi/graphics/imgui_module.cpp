@@ -28,12 +28,12 @@ namespace mellohi
 
         world.system("systems::NewFrame")
                 .kind<phases::PreRender>()
-                .each(systems::new_frame);
+                .each(new_frame);
 
         world.system<GraphicsModule>("systems::EndFrame")
                 .term_at(0).singleton()
                 .kind<phases::PostRender>()
-                .each(systems::end_frame);
+                .each(end_frame);
     }
 
     ImGuiModule::~ImGuiModule()
@@ -42,20 +42,17 @@ namespace mellohi
         ImGui_ImplWGPU_Shutdown();
     }
 
-    namespace systems
+    auto ImGuiModule::new_frame() -> void
     {
-        auto new_frame() -> void
-        {
-            ImGui_ImplWGPU_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-        }
+        ImGui_ImplWGPU_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+    }
 
-        auto end_frame(const GraphicsModule &graphics) -> void
-        {
-            ImGui::EndFrame();
-            ImGui::Render();
-            ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), graphics.render_pass->get_raw_ptr());
-        }
+    auto ImGuiModule::end_frame(const GraphicsModule &graphics) -> void
+    {
+        ImGui::EndFrame();
+        ImGui::Render();
+        ImGui_ImplWGPU_RenderDrawData(ImGui::GetDrawData(), graphics.render_pass->get_raw_ptr());
     }
 }
