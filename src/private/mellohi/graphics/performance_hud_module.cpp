@@ -22,11 +22,25 @@ namespace mellohi
         }
     }
 
+    auto PerformanceHudModule::DeltaTimeStats::calculate() -> void
+    {
+        if (!delta_times.empty())
+        {
+            avg = sum / static_cast<f32>(delta_times.size());
+
+            stddev = std::sqrt(std::max(0.0f, sum_squared / delta_times.size() - avg * avg));
+
+            delta_times.clear();
+            sum = 0;
+            sum_squared = 0;
+        }
+    }
+
     PerformanceHudModule::PerformanceHudModule(flecs::world &world)
     {
         world.import<ImGuiModule>();
 
-        world.system<PerformanceHudModule>("systems::TrackDeltaTime")
+        world.system<const GraphicsModule, PerformanceHudModule>("systems::TrackDeltaTime")
                 .term_at(0).singleton()
                 .kind<phases::Update>()
                 .each(track_delta_time);
@@ -35,7 +49,7 @@ namespace mellohi
                 .term_at(0).singleton()
                 .kind<phases::Update>()
                 .interval(AVERAGING_PERIOD)
-                .each(calculate_delta_time_avg);
+                .each(calculate_delta_times);
 
         world.system<const GraphicsModule, const PerformanceHudModule>("systems::RenderPerformanceHud")
                 .term_at(0).singleton()
@@ -43,23 +57,23 @@ namespace mellohi
                 .each(render);
     }
 
-    auto PerformanceHudModule::track_delta_time(const flecs::iter &it, usize,
+    auto PerformanceHudModule::track_delta_time(const flecs::iter &it, usize, const GraphicsModule &graphics,
                                                 PerformanceHudModule &performance_hud) -> void
     {
-        performance_hud.delta_times.push_back(it.delta_time());
-        performance_hud.delta_time_sum += it.delta_time();
+        performance_hud.cpu_dt.delta_times.push_back(it.delta_time());
+        performance_hud.cpu_dt.sum += it.delta_time();
+        performance_hud.cpu_dt.sum_squared += it.delta_time() * it.delta_time();
+
+        const auto gpu_elapsed_ms = graphics.time_query_set->get_elapsed_ms();
+        performance_hud.gpu_dt.delta_times.push_back(gpu_elapsed_ms);
+        performance_hud.gpu_dt.sum += gpu_elapsed_ms;
+        performance_hud.gpu_dt.sum_squared += gpu_elapsed_ms * gpu_elapsed_ms;
     }
 
-    auto PerformanceHudModule::calculate_delta_time_avg(PerformanceHudModule &performance_hud) -> void
+    auto PerformanceHudModule::calculate_delta_times(PerformanceHudModule &performance_hud) -> void
     {
-        if (!performance_hud.delta_times.empty())
-        {
-            performance_hud.delta_time_avg = performance_hud.delta_time_sum /
-                                             static_cast<f32>(performance_hud.delta_times.size());
-
-            performance_hud.delta_times.clear();
-            performance_hud.delta_time_sum = 0;
-        }
+        performance_hud.cpu_dt.calculate();
+        performance_hud.gpu_dt.calculate();
     }
 
     auto PerformanceHudModule::render(const GraphicsModule &graphics,
@@ -78,7 +92,7 @@ namespace mellohi
         const ImVec2 pos = viewport->Pos;
         const ImVec2 size = viewport->Size;
         ImGui::SetNextWindowPos({size.x - margin, pos.y + margin}, ImGuiCond_Always, {1.0, 0.0});
-        ImGui::SetNextWindowSizeConstraints({225, 0}, {FLT_MAX, FLT_MAX});
+        ImGui::SetNextWindowSizeConstraints({250, 0}, {FLT_MAX, FLT_MAX});
         ImGui::SetNextWindowBgAlpha(0.35f);
 
         if (ImGui::Begin("Performance HUD", nullptr, window_flags))
@@ -98,17 +112,22 @@ namespace mellohi
 
             ImGui::Separator();
 
-            const ImVec4 color = performance_hud.delta_time_avg > PerformanceHudModule::MAX_DELTA_TIME
+            const ImVec4 color = performance_hud.cpu_dt.avg > PerformanceHudModule::MAX_DELTA_TIME
                                      ? red
-                                     : performance_hud.delta_time_avg < PerformanceHudModule::TARGET_DELTA_TIME
+                                     : performance_hud.cpu_dt.avg < PerformanceHudModule::TARGET_DELTA_TIME
                                            ? white
                                            : yellow;
-            formatted = std::format("FPS: {:7.2f}", 1 / performance_hud.delta_time_avg);
+            formatted = std::format("CPU: {:>5.2f} ± {:>5.2f} ms", performance_hud.cpu_dt.avg * 1000,
+                                    performance_hud.cpu_dt.stddev * 1000);
             ImGui::TextColored(color, "%s", formatted.c_str());
 
-            formatted = std::format("{:.2f} ms", performance_hud.delta_time_avg * 1000);
+            formatted = std::format("{:>7.2f} fps", 1 / performance_hud.cpu_dt.avg);
             ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::CalcTextSize(formatted.c_str()).x);
             ImGui::TextColored(color, "%s", formatted.c_str());
+
+            formatted = std::format("GPU: {:>5.2f} ± {:>5.2f} ms", performance_hud.gpu_dt.avg,
+                                    performance_hud.gpu_dt.stddev);
+            ImGui::TextUnformatted(formatted.c_str());
 
             formatted = std::format("Draw Calls: {:d}", graphics.render_pass->get_draw_call_count());
             ImGui::TextUnformatted(formatted.c_str());

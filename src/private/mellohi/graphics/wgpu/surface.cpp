@@ -77,7 +77,7 @@ namespace mellohi::wgpu
             .alphaMode = WGPUCompositeAlphaMode_Auto,
             .width = size.x,
             .height = size.y,
-            .presentMode = vsync ? WGPUPresentMode_Fifo : WGPUPresentMode_Immediate
+            .presentMode = vsync ? WGPUPresentMode_Fifo : WGPUPresentMode_Immediate,
         };
 
         wgpuSurfaceConfigure(m_wgpu_surface, &surface_configuration);

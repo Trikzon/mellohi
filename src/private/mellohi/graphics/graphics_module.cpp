@@ -15,6 +15,7 @@ namespace mellohi
         surface = std::make_shared<wgpu::Surface>(instance, *window);
         const wgpu::Adapter adapter{instance, *surface};
         device = std::make_shared<wgpu::Device>(adapter, adapter.get_limits());
+        time_query_set = std::make_shared<wgpu::TimeQuerySet>(*device);
 
         surface->configure(*device, window->get_framebuffer_size(), false);
         window->set_framebuffer_size_callback([world](const vec2u framebuffer_size)
@@ -73,7 +74,8 @@ namespace mellohi
     auto GraphicsModule::create_render_pass(GraphicsModule &graphics) -> void
     {
         graphics.render_pass = wgpu::RenderPass{
-            *graphics.device, *graphics.surface, graphics.window->get_framebuffer_size(), vec3f{0.1f, 0.05f, 0.1f}
+            *graphics.device, *graphics.surface, *graphics.time_query_set,
+            graphics.window->get_framebuffer_size(), vec3f{0.1f, 0.05f, 0.1f}
         };
     }
 

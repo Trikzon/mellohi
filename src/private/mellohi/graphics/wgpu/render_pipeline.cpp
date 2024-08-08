@@ -106,7 +106,7 @@ namespace mellohi::wgpu
                 .topology = WGPUPrimitiveTopology_TriangleList,
                 .stripIndexFormat = WGPUIndexFormat_Undefined,
                 .frontFace = WGPUFrontFace_CCW,
-                .cullMode = WGPUCullMode_None,
+                .cullMode = WGPUCullMode_Front,
             },
             .depthStencil = &depth_stencil_state,
             .multisample = WGPUMultisampleState

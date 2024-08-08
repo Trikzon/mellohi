@@ -6,15 +6,19 @@ namespace mellohi::wgpu
 {
     Instance::Instance()
     {
-        const char *toggle_name = "enable_immedate_error_handling";
+        const vector enabled_toggles = {
+            "enable_immedate_error_handling",
+            "allow_unsafe_apis",
+        };
+
         const WGPUDawnTogglesDescriptor dawn_toggles
         {
             .chain = {
                 .next = nullptr,
                 .sType = WGPUSType_DawnTogglesDescriptor,
             },
-            .enabledToggleCount = 1,
-            .enabledToggles = &toggle_name,
+            .enabledToggleCount = enabled_toggles.size(),
+            .enabledToggles = enabled_toggles.data(),
             .disabledToggleCount = 0,
             .disabledToggles = nullptr,
         };

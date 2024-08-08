@@ -3,13 +3,15 @@
 #include "mellohi/graphics/wgpu/command_encoder.hpp"
 #include "mellohi/graphics/wgpu/index_buffer.hpp"
 #include "mellohi/graphics/wgpu/render_pipeline.hpp"
+#include "mellohi/graphics/wgpu/time_query_set.hpp"
 
 namespace mellohi::wgpu
 {
     class RenderPass
     {
     public:
-        RenderPass(const Device &device, const Surface &surface, vec2u framebuffer_size, vec3f clear_color);
+        RenderPass(const Device &device, const Surface &surface, const TimeQuerySet &time_query_set,
+                   vec2u framebuffer_size, vec3f clear_color);
         ~RenderPass();
         RenderPass(const RenderPass &other);
         RenderPass(RenderPass &&other) noexcept;
@@ -39,6 +41,7 @@ namespace mellohi::wgpu
 
         s_ptr<Stats> m_stats{nullptr};
         s_ptr<Device> m_device{nullptr};
+        s_ptr<TimeQuerySet> m_time_query_set{nullptr};
         s_ptr<CommandEncoder> m_command_encoder{nullptr};
         WGPURenderPassEncoder m_wgpu_render_pass_encoder{nullptr};
     };

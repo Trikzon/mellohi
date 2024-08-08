@@ -5,11 +5,12 @@
 
 namespace mellohi::wgpu
 {
-    RenderPass::RenderPass(const Device &device, const Surface &surface, const vec2u framebuffer_size,
-                           const vec3f clear_color)
+    RenderPass::RenderPass(const Device &device, const Surface &surface, const TimeQuerySet &time_query_set,
+                           const vec2u framebuffer_size, const vec3f clear_color)
     {
         m_stats = std::make_shared<Stats>();
         m_device = std::make_shared<Device>(device);
+        m_time_query_set = std::make_shared<TimeQuerySet>(time_query_set);
         m_command_encoder = std::make_shared<CommandEncoder>(device, "Mellohi Render Pass Command Encoder");
 
         const Texture current_surface_texture{surface};
@@ -45,7 +46,7 @@ namespace mellohi::wgpu
         // TODO: Use wgpu::Texture instead of doing it manually.
         const WGPUTexture depth_texture = wgpuDeviceCreateTexture(device.get_raw_ptr(), &depth_texture_descriptor);
 
-        WGPUTextureViewDescriptor depth_texture_view_descriptor
+        constexpr WGPUTextureViewDescriptor depth_texture_view_descriptor
         {
             .nextInChain = nullptr,
             .label = "Mellohi Render Pass Depth Texture View",
@@ -60,7 +61,7 @@ namespace mellohi::wgpu
 
         const WGPUTextureView depth_texture_view = wgpuTextureCreateView(depth_texture, &depth_texture_view_descriptor);
 
-        WGPURenderPassDepthStencilAttachment render_pass_depth_stencil_attachment
+        const WGPURenderPassDepthStencilAttachment render_pass_depth_stencil_attachment
         {
             .view = depth_texture_view,
             .depthLoadOp = WGPULoadOp_Clear,
@@ -73,7 +74,14 @@ namespace mellohi::wgpu
             .stencilReadOnly = true,
         };
 
-        WGPURenderPassDescriptor render_pass_descriptor
+        const WGPURenderPassTimestampWrites render_pass_timestamp_writes
+        {
+            .querySet = time_query_set.get_raw_ptr(),
+            .beginningOfPassWriteIndex = 0,
+            .endOfPassWriteIndex = 1
+        };
+
+        const WGPURenderPassDescriptor render_pass_descriptor
         {
             .nextInChain = nullptr,
             .label = "Mellohi Render Pass",
@@ -81,7 +89,7 @@ namespace mellohi::wgpu
             .colorAttachments = &render_pass_color_attachment,
             .depthStencilAttachment = &render_pass_depth_stencil_attachment,
             .occlusionQuerySet = nullptr,
-            .timestampWrites = nullptr,
+            .timestampWrites = &render_pass_timestamp_writes,
         };
 
         m_wgpu_render_pass_encoder = wgpuCommandEncoderBeginRenderPass(m_command_encoder->get_raw_ptr(),
@@ -104,6 +112,7 @@ namespace mellohi::wgpu
     {
         m_stats = other.m_stats;
         m_device = other.m_device;
+        m_time_query_set = other.m_time_query_set;
         m_command_encoder = other.m_command_encoder;
 
         m_wgpu_render_pass_encoder = other.m_wgpu_render_pass_encoder;
@@ -117,6 +126,7 @@ namespace mellohi::wgpu
     {
         std::swap(m_stats, other.m_stats);
         std::swap(m_device, other.m_device);
+        std::swap(m_time_query_set, other.m_time_query_set);
         std::swap(m_command_encoder, other.m_command_encoder);
         std::swap(m_wgpu_render_pass_encoder, other.m_wgpu_render_pass_encoder);
     }
@@ -127,6 +137,7 @@ namespace mellohi::wgpu
         {
             m_stats = other.m_stats;
             m_device = other.m_device;
+            m_time_query_set = other.m_time_query_set;
             m_command_encoder = other.m_command_encoder;
 
             if (m_wgpu_render_pass_encoder != nullptr)
@@ -150,6 +161,7 @@ namespace mellohi::wgpu
         {
             std::swap(m_stats, other.m_stats);
             std::swap(m_device, other.m_device);
+            std::swap(m_time_query_set, other.m_time_query_set);
             std::swap(m_command_encoder, other.m_command_encoder);
             std::swap(m_wgpu_render_pass_encoder, other.m_wgpu_render_pass_encoder);
         }
@@ -200,9 +212,13 @@ namespace mellohi::wgpu
     {
         wgpuRenderPassEncoderEnd(m_wgpu_render_pass_encoder);
 
+        m_time_query_set->resolve(*m_command_encoder);
+
         const CommandBuffer command_buffer{*m_command_encoder, "Mellohi Render Pass Command Buffer"};
         const Queue queue{*m_device};
         queue.submit(command_buffer);
+
+        m_time_query_set->read_from_gpu();
     }
 
     auto RenderPass::get_draw_call_count() const -> usize

@@ -19,6 +19,7 @@ namespace mellohi
         s_ptr<glfw::Window> window{nullptr};
         s_ptr<wgpu::Surface> surface{nullptr};
         s_ptr<wgpu::Device> device{nullptr};
+        s_ptr<wgpu::TimeQuerySet> time_query_set{nullptr};
         optional<wgpu::RenderPass> render_pass;
 
         explicit GraphicsModule(flecs::world &world);

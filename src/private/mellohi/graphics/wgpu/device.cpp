@@ -15,12 +15,16 @@ namespace mellohi::wgpu
             .limits = limits,
         };
 
+        const vector required_features = {
+            WGPUFeatureName_TimestampQuery
+        };
+
         const WGPUDeviceDescriptor device_descriptor
         {
             .nextInChain = nullptr,
             .label = "Mellohi Device",
-            .requiredFeatureCount = 0,
-            .requiredFeatures = nullptr,
+            .requiredFeatureCount = required_features.size(),
+            .requiredFeatures = required_features.data(),
             .requiredLimits = &required_limits,
             .defaultQueue = WGPUQueueDescriptor
             {

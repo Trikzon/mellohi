@@ -14,5 +14,6 @@
 #include "mellohi/graphics/wgpu/surface.hpp"
 #include "mellohi/graphics/wgpu/texture.hpp"
 #include "mellohi/graphics/wgpu/texture_view.hpp"
+#include "mellohi/graphics/wgpu/time_query_set.hpp"
 #include "mellohi/graphics/wgpu/uniform_buffer.hpp"
 #include "mellohi/graphics/wgpu/vertex_buffer.hpp"
