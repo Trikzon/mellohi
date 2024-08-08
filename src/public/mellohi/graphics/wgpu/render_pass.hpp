@@ -11,7 +11,7 @@ namespace mellohi::wgpu
     {
     public:
         RenderPass(const Device &device, const Surface &surface, const TimeQuerySet &time_query_set,
-                   vec2u framebuffer_size, vec3f clear_color);
+                   vec2u framebuffer_size);
         ~RenderPass();
         RenderPass(const RenderPass &other);
         RenderPass(RenderPass &&other) noexcept;

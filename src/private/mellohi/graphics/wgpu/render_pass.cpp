@@ -6,7 +6,7 @@
 namespace mellohi::wgpu
 {
     RenderPass::RenderPass(const Device &device, const Surface &surface, const TimeQuerySet &time_query_set,
-                           const vec2u framebuffer_size, const vec3f clear_color)
+                           const vec2u framebuffer_size)
     {
         m_stats = std::make_shared<Stats>();
         m_device = std::make_shared<Device>(device);
@@ -16,6 +16,7 @@ namespace mellohi::wgpu
         const Texture current_surface_texture{surface};
         const TextureView current_surface_texture_view{current_surface_texture};
 
+        const auto clear_color = surface.get_clear_color();
         const WGPURenderPassColorAttachment render_pass_color_attachment
         {
             .nextInChain = nullptr,

@@ -86,4 +86,22 @@ namespace mellohi::wgpu
 
         wgpuBufferUnmap(wgpu_map_buffer);
     }
+
+    TimeQuerySet::Handle::~Handle()
+    {
+        if (wgpu_resolve_buffer != nullptr)
+        {
+            wgpuBufferRelease(wgpu_resolve_buffer);
+        }
+
+        if (wgpu_map_buffer != nullptr)
+        {
+            wgpuBufferRelease(wgpu_map_buffer);
+        }
+
+        if (wgpu_query_set != nullptr)
+        {
+            wgpuQuerySetRelease(wgpu_query_set);
+        }
+    }
 }

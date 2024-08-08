@@ -85,8 +85,7 @@ namespace mellohi
                                                   | ImGuiWindowFlags_AlwaysAutoResize
                                                   | ImGuiWindowFlags_NoSavedSettings
                                                   | ImGuiWindowFlags_NoFocusOnAppearing
-                                                  | ImGuiWindowFlags_NoNav
-                                                  | ImGuiWindowFlags_NoMouseInputs;
+                                                  | ImGuiWindowFlags_NoNav;
         constexpr f32 margin = 10.0f;
         const ImGuiViewport *viewport = ImGui::GetMainViewport();
         const ImVec2 pos = viewport->Pos;
@@ -125,9 +124,18 @@ namespace mellohi
             ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::CalcTextSize(formatted.c_str()).x);
             ImGui::TextColored(color, "%s", formatted.c_str());
 
+            ImGui::AlignTextToFramePadding();
             formatted = std::format("GPU: {:>5.2f} ± {:>4.2f} ms", performance_hud.gpu_dt.avg,
                                     performance_hud.gpu_dt.stddev);
             ImGui::TextUnformatted(formatted.c_str());
+
+            bool vsync = graphics.surface->get_vsync();
+            ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::CalcTextSize("VSync").x - 30);
+            ImGui::Checkbox("VSync", &vsync);
+            if (vsync != graphics.surface->get_vsync())
+            {
+                graphics.surface->set_vsync(vsync);
+            }
 
             formatted = std::format("Draw Calls: {:d}", graphics.render_pass->get_draw_call_count());
             ImGui::TextUnformatted(formatted.c_str());

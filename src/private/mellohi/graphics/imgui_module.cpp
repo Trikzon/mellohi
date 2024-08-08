@@ -32,6 +32,19 @@ namespace mellohi
         auto font_data = AssetId{"mellohi:fonts/JetBrainsMono.ttf"}.read_file_as_bytes();
         ImGui::GetIO().Fonts->AddFontFromMemoryTTF(font_data.data(), font_data.size(), 18.0f, &config);
 
+        auto &style = ImGui::GetStyle();
+        style.WindowBorderSize = 1.0f;
+        style.WindowRounding = 4.0f;
+        style.FrameBorderSize = 1.0f;
+        style.FrameRounding = 4.0f;
+
+        ImVec4 *colors = style.Colors;
+        colors[ImGuiCol_FrameBg] = ImVec4(0.20f, 0.20f, 0.20f, 0.54f);
+        colors[ImGuiCol_FrameBgHovered] = ImVec4(0.40f, 0.40f, 0.40f, 0.40f);
+        colors[ImGuiCol_FrameBgActive] = ImVec4(0.40f, 0.40f, 0.40f, 0.67f);
+        colors[ImGuiCol_TitleBgActive] = ImVec4(0.40f, 0.16f, 0.48f, 1.00f);
+        colors[ImGuiCol_CheckMark] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
+
         world.system("systems::NewFrame")
                 .kind<phases::PreRender>()
                 .each(new_frame);

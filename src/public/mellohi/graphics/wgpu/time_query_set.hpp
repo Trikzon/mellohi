@@ -26,6 +26,8 @@ namespace mellohi::wgpu
             WGPUBuffer wgpu_map_buffer{nullptr};
             WGPUQuerySet wgpu_query_set{nullptr};
 
+            ~Handle();
+
             auto on_buffer_mapped(WGPUBufferMapAsyncStatus status) -> void;
         };
 
