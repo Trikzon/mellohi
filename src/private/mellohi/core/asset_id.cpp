@@ -69,12 +69,28 @@ namespace mellohi
         return path("assets") / m_namespace / m_path;
     }
 
-    auto AssetId::read_file_to_string() const -> string
+    auto AssetId::read_file_as_string() const -> string
     {
-        MH_ASSERT(file_exists(), "Cannot read file to string because the file does not exist.");
+        MH_ASSERT(file_exists(), "Cannot read file as string because the file does not exist.");
 
         std::ifstream ifs(get_file_path());
         std::string content((std::istreambuf_iterator(ifs)), (std::istreambuf_iterator<char>()));
+        return content;
+    }
+
+    auto AssetId::read_file_as_bytes() const -> vector<u8>
+    {
+        MH_ASSERT(file_exists(), "Cannot read file as bytes because the file does not exist.");
+
+        std::ifstream ifs(get_file_path(), std::ios::binary | std::ios::ate);
+
+        const std::streamsize size = ifs.tellg();
+
+        ifs.seekg(0, std::ios::beg);
+
+        vector<u8> content(size);
+        ifs.read(reinterpret_cast<char *>(content.data()), size);
+
         return content;
     }
 }

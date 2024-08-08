@@ -92,7 +92,7 @@ namespace mellohi
         const ImVec2 pos = viewport->Pos;
         const ImVec2 size = viewport->Size;
         ImGui::SetNextWindowPos({size.x - margin, pos.y + margin}, ImGuiCond_Always, {1.0, 0.0});
-        ImGui::SetNextWindowSizeConstraints({250, 0}, {FLT_MAX, FLT_MAX});
+        ImGui::SetNextWindowSizeConstraints({300, 0}, {FLT_MAX, FLT_MAX});
         ImGui::SetNextWindowBgAlpha(0.35f);
 
         if (ImGui::Begin("Performance HUD", nullptr, window_flags))
@@ -117,7 +117,7 @@ namespace mellohi
                                      : performance_hud.cpu_dt.avg < PerformanceHudModule::TARGET_DELTA_TIME
                                            ? white
                                            : yellow;
-            formatted = std::format("CPU: {:>5.2f} ± {:>5.2f} ms", performance_hud.cpu_dt.avg * 1000,
+            formatted = std::format("CPU: {:>5.2f} ± {:>4.2f} ms", performance_hud.cpu_dt.avg * 1000,
                                     performance_hud.cpu_dt.stddev * 1000);
             ImGui::TextColored(color, "%s", formatted.c_str());
 
@@ -125,7 +125,7 @@ namespace mellohi
             ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - ImGui::CalcTextSize(formatted.c_str()).x);
             ImGui::TextColored(color, "%s", formatted.c_str());
 
-            formatted = std::format("GPU: {:>5.2f} ± {:>5.2f} ms", performance_hud.gpu_dt.avg,
+            formatted = std::format("GPU: {:>5.2f} ± {:>4.2f} ms", performance_hud.gpu_dt.avg,
                                     performance_hud.gpu_dt.stddev);
             ImGui::TextUnformatted(formatted.c_str());
 

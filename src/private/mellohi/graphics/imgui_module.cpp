@@ -26,6 +26,12 @@ namespace mellohi
         init_info.DepthStencilFormat = WGPUTextureFormat_Depth24Plus;
         ImGui_ImplWGPU_Init(&init_info);
 
+        auto config = ImFontConfig();
+        strcpy(config.Name, "JetBrains Mono");
+        config.FontDataOwnedByAtlas = false;
+        auto font_data = AssetId{"mellohi:fonts/JetBrainsMono.ttf"}.read_file_as_bytes();
+        ImGui::GetIO().Fonts->AddFontFromMemoryTTF(font_data.data(), font_data.size(), 18.0f, &config);
+
         world.system("systems::NewFrame")
                 .kind<phases::PreRender>()
                 .each(new_frame);

@@ -4,7 +4,7 @@ namespace mellohi::wgpu
 {
     ShaderModule::ShaderModule(const Device &device, const AssetId &wgsl_file_id)
     {
-        const string wgsl_code = wgsl_file_id.read_file_to_string();
+        const string wgsl_code = wgsl_file_id.read_file_as_string();
 
         const WGPUShaderModuleWGSLDescriptor shader_module_wgsl_descriptor
         {

@@ -22,7 +22,8 @@ namespace mellohi
 
         auto file_exists() const -> bool;
         auto get_file_path() const -> path;
-        auto read_file_to_string() const -> string;
+        auto read_file_as_string() const -> string;
+        auto read_file_as_bytes() const -> vector<u8>;
 
     private:
         string m_namespace{}, m_path{};
