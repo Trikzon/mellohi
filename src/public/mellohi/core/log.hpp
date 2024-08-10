@@ -50,9 +50,9 @@ namespace mellohi
     }
 }
 
-#define MH_INFO(message, ...) mellohi::log_info(__FILE_NAME__, __LINE__, message, ##__VA_ARGS__)
-#define MH_WARN(message, ...) mellohi::log_warn(__FILE_NAME__, __LINE__, message, ##__VA_ARGS__)
-#define MH_ERROR(message, ...) mellohi::log_error(__FILE_NAME__, __LINE__, message, ##__VA_ARGS__)
+#define MH_INFO(message, ...) mellohi::log_info(__FILE__, __LINE__, message, ##__VA_ARGS__)
+#define MH_WARN(message, ...) mellohi::log_warn(__FILE__, __LINE__, message, ##__VA_ARGS__)
+#define MH_ERROR(message, ...) mellohi::log_error(__FILE__, __LINE__, message, ##__VA_ARGS__)
 
 #define MH_ASSERT(condition, message, ...) \
     if (!(condition)) { \
