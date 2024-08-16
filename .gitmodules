@@ -13,3 +13,6 @@
 [submodule "vendor/glfw3webgpu"]
 	path = vendor/glfw3webgpu
 	url = https://github.com/eliemichel/glfw3webgpu.git
+[submodule "vendor/imgui/imgui"]
+	path = vendor/imgui/imgui
+	url = https://github.com/ocornut/imgui.git
