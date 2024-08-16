@@ -18,7 +18,7 @@ namespace mellohi
         string warn;
         string err;
 
-        const string obj_file_path = obj_file_id.get_file_path();
+        const string obj_file_path = obj_file_id.get_file_path().string();
         const bool ret = LoadObj(&attrib, &shapes, &materials, &warn, &err, obj_file_path.c_str());
 
         if (!warn.empty())
