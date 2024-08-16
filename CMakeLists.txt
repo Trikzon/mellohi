@@ -31,7 +31,7 @@ else()
 endif()
 
 add_subdirectory(vendor/glfw3webgpu)
-add_subdirectory(vendor/dawn)
+add_subdirectory(vendor/webgpu)
 add_subdirectory(vendor/flecs)
 add_subdirectory(vendor/glm)
 add_subdirectory(vendor/imgui)
