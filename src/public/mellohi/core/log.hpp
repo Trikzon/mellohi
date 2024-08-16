@@ -8,11 +8,20 @@
 
 namespace mellohi
 {
-    template <typename... Args>
-    void log_helper(const str color, const str tag, const char* file_name, int line,
-        const str message, Args&&... args)
+    template<typename... Args>
+    void log_helper(const str color, const str tag, const char *path, int line,
+                    const str message, Args &&... args)
     {
-        auto to_string = [](const auto& value) -> string
+        const auto get_file_name = [](const char *path) -> const char * {
+            const char *file_name = std::strrchr(path, '/');
+            if (file_name == nullptr)
+            {
+                file_name = std::strchr(path, '\\');
+            }
+            return file_name == nullptr ? path : file_name + 1;
+        };
+
+        const auto to_string = [](const auto &value) -> string
         {
             std::ostringstream oss;
             oss << value;
@@ -25,25 +34,25 @@ namespace mellohi
         );
 
         constexpr auto color_reset = "\033[0m";
-        std::println("{}[{}] {}({}): {}{}", color, tag, file_name, line, formatted_message, color_reset);
+        std::println("{}[{}] {}({}): {}{}", color, tag, get_file_name(path), line, formatted_message, color_reset);
     }
 
-    template <typename... Args>
-    void log_info(const char* file_name, int line, const str message, Args&&... args)
+    template<typename... Args>
+    void log_info(const char *file_name, int line, const str message, Args &&... args)
     {
         constexpr auto color_reset = "\033[0m";
         log_helper(color_reset, "INFO", file_name, line, message, std::forward<Args>(args)...);
     }
 
-    template <typename... Args>
-    void log_warn(const char* file_name, int line, const str message, Args&&... args)
+    template<typename... Args>
+    void log_warn(const char *file_name, int line, const str message, Args &&... args)
     {
         constexpr auto color_yellow = "\033[33m";
         log_helper(color_yellow, "WARN", file_name, line, message, std::forward<Args>(args)...);
     }
 
-    template <typename... Args>
-    void log_error(const char* file_name, int line, const str message, Args&&... args)
+    template<typename... Args>
+    void log_error(const char *file_name, int line, const str message, Args &&... args)
     {
         constexpr auto color_red = "\033[31m";
         log_helper(color_red, "ERROR", file_name, line, message, std::forward<Args>(args)...);
@@ -56,6 +65,6 @@ namespace mellohi
 
 #define MH_ASSERT(condition, message, ...) \
     if (!(condition)) { \
-    MH_ERROR(message, ##__VA_ARGS__); \
-    std::abort(); \
+        MH_ERROR(message, ##__VA_ARGS__); \
+        std::abort(); \
     }
