@@ -1,12 +1,14 @@
 #pragma once
 
-#include "mellohi/graphics/wgpu/surface.hpp"
+#include "mellohi/core/asset_id.hpp"
+#include "mellohi/graphics/wgpu/device.hpp"
 
 namespace mellohi::wgpu
 {
     class Texture
     {
     public:
+        Texture(const Device& device, const AssetId &asset_id);
         explicit Texture(const Surface &surface);
         ~Texture();
         Texture(const Texture &other);
@@ -26,5 +28,8 @@ namespace mellohi::wgpu
     private:
         WGPUTexture m_wgpu_texture{nullptr};
         string m_label{};
+
+        auto write_mip_maps(const Device &device, WGPUExtent3D texture_size, u32 mip_level_count,
+                            const u8 *pixels) const -> void;
     };
 }

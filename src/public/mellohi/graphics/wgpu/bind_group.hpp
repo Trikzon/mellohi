@@ -1,5 +1,7 @@
 #pragma once
 
+#include "mellohi/graphics/wgpu/sampler.hpp"
+#include "mellohi/graphics/wgpu/texture_view.hpp"
 #include "mellohi/graphics/wgpu/uniform_buffer.hpp"
 
 namespace mellohi::wgpu
@@ -10,6 +12,8 @@ namespace mellohi::wgpu
         BindGroup(const Device &device, const string &label, u32 initial_dynamic_size = INITIAL_DYNAMIC_SIZE);
 
         auto add_binding(u32 binding_idx, u32 size_bytes) const -> void;
+        auto add_binding(u32 binding_idx, const TextureView &texture_view) const -> void;
+        auto add_binding(u32 binding_idx, const Sampler &sampler) const -> void;
         auto write(u32 binding_idx, u32 dynamic_idx, const void *data, u32 size_bytes) const -> void;
 
         auto get_dynamic_offsets(u32 dynamic_idx) const -> vector<u32>;
@@ -27,7 +31,9 @@ namespace mellohi::wgpu
             WGPUBindGroup wgpu_bind_group{nullptr};
             WGPUBindGroupLayout wgpu_bind_group_layout{nullptr};
             vector<UniformBuffer> uniform_buffers{};
-            u32 dynamic_size;
+            vector<WGPUBindGroupEntry> wgpu_entries{};
+            vector<WGPUBindGroupLayoutEntry> wgpu_layout_entries{};
+            u32 dynamic_size{INITIAL_DYNAMIC_SIZE};
 
             Handle() = default;
             ~Handle();

@@ -18,8 +18,9 @@ namespace mellohi
         string warn;
         string err;
 
-        const string obj_file_path = obj_file_id.get_file_path().string();
-        const bool ret = LoadObj(&attrib, &shapes, &materials, &warn, &err, obj_file_path.c_str());
+        const path obj_file_path = obj_file_id.get_file_path();
+        const bool ret = LoadObj(&attrib, &shapes, &materials, &warn, &err, obj_file_path.c_str(),
+                                 obj_file_path.parent_path().c_str());
 
         if (!warn.empty())
         {
@@ -38,6 +39,7 @@ namespace mellohi
             vec3f position;
             vec3f normal;
             vec3f color;
+            vec2f uv;
         };
         vector<VertexAttributes> vertexData;
 
@@ -67,6 +69,11 @@ namespace mellohi
                     attrib.colors[3 * index.vertex_index + 1],
                     attrib.colors[3 * index.vertex_index + 2]
                 };
+
+                vertexData[offset + i].uv = {
+                    attrib.texcoords[2 * index.texcoord_index + 0],
+                    1 - attrib.texcoords[2 * index.texcoord_index + 1]
+                };
             }
         }
 
@@ -79,6 +86,7 @@ namespace mellohi
         vertex_buffer->add_attribute<vec3f>(0); // Position
         vertex_buffer->add_attribute<vec3f>(1); // Normal
         vertex_buffer->add_attribute<vec3f>(2); // Color;
+        vertex_buffer->add_attribute<vec2f>(3); // UV
 
         vertex_count = vertexData.size();
 
@@ -101,10 +109,16 @@ namespace mellohi
         const auto &camera = world.ensure<CameraModule>();
         const auto &graphics = world.ensure<GraphicsModule>();
 
+        // const wgpu::Texture texture{*graphics.device, AssetId{"mellohi:textures/missing.png"}};
+        const wgpu::Texture texture{*graphics.device, AssetId{"sandbox:textures/fourareen2K_albedo.jpg"}};
+        const wgpu::TextureView texture_view{texture};
+
         m_device = graphics.device;
         m_camera_bind_group = camera.bind_group;
         m_model_bind_group = std::make_shared<wgpu::BindGroup>(*graphics.device, "Model Bind Group");
         m_model_bind_group->add_binding(0, sizeof(MeshUniforms));
+        m_model_bind_group->add_binding(1, texture_view);
+        m_model_bind_group->add_binding(2, wgpu::Sampler{*graphics.device, "Mesh Sampler", false});
         m_shader_module = std::make_shared<wgpu::ShaderModule>(*graphics.device, AssetId{"mellohi:shaders/mesh.wgsl"});
 
         world.prefab<prefabs::Mesh>("prefabs::Mesh")

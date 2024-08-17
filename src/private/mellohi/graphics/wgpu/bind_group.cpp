@@ -25,6 +25,66 @@ namespace mellohi::wgpu
         m_handle->rebuild();
     }
 
+    auto BindGroup::add_binding(const u32 binding_idx, const TextureView &texture_view) const -> void
+    {
+        m_handle->wgpu_entries.push_back(WGPUBindGroupEntry{
+            .nextInChain = nullptr,
+            .binding = binding_idx,
+            .buffer = nullptr,
+            .offset = 0,
+            .size = 0,
+            .sampler = nullptr,
+            .textureView = texture_view.get_raw_ptr(),
+        });
+
+        m_handle->wgpu_layout_entries.push_back(WGPUBindGroupLayoutEntry{
+            .nextInChain = nullptr,
+            .binding = binding_idx,
+            .visibility = WGPUShaderStage_Fragment,
+            .buffer = nullptr,
+            .sampler = nullptr,
+            .texture = WGPUTextureBindingLayout
+            {
+                .nextInChain = nullptr,
+                .sampleType = WGPUTextureSampleType_Float,
+                .viewDimension = WGPUTextureViewDimension_2D,
+                .multisampled = false,
+            },
+            .storageTexture = nullptr,
+        });
+
+        m_handle->rebuild();
+    }
+
+    auto BindGroup::add_binding(const u32 binding_idx, const Sampler &sampler) const -> void
+    {
+        m_handle->wgpu_entries.push_back(WGPUBindGroupEntry{
+            .nextInChain = nullptr,
+            .binding = binding_idx,
+            .buffer = nullptr,
+            .offset = 0,
+            .size = 0,
+            .sampler = sampler.get_raw_ptr(),
+            .textureView = nullptr,
+        });
+
+        m_handle->wgpu_layout_entries.push_back(WGPUBindGroupLayoutEntry{
+            .nextInChain = nullptr,
+            .binding = binding_idx,
+            .visibility = WGPUShaderStage_Fragment,
+            .buffer = nullptr,
+            .sampler = WGPUSamplerBindingLayout
+            {
+                .nextInChain = nullptr,
+                .type = WGPUSamplerBindingType_Filtering,
+            },
+            .texture = nullptr,
+            .storageTexture = nullptr
+        });
+
+        m_handle->rebuild();
+    }
+
     auto BindGroup::write(const u32 binding_idx, const u32 dynamic_idx, const void *data,
                           const u32 size_bytes) const -> void
     {
@@ -122,11 +182,11 @@ namespace mellohi::wgpu
             wgpu_bind_group_layout = nullptr;
         }
 
-        vector<WGPUBindGroupLayoutEntry> uniform_layouts{};
-        uniform_layouts.reserve(uniform_buffers.size());
+        vector<WGPUBindGroupLayoutEntry> layout_entries = wgpu_layout_entries;
+        layout_entries.reserve(uniform_buffers.size());
         for (const auto &uniform_buffer: uniform_buffers)
         {
-            uniform_layouts.push_back(uniform_buffer.get_wgpu_layout());
+            layout_entries.push_back(uniform_buffer.get_wgpu_layout());
         }
 
         const auto layout_label = label + " Layout";
@@ -134,17 +194,17 @@ namespace mellohi::wgpu
         {
             .nextInChain = nullptr,
             .label = layout_label.c_str(),
-            .entryCount = static_cast<u32>(uniform_layouts.size()),
-            .entries = uniform_layouts.data(),
+            .entryCount = static_cast<u32>(layout_entries.size()),
+            .entries = layout_entries.data(),
         };
 
         wgpu_bind_group_layout = wgpuDeviceCreateBindGroupLayout(device->get_raw_ptr(), &bind_group_layout_descriptor);
 
-        vector<WGPUBindGroupEntry> uniform_entries{};
-        uniform_entries.reserve(uniform_buffers.size());
+        vector<WGPUBindGroupEntry> entries = wgpu_entries;
+        entries.reserve(uniform_buffers.size());
         for (const auto &uniform_buffer: uniform_buffers)
         {
-            uniform_entries.push_back(uniform_buffer.get_wgpu_entry());
+            entries.push_back(uniform_buffer.get_wgpu_entry());
         }
 
         const WGPUBindGroupDescriptor bind_group_descriptor
@@ -152,8 +212,8 @@ namespace mellohi::wgpu
             .nextInChain = nullptr,
             .label = label.c_str(),
             .layout = wgpu_bind_group_layout,
-            .entryCount = static_cast<u32>(uniform_entries.size()),
-            .entries = uniform_entries.data(),
+            .entryCount = static_cast<u32>(entries.size()),
+            .entries = entries.data(),
         };
 
         wgpu_bind_group = wgpuDeviceCreateBindGroup(device->get_raw_ptr(), &bind_group_descriptor);
