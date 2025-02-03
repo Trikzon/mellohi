@@ -17,13 +17,13 @@ namespace mellohi
         
     }
     
-    Color::Color(const std::string &hex_code)
+    Color::Color(std::string_view hex_code)
     {
         static const std::regex hex_regex("^#([A-Fa-f0-9]+)$");
         
-        MH_ASSERT(std::regex_match(hex_code, hex_regex), "Cannot create Color with invalid hex code {}.", hex_code);
+        std::string full_hex_code{hex_code};
+        MH_ASSERT(std::regex_match(full_hex_code, hex_regex), "Cannot create Color with invalid hex code {}.", hex_code);
         
-        std::string full_hex_code = hex_code;
         if (hex_code.length() == 4 || hex_code.length() == 5)
         {
             full_hex_code = {'#', hex_code[1], hex_code[1], hex_code[2], hex_code[2], hex_code[3], hex_code[3]};

@@ -47,5 +47,3 @@ namespace mellohi
 	
 	using glm::quat;
 }
-
-#define MH_CONTAINS(vector, value) std::find(vector.begin(), vector.end(), value) != vector.end()

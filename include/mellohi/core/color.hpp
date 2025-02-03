@@ -10,7 +10,7 @@ namespace mellohi
         
         Color();
         Color(f32 r, f32 g, f32 b, f32 a = 1.0f);
-        Color(const std::string &hex_code);
+        Color(std::string_view hex_code);
         
         bool operator==(const Color &other) const;
         bool operator!=(const Color &other) const;
