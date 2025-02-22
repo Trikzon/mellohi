@@ -9,13 +9,22 @@ option(MH_GRAPHICS_VULKAN "Enable Vulkan graphics backend" ON)
 option(MH_PLATFORM_GLFW   "Enable GLFW platform backend"   ON)
 
 set(INCLUDES
+    include/mellohi/assets/asset.hpp
+    include/mellohi/assets/asset_cache.hpp
+    include/mellohi/assets/asset_path.hpp
+    include/mellohi/assets/asset_registry.hpp
     include/mellohi/core/color.hpp
+    include/mellohi/core/engine.hpp
     include/mellohi/core/logger.hpp
     include/mellohi/core/types.hpp
 )
 
 set(SOURCES
+    src/mellohi/assets/asset.cpp
+    src/mellohi/assets/asset_path.cpp
+    src/mellohi/assets/asset_registry.cpp
     src/mellohi/core/color.cpp
+    src/mellohi/core/engine.cpp
 )
 
 add_library(mellohi STATIC ${SOURCES} ${INCLUDES})
