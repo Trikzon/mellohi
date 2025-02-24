@@ -18,9 +18,15 @@ namespace mellohi
         return *m_asset_registry;
     }
     
+    EventDispatcher & Engine::event_dispatcher()
+    {
+        return *m_event_dispatcher;
+    }
+    
     Engine::Engine()
     {
         m_asset_cache = std::make_unique<AssetCache>();
         m_asset_registry = std::make_unique<AssetRegistry>();
+        m_event_dispatcher = std::make_unique<EventDispatcher>();
     }
 }

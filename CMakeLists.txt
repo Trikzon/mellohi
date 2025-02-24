@@ -17,6 +17,8 @@ set(INCLUDES
     include/mellohi/core/engine.hpp
     include/mellohi/core/logger.hpp
     include/mellohi/core/types.hpp
+    include/mellohi/events/event.hpp
+    include/mellohi/events/event_dispatcher.hpp
 )
 
 set(SOURCES
@@ -25,6 +27,7 @@ set(SOURCES
     src/mellohi/assets/asset_registry.cpp
     src/mellohi/core/color.cpp
     src/mellohi/core/engine.cpp
+    src/mellohi/events/event_dispatcher.cpp
 )
 
 add_library(mellohi STATIC ${SOURCES} ${INCLUDES})
