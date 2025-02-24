@@ -1,9 +1,9 @@
 #pragma once
 
+#include "mellohi/core/types.hpp"
+
 #include <format>
 #include <sstream>
-
-#include "mellohi/core/types.hpp"
 
 #define MH_LOG_WARN_ENABLED
 #define MH_LOG_INFO_ENABLED

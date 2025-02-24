@@ -1,10 +1,8 @@
 #include "mellohi/assets/asset.hpp"
 
 #include "mellohi/assets/asset_cache.hpp"
-#include "mellohi/assets/asset_path.hpp"
 #include "mellohi/assets/asset_registry.hpp"
 #include "mellohi/core/engine.hpp"
-#include "mellohi/core/logger.hpp"
 
 namespace mellohi
 {

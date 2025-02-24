@@ -1,13 +1,14 @@
 #pragma once
 
 #include "mellohi/core/types.hpp"
-#include "mellohi/events/event.hpp"
 
 #include <typeindex>
 #include <unordered_map>
 
 namespace mellohi
 {
+    class Event;
+    
     class EventDispatcher
     {
     public:

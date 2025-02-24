@@ -1,6 +1,7 @@
 #include "mellohi/assets/toml_asset.hpp"
 
 #include "mellohi/assets/asset_registry.hpp"
+#include "mellohi/core/color.hpp"
 #include "mellohi/core/engine.hpp"
 
 namespace mellohi

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "mellohi/core/color.hpp"
 #include "mellohi/assets/toml_asset.hpp"
 
 #include <shared_mutex>

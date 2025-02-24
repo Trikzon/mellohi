@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mellohi/assets/asset.hpp"
-#include "mellohi/core/engine.hpp"
 #include "mellohi/core/logger.hpp"
 
 #include <shared_mutex>

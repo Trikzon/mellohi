@@ -1,9 +1,9 @@
 #include "mellohi/core/color.hpp"
 
+#include "mellohi/core/logger.hpp"
+
 #include <regex>
 #include <sstream>
-
-#include "mellohi/core/logger.hpp"
 
 namespace mellohi
 {

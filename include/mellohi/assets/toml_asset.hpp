@@ -1,13 +1,14 @@
 #pragma once
 
 #include "mellohi/assets/asset.hpp"
-#include "mellohi/core/color.hpp"
 #include "mellohi/core/logger.hpp"
 
 #include <toml++/toml.hpp>
 
 namespace mellohi
 {
+    class Color;
+    
     class TomlAsset : public Asset
     {
     public:

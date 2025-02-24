@@ -1,10 +1,11 @@
 #pragma once
 
-#include "mellohi/assets/asset_path.hpp"
 #include "mellohi/core/types.hpp"
 
 namespace mellohi
 {
+    class AssetPath;
+    
     // TODO: Use a UUID instead.
     using AssetId = u64;
     
