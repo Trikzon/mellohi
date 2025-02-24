@@ -1,11 +1,13 @@
 #pragma once
 
-#include "mellohi/assets/asset_cache.hpp"
-#include "mellohi/assets/asset_registry.hpp"
-#include "mellohi/events/event_dispatcher.hpp"
+#include <memory>
 
 namespace mellohi
 {
+    class AssetCache;
+    class AssetRegistry;
+    class EventDispatcher;
+    
     class Engine
     {
     public:

@@ -1,5 +1,9 @@
 #include "mellohi/core/engine.hpp"
 
+#include "mellohi/assets/asset_cache.hpp"
+#include "mellohi/assets/asset_registry.hpp"
+#include "mellohi/events/event_dispatcher.hpp"
+
 namespace mellohi
 {
     Engine & Engine::get()

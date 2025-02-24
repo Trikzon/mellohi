@@ -23,6 +23,7 @@ set(INCLUDES
 
 set(SOURCES
     src/mellohi/assets/asset.cpp
+    src/mellohi/assets/asset_cache.cpp
     src/mellohi/assets/asset_path.cpp
     src/mellohi/assets/asset_registry.cpp
     src/mellohi/core/color.cpp

@@ -1,33 +1,32 @@
+#include <mellohi/assets/asset_registry.hpp>
+#include <mellohi/assets/asset_cache.hpp>
 #include <mellohi/core/engine.hpp>
 #include <mellohi/core/logger.hpp>
+#include <mellohi/events/event_dispatcher.hpp>
 
 using namespace mellohi;
-
-struct TestEvent : public Event
-{
-    const f32 x, y;
-    
-    TestEvent(const f32 x, const f32 y) : x(x), y(y) {}
-};
 
 int main()
 {
     MH_INFO("Hello, world!");
     
     auto &engine = Engine::get();
+    auto &asset_registry = engine.asset_registry();
+    auto &asset_cache = engine.asset_cache();
     
-    auto &event_dispatcher = engine.event_dispatcher();
+    const auto id0 = asset_registry.asset_id_from_path(AssetPath{"@test:test:id0"});
+    const auto id1 = asset_registry.asset_id_from_path(AssetPath{"@test:test:id1"});
     
-    const auto l_id = event_dispatcher.register_listener<TestEvent>([](const TestEvent &event)
-    {
-        MH_INFO("Event: {}, {}", event.x, event.y);
-    });
+    const auto asset0 = asset_cache.fetch_or_load<TextAsset>(id0);
+    const auto asset1 = asset_cache.fetch_or_load<TextAsset>(id1);
     
-    event_dispatcher.dispatch_event<TestEvent>(TestEvent{1.0f, 2.0f});
+    asset_cache.load<TextAsset>(id0);
     
-    event_dispatcher.unregister_listener(l_id);
+    asset_cache.add_dependency(id0, id1);
+    asset_cache.add_dependency(id1, id0);
+    MH_TRACE("Added dependency");
     
-    event_dispatcher.dispatch_event<TestEvent>(TestEvent{3.0f, 4.0f});
+    asset_cache.load<TextAsset>(id1);
     
     return 0;
 }

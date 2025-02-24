@@ -13,14 +13,15 @@ namespace mellohi
         explicit Asset(AssetId id);
         virtual ~Asset();
         
-        void reload();
-        
         AssetId id() const;
+        
+        // Loads (or reloads in-place) the asset.
+        // If called directly, will not notify event listeners with the
+        // AssetLoadedEvent. Instead, use AssetCache#load(AssetId).
+        virtual void load() = 0;
         
     private:
         const AssetId m_id;
-    
-        virtual void load() = 0;
     };
     
     class TextAsset : public Asset
@@ -28,12 +29,12 @@ namespace mellohi
     public:
         explicit TextAsset(AssetId id);
         
+        void load() override;
+        
         const std::string & text() const;
         
     private:
         std::string m_text;
-        
-        void load() override;
     };
     
     class DependentAsset : public Asset
@@ -41,11 +42,11 @@ namespace mellohi
     public:
         explicit DependentAsset(AssetId id);
         
+        void load() override;
+        
         const std::string & text() const;
         
     private:
         std::shared_ptr<TextAsset> m_text_asset;
-    
-        void load() override;
     };
 }
