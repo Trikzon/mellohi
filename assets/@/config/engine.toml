@@ -1,6 +1,6 @@
 [engine]
-name = "Mellohi"
 package = "mellohi"
+title = "Mellohi"
 
 [window]
 clear_color = "#6495ED"

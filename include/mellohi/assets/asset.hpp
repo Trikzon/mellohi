@@ -1,5 +1,6 @@
 #pragma once
 
+#include "mellohi/assets/asset_path.hpp"
 #include "mellohi/core/types.hpp"
 
 namespace mellohi
@@ -13,7 +14,8 @@ namespace mellohi
         explicit Asset(AssetId id);
         virtual ~Asset();
         
-        AssetId id() const;
+        AssetId asset_id() const;
+        AssetPath asset_path() const;
         
         // Loads (or reloads in-place) the asset.
         // If called directly, will not notify event listeners with the

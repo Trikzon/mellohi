@@ -2,6 +2,7 @@
 
 #include "mellohi/assets/asset_cache.hpp"
 #include "mellohi/assets/asset_registry.hpp"
+#include "mellohi/core/config_assets.hpp"
 #include "mellohi/events/event_dispatcher.hpp"
 
 namespace mellohi
@@ -10,6 +11,12 @@ namespace mellohi
     {
         static Engine instance;
         return instance;
+    }
+    
+    void Engine::initialize()
+    {
+        const auto engine_config_id = asset_registry().asset_id_from_path(AssetPath{"@:config:engine.toml"});
+        m_engine_config = asset_cache().load<EngineConfigAsset>(engine_config_id);
     }
     
     AssetCache & Engine::asset_cache()
@@ -25,6 +32,12 @@ namespace mellohi
     EventDispatcher & Engine::event_dispatcher()
     {
         return *m_event_dispatcher;
+    }
+    
+    const EngineConfigAsset & Engine::engine_config() const
+    {
+        MH_ASSERT(m_engine_config != nullptr, "Engine config is not available as Engine has not been initialized.");
+        return *m_engine_config;
     }
     
     Engine::Engine()

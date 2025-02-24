@@ -38,7 +38,7 @@ namespace mellohi
     {
         std::shared_lock read_lock{m_mutex};
         auto it = m_loaded_assets.find(id);
-        if (it == m_loaded_assets.end())
+        if (it == m_loaded_assets.end() || it->second.expired())
         {
             return nullptr;
         }
@@ -70,7 +70,7 @@ namespace mellohi
             
             // Check if an asset has been inserted into the cache between locks.
             auto it = m_loaded_assets.find(id);
-            if (it != m_loaded_assets.end())
+            if (it != m_loaded_assets.end() && !it->second.expired())
             {
                 const auto t_asset = std::dynamic_pointer_cast<T>(it->second.lock());
                 if (!t_asset)

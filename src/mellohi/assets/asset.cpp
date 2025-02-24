@@ -15,12 +15,19 @@ namespace mellohi
     
     Asset::~Asset()
     {
-        MH_TRACE("Destructing asset {}.", id());
+        MH_TRACE("Destructing asset {}.", asset_id());
     }
     
-    AssetId Asset::id() const
+    AssetId Asset::asset_id() const
     {
         return m_id;
+    }
+    
+    AssetPath Asset::asset_path() const
+    {
+        const auto path_opt = Engine::get().asset_registry().asset_path_from_id(asset_id());
+        MH_ASSERT(path_opt.has_value(), "Asset {} is not registered in the AssetRegistry.", asset_id());
+        return path_opt.value();
     }
     
     TextAsset::TextAsset(AssetId id) : Asset(id)
@@ -30,7 +37,7 @@ namespace mellohi
     
     void TextAsset::load()
     {
-        MH_TRACE("Loading asset {}.", id());
+        MH_TRACE("Loading asset {}.", asset_id());
         m_text = "Hello, world!";
     }
         
@@ -46,7 +53,7 @@ namespace mellohi
     
     void DependentAsset::load()
     {
-        MH_TRACE("Loading asset {}.", id());
+        MH_TRACE("Loading asset {}.", asset_id());
         auto &registry = Engine::get().asset_registry();
         auto &cache = Engine::get().asset_cache();
         

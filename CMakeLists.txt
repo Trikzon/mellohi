@@ -13,7 +13,9 @@ set(INCLUDES
     include/mellohi/assets/asset_cache.hpp
     include/mellohi/assets/asset_path.hpp
     include/mellohi/assets/asset_registry.hpp
+    include/mellohi/assets/toml_asset.hpp
     include/mellohi/core/color.hpp
+    include/mellohi/core/config_assets.hpp
     include/mellohi/core/engine.hpp
     include/mellohi/core/logger.hpp
     include/mellohi/core/types.hpp
@@ -26,7 +28,9 @@ set(SOURCES
     src/mellohi/assets/asset_cache.cpp
     src/mellohi/assets/asset_path.cpp
     src/mellohi/assets/asset_registry.cpp
+    src/mellohi/assets/toml_asset.cpp
     src/mellohi/core/color.cpp
+    src/mellohi/core/config_assets.cpp
     src/mellohi/core/engine.cpp
     src/mellohi/events/event_dispatcher.cpp
 )
