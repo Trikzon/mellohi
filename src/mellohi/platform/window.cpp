@@ -7,4 +7,16 @@ namespace mellohi
     {
         
     }
+    
+    WindowFocusChangedEvent::WindowFocusChangedEvent(std::shared_ptr<Window> window, bool focused)
+        : window(window), focused(focused)
+    {
+        
+    }
+    
+    WindowResizedEvent::WindowResizedEvent(std::shared_ptr<Window> window, uvec2 size)
+        : window(window), size(size)
+    {
+        
+    }
 }

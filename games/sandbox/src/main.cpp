@@ -13,9 +13,9 @@ int main()
     engine.initialize();
     
     auto &event_dispatcher = engine.event_dispatcher();
-    event_dispatcher.register_listener<FramebufferResizedEvent>([](const FramebufferResizedEvent &event)
+    event_dispatcher.register_listener<WindowFocusChangedEvent>([](const WindowFocusChangedEvent &event)
     {
-        event.window->title(std::format("Framebuffer size: {}, {}", event.framebuffer_size.x, event.framebuffer_size.y));
+        event.window->title(std::format("Focused: {}", event.focused));
     });
     
     engine.run();

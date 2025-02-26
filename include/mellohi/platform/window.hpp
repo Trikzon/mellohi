@@ -14,6 +14,7 @@ namespace mellohi
         
         void initialize();
         
+        bool focused() const;
         uvec2 framebuffer_size() const;
         bool should_close() const;
         uvec2 size() const;
@@ -37,5 +38,21 @@ namespace mellohi
         uvec2 framebuffer_size;
         
         FramebufferResizedEvent(std::shared_ptr<Window> window, uvec2 framebuffer_size);
+    };
+    
+    struct WindowFocusChangedEvent : public Event
+    {
+        std::shared_ptr<Window> window;
+        bool focused;
+        
+        WindowFocusChangedEvent(std::shared_ptr<Window> window, bool focused);
+    };
+    
+    struct WindowResizedEvent : public Event
+    {
+        std::shared_ptr<Window> window;
+        uvec2 size;
+        
+        WindowResizedEvent(std::shared_ptr<Window> window, uvec2 size);
     };
 }

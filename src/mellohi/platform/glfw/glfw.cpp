@@ -25,6 +25,21 @@ namespace mellohi
         glfwPollEvents();
     }
     
+    u32 Glfw::window_attribute(GLFWwindow *glfw_window, u32 attribute) const
+    {
+        return glfwGetWindowAttrib(glfw_window, attribute);
+    }
+    
+    void Glfw::window_attribute(GLFWwindow *glfw_window, const u32 attribute, const u32 value)
+    {
+        glfwSetWindowAttrib(glfw_window, attribute, value);
+    }
+    
+    void Glfw::window_focus_changed_callback(GLFWwindow *glfw_window, GLFWwindowfocusfun callback)
+    {
+        glfwSetWindowFocusCallback(glfw_window, callback);
+    }
+    
     uvec2 Glfw::window_framebuffer_size(GLFWwindow *glfw_window) const
     {
         i32 width, height;
@@ -33,7 +48,7 @@ namespace mellohi
         return uvec2{width, height};
     }
     
-    void Glfw::window_framebuffer_size_callback(GLFWwindow *glfw_window, GLFWframebuffersizefun callback)
+    void Glfw::window_framebuffer_resized_callback(GLFWwindow *glfw_window, GLFWframebuffersizefun callback)
     {
         glfwSetFramebufferSizeCallback(glfw_window, callback);
     }
@@ -59,6 +74,11 @@ namespace mellohi
     void Glfw::window_size(GLFWwindow *glfw_window, uvec2 size)
     {
         glfwSetWindowSize(glfw_window, size.x, size.y);
+    }
+    
+    void Glfw::window_resized_callback(GLFWwindow *glfw_window, GLFWwindowsizefun callback)
+    {
+        glfwSetWindowSizeCallback(glfw_window, callback);
     }
     
     std::string Glfw::window_title(GLFWwindow *glfw_window) const

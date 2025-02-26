@@ -18,7 +18,14 @@ namespace mellohi
         
         glfw.window_user_pointer(m_data->glfw_window, this);
         
-        glfw.window_framebuffer_size_callback(m_data->glfw_window, on_framebuffer_resized);
+        glfw.window_focus_changed_callback(m_data->glfw_window, on_focus_changed);
+        glfw.window_framebuffer_resized_callback(m_data->glfw_window, on_framebuffer_resized);
+        glfw.window_resized_callback(m_data->glfw_window, on_window_resized);
+    }
+    
+    bool Window::focused() const
+    {
+        return Glfw::get().window_attribute(m_data->glfw_window, GLFW_FOCUSED);
     }
     
     uvec2 Window::framebuffer_size() const
@@ -66,6 +73,16 @@ namespace mellohi
         m_data->glfw_window = glfw.create_window(size, title);
     }
     
+    void on_focus_changed(GLFWwindow *glfw_window, i32 focused)
+    {
+        Window *window = Glfw::get().window_user_pointer<Window>(glfw_window);
+        
+        auto &event_dispatcher = Engine::get().event_dispatcher();
+        event_dispatcher.dispatch_event<WindowFocusChangedEvent>(
+            WindowFocusChangedEvent{window->shared_from_this(), static_cast<bool>(focused)}
+        );
+}
+    
     void on_framebuffer_resized(GLFWwindow *glfw_window, const i32 width, const i32 height)
     {
         MH_ASSERT(width >= 0 && height >= 0, "GLFW framebuffer width or height is negative.");
@@ -75,6 +92,18 @@ namespace mellohi
         auto &event_dispatcher = Engine::get().event_dispatcher();
         event_dispatcher.dispatch_event<FramebufferResizedEvent>(
             FramebufferResizedEvent{window->shared_from_this(), uvec2{width, height}}
+        );
+    }
+    
+    void on_window_resized(GLFWwindow *glfw_window, i32 width, i32 height)
+    {
+        MH_ASSERT(width >= 0 && height >= 0, "GLFW window width or height is negative.");
+        
+        Window *window = Glfw::get().window_user_pointer<Window>(glfw_window);
+        
+        auto &event_dispatcher = Engine::get().event_dispatcher();
+        event_dispatcher.dispatch_event<WindowResizedEvent>(
+            WindowResizedEvent{window->shared_from_this(), uvec2{width, height}}
         );
     }
 }
