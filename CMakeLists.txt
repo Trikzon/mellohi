@@ -35,6 +35,7 @@ set(SOURCES
     src/mellohi/core/config_assets.cpp
     src/mellohi/core/engine.cpp
     src/mellohi/events/event_dispatcher.cpp
+    src/mellohi/platform/window.cpp
 )
 
 if(MH_PLATFORM_GLFW)

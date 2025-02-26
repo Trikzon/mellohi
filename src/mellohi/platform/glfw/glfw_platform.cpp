@@ -23,7 +23,9 @@ namespace mellohi
     
     std::shared_ptr<Window> Platform::create_window(const uvec2 size, const bool resizable, const std::string &title)
     {
-        return std::shared_ptr<Window>{new Window{size, resizable, title}};
+        auto window = std::shared_ptr<Window>{new Window{size, resizable, title}};
+        window->initialize();
+        return window;
     }
     
     void Platform::process_events()

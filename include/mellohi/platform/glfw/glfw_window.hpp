@@ -12,6 +12,8 @@ namespace mellohi
     {
         GLFWwindow *glfw_window;
     };
+    
+    void on_framebuffer_resized(GLFWwindow *glfw_window, i32 width, i32 height);
 }
 
 #endif
