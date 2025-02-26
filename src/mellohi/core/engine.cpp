@@ -4,6 +4,7 @@
 #include "mellohi/assets/asset_registry.hpp"
 #include "mellohi/core/config_assets.hpp"
 #include "mellohi/events/event_dispatcher.hpp"
+#include "mellohi/platform/platform.hpp"
 
 namespace mellohi
 {
@@ -17,6 +18,20 @@ namespace mellohi
     {
         const auto engine_config_id = asset_registry().asset_id_from_path(AssetPath{"@:config:engine.toml"});
         m_engine_config = asset_cache().load<EngineConfigAsset>(engine_config_id);
+        
+        m_main_window = m_platform->create_window(
+            m_engine_config->window_initial_size(),
+            m_engine_config->window_resizable(),
+            m_engine_config->window_title()
+        );
+    }
+    
+    void Engine::run()
+    {
+        while (!m_main_window->should_close())
+        {
+            m_platform->process_events();
+        }
     }
     
     AssetCache & Engine::asset_cache()
@@ -45,5 +60,6 @@ namespace mellohi
         m_asset_cache = std::make_unique<AssetCache>();
         m_asset_registry = std::make_unique<AssetRegistry>();
         m_event_dispatcher = std::make_unique<EventDispatcher>();
+        m_platform = std::make_unique<Platform>();
     }
 }
