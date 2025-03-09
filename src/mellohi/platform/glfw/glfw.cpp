@@ -1,3 +1,4 @@
+#include "GLFW/glfw3.h"
 #ifdef MH_PLATFORM_GLFW
 
 #include "mellohi/platform/glfw/glfw.hpp"
@@ -25,6 +26,18 @@ namespace mellohi
         glfwPollEvents();
     }
     
+    fvec2 Glfw::window_cursor_pos(GLFWwindow *glfw_window) const
+    {
+        f64 x_pos, y_pos;
+        glfwGetCursorPos(glfw_window, &x_pos, &y_pos);
+        return {x_pos, y_pos};
+    }
+    
+    void Glfw::window_cursor_pos(GLFWwindow *glfw_window, fvec2 cursor_pos)
+    {
+        glfwSetCursorPos(glfw_window, cursor_pos.x, cursor_pos.y);
+    }
+    
     u32 Glfw::window_attribute(GLFWwindow *glfw_window, u32 attribute) const
     {
         return glfwGetWindowAttrib(glfw_window, attribute);
@@ -48,7 +61,7 @@ namespace mellohi
         return uvec2{width, height};
     }
     
-    void Glfw::window_framebuffer_resized_callback(GLFWwindow *glfw_window, GLFWframebuffersizefun callback)
+    void Glfw::window_framebuffer_resized_callback(GLFWwindow *glfw_window, const GLFWframebuffersizefun callback)
     {
         glfwSetFramebufferSizeCallback(glfw_window, callback);
     }
@@ -56,6 +69,21 @@ namespace mellohi
     void Glfw::window_hint(const u32 hint, const u32 value)
     {
         glfwWindowHint(hint, value);
+    }
+    
+    void Glfw::window_key_event_callback(GLFWwindow *glfw_window, const GLFWkeyfun callback)
+    {
+        glfwSetKeyCallback(glfw_window, callback);
+    }
+    
+    void Glfw::window_mouse_button_event_callback(GLFWwindow *glfw_window, const GLFWmousebuttonfun callback)
+    {
+        glfwSetMouseButtonCallback(glfw_window, callback);
+    }
+    
+    void Glfw::window_mouse_motion_event_callback(GLFWwindow *glfw_window, const GLFWcursorposfun callback)
+    {
+        glfwSetCursorPosCallback(glfw_window, callback);
     }
     
     bool Glfw::window_should_close(GLFWwindow *glfw_window) const
@@ -71,12 +99,12 @@ namespace mellohi
         return uvec2{width, height};
     }
     
-    void Glfw::window_size(GLFWwindow *glfw_window, uvec2 size)
+    void Glfw::window_size(GLFWwindow *glfw_window, const uvec2 size)
     {
         glfwSetWindowSize(glfw_window, size.x, size.y);
     }
     
-    void Glfw::window_resized_callback(GLFWwindow *glfw_window, GLFWwindowsizefun callback)
+    void Glfw::window_resized_callback(GLFWwindow *glfw_window, const GLFWwindowsizefun callback)
     {
         glfwSetWindowSizeCallback(glfw_window, callback);
     }

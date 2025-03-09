@@ -79,7 +79,7 @@ namespace mellohi
     
     std::ostream & operator<<(std::ostream &os, const Color &color)
     {
-        return os << '[' << color.r << ", " << color.g << ", " << color.b << ", " << color.a << ']';
+        return os << '(' << color.r << ", " << color.g << ", " << color.b << ", " << color.a << ')';
     }
     
     Color Color::srgb_to_linear() const

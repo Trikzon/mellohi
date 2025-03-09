@@ -25,6 +25,7 @@ namespace mellohi
         AssetCache & asset_cache();
         AssetRegistry & asset_registry();
         EventDispatcher & event_dispatcher();
+        Platform & platform();
         
         const EngineConfigAsset & engine_config() const;
         Window & main_window();

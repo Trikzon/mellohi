@@ -21,6 +21,7 @@ set(INCLUDES
     include/mellohi/core/types.hpp
     include/mellohi/events/event.hpp
     include/mellohi/events/event_dispatcher.hpp
+    include/mellohi/platform/input_buttons.hpp
     include/mellohi/platform/platform.hpp
     include/mellohi/platform/window.hpp
 )
@@ -35,18 +36,21 @@ set(SOURCES
     src/mellohi/core/config_assets.cpp
     src/mellohi/core/engine.cpp
     src/mellohi/events/event_dispatcher.cpp
+    src/mellohi/platform/input_buttons.cpp
     src/mellohi/platform/window.cpp
 )
 
 if(MH_PLATFORM_GLFW)
     list(APPEND INCLUDES
         include/mellohi/platform/glfw/glfw.hpp
+        include/mellohi/platform/glfw/glfw_input_buttons.hpp
         include/mellohi/platform/glfw/glfw_platform.hpp
         include/mellohi/platform/glfw/glfw_window.hpp
     )
     
     list(APPEND SOURCES
         src/mellohi/platform/glfw/glfw.cpp
+        src/mellohi/platform/glfw/glfw_input_buttons.cpp
         src/mellohi/platform/glfw/glfw_platform.cpp
         src/mellohi/platform/glfw/glfw_window.cpp
     )

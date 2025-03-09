@@ -17,6 +17,18 @@ int main()
     {
         event.window->title(std::format("Focused: {}", event.focused));
     });
+    event_dispatcher.register_listener<KeyEvent>([](const KeyEvent &event)
+    {
+        event.window->title(format("{}, {}, {}", event.key, event.action, event.mod_flags));
+    });
+    event_dispatcher.register_listener<MouseButtonEvent>([](const MouseButtonEvent &event)
+    {
+        event.window->title(format("{}, {}, {}", event.button, event.action, event.mod_flags));
+    });
+    event_dispatcher.register_listener<MouseMotionEvent>([](const MouseMotionEvent &event)
+    {
+        event.window->title(format("{}, {}", event.delta.x, event.delta.y));
+    });
     
     engine.run();
     

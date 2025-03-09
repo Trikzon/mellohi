@@ -49,6 +49,11 @@ namespace mellohi
         return *m_event_dispatcher;
     }
     
+    Platform & Engine::platform()
+    {
+        return *m_platform;
+    }
+    
     const EngineConfigAsset & Engine::engine_config() const
     {
         MH_ASSERT(m_engine_config != nullptr, "Engine config is not available as Engine has not been initialized.");

@@ -26,6 +26,27 @@ namespace mellohi
         Debug = 4,
         Trace = 5,
     };
+    
+    template<typename... Args>
+    std::string format(const char *message, Args &&...args)
+    {
+        const static auto to_string = [](const auto &value) -> std::string
+        {
+            std::ostringstream oss;
+            oss << value;
+            return oss.str();
+        };
+        
+        auto string_args = std::make_tuple(to_string(std::forward<Args>(args))...);
+        
+        return std::vformat(message,
+                            std::apply(
+                            [](auto &&...s_args)
+                            {
+                                return std::make_format_args(s_args...);
+                            },
+                            std::move(string_args)));
+    }
 
     template <typename... Args>
     void log(LogLevel level, const char *file_path, int line, const char *message, Args &&...args)
@@ -42,23 +63,9 @@ namespace mellohi
             return file_name == nullptr ? file_path : file_name + 1;
         };
         
-        const auto to_string = [](const auto &value) -> std::string
-        {
-            std::ostringstream oss;
-            oss << value;
-            return oss.str();
-        };
-        
         const char *tag = tags[static_cast<int>(level)];
         
-        auto string_args = std::make_tuple(to_string(std::forward<Args>(args))...);
-        const std::string formatted_message = std::vformat(message,
-                                                           std::apply(
-                                                           [](auto &&...s_args)
-                                                           {
-                                                               return std::make_format_args(s_args...);
-                                                           },
-                                                           std::move(string_args)));
+        const std::string formatted_message = format(message, std::forward<Args>(args)...);
         
         constexpr auto color_reset = "\033[0m";
         auto color = [level, color_reset]()

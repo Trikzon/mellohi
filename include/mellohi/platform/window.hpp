@@ -2,6 +2,7 @@
 
 #include "mellohi/core/types.hpp"
 #include "mellohi/events/event.hpp"
+#include "mellohi/platform/input_buttons.hpp"
 
 #include <memory>
 
@@ -14,6 +15,8 @@ namespace mellohi
         
         void initialize();
         
+        fvec2 cursor_pos() const;
+        void cursor_pos(fvec2 cursor_pos);
         bool focused() const;
         uvec2 framebuffer_size() const;
         bool should_close() const;
@@ -38,6 +41,35 @@ namespace mellohi
         uvec2 framebuffer_size;
         
         FramebufferResizedEvent(std::shared_ptr<Window> window, uvec2 framebuffer_size);
+    };
+    
+    struct KeyEvent : public Event
+    {
+        std::shared_ptr<Window> window;
+        Key key;
+        ButtonAction action;
+        ButtonModFlags mod_flags;
+        
+        KeyEvent(std::shared_ptr<Window> window, Key key, ButtonAction action, ButtonModFlags mod_flags);
+    };
+    
+    struct MouseButtonEvent : public Event
+    {
+        std::shared_ptr<Window> window;
+        MouseButton button;
+        ButtonAction action;
+        ButtonModFlags mod_flags;
+        
+        MouseButtonEvent(std::shared_ptr<Window> window, MouseButton button, ButtonAction action,
+            ButtonModFlags mod_flags);
+    };
+    
+    struct MouseMotionEvent : public Event
+    {
+        std::shared_ptr<Window> window;
+        fvec2 delta;
+        
+        MouseMotionEvent(std::shared_ptr<Window> window, fvec2 delta);
     };
     
     struct WindowFocusChangedEvent : public Event

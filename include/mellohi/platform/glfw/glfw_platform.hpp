@@ -4,7 +4,6 @@
 
 #include "mellohi/platform/platform.hpp"
 
-
 namespace mellohi
 {
     struct Platform::ImplData
