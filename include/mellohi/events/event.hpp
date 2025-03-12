@@ -7,3 +7,4 @@ namespace mellohi
         virtual ~Event() = default;
     };
 }
+

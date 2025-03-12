@@ -26,7 +26,7 @@ namespace mellohi
         Debug = 4,
         Trace = 5,
     };
-    
+
     template<typename... Args>
     std::string format(const char *message, Args &&...args)
     {
@@ -36,9 +36,9 @@ namespace mellohi
             oss << value;
             return oss.str();
         };
-        
+
         auto string_args = std::make_tuple(to_string(std::forward<Args>(args))...);
-        
+
         return std::vformat(message,
                             std::apply(
                             [](auto &&...s_args)
@@ -52,7 +52,7 @@ namespace mellohi
     void log(LogLevel level, const char *file_path, int line, const char *message, Args &&...args)
     {
         const char *tags[6] = {"FATAL", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"};
-        
+
         const auto get_file_name = [](const char *file_path) -> const char *
         {
             const char *file_name = std::strrchr(file_path, '/');
@@ -62,11 +62,11 @@ namespace mellohi
             }
             return file_name == nullptr ? file_path : file_name + 1;
         };
-        
+
         const char *tag = tags[static_cast<int>(level)];
-        
+
         const std::string formatted_message = format(message, std::forward<Args>(args)...);
-        
+
         constexpr auto color_reset = "\033[0m";
         auto color = [level, color_reset]()
         {
@@ -81,7 +81,7 @@ namespace mellohi
                 return color_reset;
             }
         }();
-        
+
         std::println("{}[{}] {}({}): {}{}", color, tag, get_file_name(file_path), line, formatted_message, color_reset);
     }
 }
@@ -130,3 +130,4 @@ namespace mellohi
 #else
     #define MH_ASSERT_DEBUG(condition, message, ...)
 #endif
+

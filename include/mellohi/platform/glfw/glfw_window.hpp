@@ -12,7 +12,7 @@ namespace mellohi
     {
         GLFWwindow *glfw_window;
     };
-    
+
     void on_focus_changed(GLFWwindow *glfw_window, i32 focused);
     void on_framebuffer_resized(GLFWwindow *glfw_window, i32 width, i32 height);
     void on_key_event(GLFWwindow *glfw_window, i32 key, i32 scan_code, i32 action, i32 mods);
@@ -22,3 +22,4 @@ namespace mellohi
 }
 
 #endif
+

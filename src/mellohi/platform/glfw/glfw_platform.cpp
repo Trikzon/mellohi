@@ -10,24 +10,24 @@ namespace mellohi
     Platform::Platform()
     {
         m_data = std::make_unique<ImplData>();
-        
+
         Glfw::get();
-        
+
         MH_TRACE("Successfully initialized GLFW platform.");
     }
-    
+
     Platform::~Platform()
     {
-        
+
     }
-    
+
     std::shared_ptr<Window> Platform::create_window(const uvec2 size, const bool resizable, const std::string &title)
     {
         auto window = std::shared_ptr<Window>{new Window{size, resizable, title}};
         window->initialize();
         return window;
     }
-    
+
     void Platform::process_events()
     {
         Glfw::get().poll_events();
@@ -35,3 +35,4 @@ namespace mellohi
 }
 
 #endif
+

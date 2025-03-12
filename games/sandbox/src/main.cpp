@@ -8,10 +8,10 @@ using namespace mellohi;
 int main()
 {
     MH_INFO("Hello, world!");
-    
+
     auto &engine = Engine::get();
     engine.initialize();
-    
+
     auto &event_dispatcher = engine.event_dispatcher();
     event_dispatcher.register_listener<WindowFocusChangedEvent>([](const WindowFocusChangedEvent &event)
     {
@@ -27,10 +27,11 @@ int main()
     });
     event_dispatcher.register_listener<MouseMotionEvent>([](const MouseMotionEvent &event)
     {
-        event.window->title(format("{}, {}", event.delta.x, event.delta.y));
+        event.window->title(format("{}, {}", event.delta.x, event.delta.y)); 
     });
-    
+
     engine.run();
-    
+
     return 0;
 }
+

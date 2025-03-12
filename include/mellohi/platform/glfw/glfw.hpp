@@ -12,10 +12,10 @@ namespace mellohi
     {
     public:
         static Glfw & get();
-        
+
         Glfw(const Glfw &other) = delete;
         void operator=(const Glfw &other) = delete;
-        
+
         GLFWwindow * create_window(uvec2 size, const std::string &title);
         void destroy_window(GLFWwindow *glfw_window);
         void poll_events();
@@ -39,20 +39,21 @@ namespace mellohi
         template<typename T>
         T * window_user_pointer(GLFWwindow *glfw_window);
         void window_user_pointer(GLFWwindow *glfw_window, void *user_pointer);
-        
+
     private:
         Glfw();
         ~Glfw();
     };
-    
+
     template<typename T>
     T * Glfw::window_user_pointer(GLFWwindow *glfw_window)
     {
         void * user_pointer = glfwGetWindowUserPointer(glfw_window);
         MH_ASSERT(user_pointer != nullptr, "GLFW window user pointer is null.");
-        
+
         return static_cast<T *>(user_pointer);
     }
 }
 
 #endif
+

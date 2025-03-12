@@ -26,12 +26,12 @@ namespace mellohi
         glfw.window_mouse_motion_event_callback(m_data->glfw_window, on_mouse_motion_event);
         glfw.window_resized_callback(m_data->glfw_window, on_window_resized);
     }
-    
+
     fvec2 Window::cursor_pos() const
     {
         return Glfw::get().window_cursor_pos(m_data->glfw_window);
     }
-    
+
     void Window::cursor_pos(const fvec2 cursor_pos)
     {
         Glfw::get().window_cursor_pos(m_data->glfw_window, cursor_pos);
@@ -118,27 +118,27 @@ namespace mellohi
             window->shared_from_this(), to_mh_key(key), to_mh_button_action(action), to_mh_button_mod_flags(mods)
         });
     }
-    
+
     void on_mouse_button_event(GLFWwindow *glfw_window, const i32 button, const i32 action, const i32 mods)
     {
         Window *window = Glfw::get().window_user_pointer<Window>(glfw_window);
-        
+
         auto &event_dispatcher = Engine::get().event_dispatcher();
         event_dispatcher.dispatch_event<MouseButtonEvent>(MouseButtonEvent{
             window->shared_from_this(),
             to_mh_mouse_button(button), to_mh_button_action(action), to_mh_button_mod_flags(mods)
         });
     }
-    
+
     void on_mouse_motion_event(GLFWwindow *glfw_window, const f64 x_pos, const f64 y_pos)
     {
         static fvec2 last_cursor_pos;
-        
+
         Window *window = Glfw::get().window_user_pointer<Window>(glfw_window);
-        
+
         fvec2 delta = fvec2{x_pos, y_pos} - last_cursor_pos;
         last_cursor_pos = {x_pos, y_pos};
-                
+
         auto &event_dispatcher = Engine::get().event_dispatcher();
         event_dispatcher.dispatch_event<MouseMotionEvent>(MouseMotionEvent{window->shared_from_this(), delta});
     }
@@ -157,3 +157,4 @@ namespace mellohi
 }
 
 #endif
+

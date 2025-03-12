@@ -127,12 +127,12 @@ namespace mellohi
             default:                  return "None";
         }
     }
-    
+
     std::ostream & operator<<(std::ostream &os, const Key key)
     {
         return os << "Key(" << to_string(key) << ")";
     }
-    
+
     std::string_view to_string(const MouseButton mouse_button)
     {
         switch (mouse_button)
@@ -148,45 +148,45 @@ namespace mellohi
             default: return "None";
         }
     }
-    
+
     std::ostream & operator<<(std::ostream &os, const MouseButton mouse_button)
     {
         return os << "MouseButton(" << to_string(mouse_button) << ")";
     }
-    
+
     ButtonModFlags operator|(const ButtonModFlags lhs, const ButtonModFlags rhs)
     {
         using T = std::underlying_type_t<ButtonModFlags>;
         return static_cast<ButtonModFlags>(static_cast<T>(lhs) | static_cast<T>(rhs));
     }
-    
+
     ButtonModFlags & operator|=(ButtonModFlags &lhs, const ButtonModFlags rhs)
     {
         lhs = lhs | rhs;
         return lhs;
     }
-    
+
     ButtonModFlags operator&(const ButtonModFlags lhs, const ButtonModFlags rhs)
     {
         using T = std::underlying_type_t<ButtonModFlags>;
         return static_cast<ButtonModFlags>(static_cast<T>(lhs) & static_cast<T>(rhs));
     }
-    
+
     ButtonModFlags & operator&=(ButtonModFlags &lhs, const ButtonModFlags rhs)
     {
         lhs = lhs & rhs;
         return lhs;
     }
-    
+
     bool operator!(const ButtonModFlags mod)
     {
         return static_cast<std::underlying_type_t<ButtonModFlags>>(mod) == 0;
     }
-    
+
     std::string to_string(const ButtonModFlags button_mod_flags)
     {
         std::string result = "";
-        
+
         if (!!(button_mod_flags & ButtonModFlags::Shift))
             result += ", Shift";
         if (!!(button_mod_flags & ButtonModFlags::Control))
@@ -199,18 +199,18 @@ namespace mellohi
             result += ", CapsLock";
         if (!!(button_mod_flags & ButtonModFlags::NumLock))
             result += ", NumLock";
-        
+
         if (result.empty())
             return "None";
         else
             return result.substr(2);
     }
-    
+
     std::ostream & operator<<(std::ostream &os, const ButtonModFlags button_mod_flags)
     {
         return os << "ButtonModFlags(" << to_string(button_mod_flags) << ")";
     }
-    
+
     std::string_view to_string(const ButtonAction button_action)
     {
         switch(button_action)
@@ -221,9 +221,10 @@ namespace mellohi
             default:                    return "None";
         }
     }
-    
+
     std::ostream & operator<<(std::ostream &os, const ButtonAction button_action)
     {
         return os << "ButtonAction(" << to_string(button_action) << ")";
     }
 }
+

@@ -11,8 +11,9 @@ namespace mellohi
             {
                 return pair.first == id;
             });
-            
+
             vec.erase(new_end, vec.end());
         }
     }
 }
+

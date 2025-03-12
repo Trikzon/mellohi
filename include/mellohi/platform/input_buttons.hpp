@@ -126,10 +126,10 @@ namespace mellohi
         RightSuper,
         Menu,
     };
-    
+
     std::string_view to_string(Key key);
     std::ostream & operator<<(std::ostream &os, Key key);
-    
+
     enum class MouseButton : u32
     {
         None,
@@ -142,10 +142,10 @@ namespace mellohi
         Seven,
         Eight,
     };
-    
+
     std::string_view to_string(MouseButton mouse_button);
     std::ostream & operator<<(std::ostream &os, MouseButton mouse_button);
-    
+
     enum class ButtonModFlags : u32
     {
         None     = 0,
@@ -156,16 +156,16 @@ namespace mellohi
         CapsLock = 16,
         NumLock  = 32,
     };
-    
+
     ButtonModFlags operator|(ButtonModFlags lhs, ButtonModFlags rhs);
     ButtonModFlags & operator|=(ButtonModFlags &lhs, ButtonModFlags rhs);
     ButtonModFlags operator&(ButtonModFlags lhs, ButtonModFlags rhs);
     ButtonModFlags & operator&=(ButtonModFlags &lhs, ButtonModFlags rhs);
     bool operator!(ButtonModFlags mod);
-    
+
     std::string to_string(ButtonModFlags button_mod_flags);
     std::ostream & operator<<(std::ostream &os, ButtonModFlags button_mod_flags);
-    
+
     enum class ButtonAction : u32
     {
         None,
@@ -173,7 +173,8 @@ namespace mellohi
         Release,
         Repeat,
     };
-    
+
     std::string_view to_string(ButtonAction button_action);
     std::ostream & operator<<(std::ostream &os, ButtonAction button_action);
 }
+

@@ -130,7 +130,7 @@ namespace mellohi
             default:                     return Key::None;
         }
     }
-    
+
     i32 to_glfw_key(Key mh_key)
     {
         switch (mh_key)
@@ -256,7 +256,7 @@ namespace mellohi
             default:                  return -1;
         }
     }
-    
+
     MouseButton to_mh_mouse_button(i32 glfw_mouse_button)
     {
         switch(glfw_mouse_button)
@@ -272,7 +272,7 @@ namespace mellohi
             default:                       return MouseButton::None;
         }
     }
-    
+
     i32 to_glfw_mouse_button(MouseButton mh_mouse_button)
     {
         switch (mh_mouse_button)
@@ -288,11 +288,11 @@ namespace mellohi
             default:                  return -1;
         }
     }
-    
+
     ButtonModFlags to_mh_button_mod_flags(i32 glfw_button_mod_flags)
     {
         auto result = ButtonModFlags::None;
-        
+
         if (glfw_button_mod_flags & GLFW_MOD_SHIFT)
             result |= ButtonModFlags::Shift;
         if (glfw_button_mod_flags & GLFW_MOD_CONTROL)
@@ -305,14 +305,14 @@ namespace mellohi
             result |= ButtonModFlags::CapsLock;
         if (glfw_button_mod_flags & GLFW_MOD_NUM_LOCK)
             result |= ButtonModFlags::NumLock;
-        
+
         return result;
     }
-    
+
     i32 to_glfw_button_mod_flags(ButtonModFlags mh_button_modifier)
     {
         i32 result = 0;
-        
+
         if (!!(mh_button_modifier & ButtonModFlags::Shift))
             result |= GLFW_MOD_SHIFT;
         if (!!(mh_button_modifier & ButtonModFlags::Control))
@@ -328,7 +328,7 @@ namespace mellohi
         
         return result;
     }
-    
+
     ButtonAction to_mh_button_action(i32 glfw_button_action)
     {
         switch (glfw_button_action)
@@ -339,7 +339,7 @@ namespace mellohi
             default:           return ButtonAction::None;
         }
     }
-    
+
     i32 to_glfw_button_action(ButtonAction mh_button_action)
     {
         switch (mh_button_action)
@@ -353,3 +353,4 @@ namespace mellohi
 }
 
 #endif
+

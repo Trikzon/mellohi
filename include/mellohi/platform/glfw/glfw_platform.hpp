@@ -8,8 +8,9 @@ namespace mellohi
 {
     struct Platform::ImplData
     {
-        
+
     };
 }
 
 #endif
+

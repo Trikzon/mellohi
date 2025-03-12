@@ -11,7 +11,7 @@ namespace mellohi {
     public:
         AssetId asset_id_from_path(const AssetPath &path);
         std::optional<AssetPath> asset_path_from_id(AssetId id) const;
-    
+
     private:
         mutable std::shared_mutex m_mutex;
         u64 m_next_id;
@@ -19,3 +19,4 @@ namespace mellohi {
         std::unordered_map<AssetId, AssetPath> m_id_to_path;
     };
 }
+
