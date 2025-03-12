@@ -21,6 +21,7 @@ set(INCLUDES
     include/mellohi/core/types.hpp
     include/mellohi/events/event.hpp
     include/mellohi/events/event_dispatcher.hpp
+    include/mellohi/graphics/graphics.hpp
     include/mellohi/platform/input_buttons.hpp
     include/mellohi/platform/platform.hpp
     include/mellohi/platform/window.hpp
@@ -47,12 +48,25 @@ if(MH_PLATFORM_GLFW)
         include/mellohi/platform/glfw/glfw_platform.hpp
         include/mellohi/platform/glfw/glfw_window.hpp
     )
-    
+
     list(APPEND SOURCES
         src/mellohi/platform/glfw/glfw.cpp
         src/mellohi/platform/glfw/glfw_input_buttons.cpp
         src/mellohi/platform/glfw/glfw_platform.cpp
         src/mellohi/platform/glfw/glfw_window.cpp
+    )
+endif()
+
+if(MH_GRAPHICS_VULKAN)
+    list(APPEND INCLUDES
+        include/mellohi/graphics/vulkan/vulkan.hpp
+        include/mellohi/graphics/vulkan/vulkan_device.hpp
+        include/mellohi/graphics/vulkan/vulkan_graphics.hpp
+    )
+
+    list(APPEND SOURCES
+        src/mellohi/graphics/vulkan/vulkan_device.cpp
+        src/mellohi/graphics/vulkan/vulkan_graphics.cpp
     )
 endif()
 
@@ -91,3 +105,4 @@ add_subdirectory(external/tomlplusplus)
 target_link_libraries(mellohi PUBLIC tomlplusplus::tomlplusplus)
 
 add_subdirectory(games)
+

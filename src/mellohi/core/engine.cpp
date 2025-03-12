@@ -4,6 +4,7 @@
 #include "mellohi/assets/asset_registry.hpp"
 #include "mellohi/core/config_assets.hpp"
 #include "mellohi/events/event_dispatcher.hpp"
+#include "mellohi/graphics/graphics.hpp"
 #include "mellohi/platform/platform.hpp"
 
 namespace mellohi
@@ -31,6 +32,8 @@ namespace mellohi
         while (!m_main_window->should_close())
         {
             m_platform->process_events();
+
+            m_graphics->draw_frame();
         }
     }
 
@@ -66,6 +69,7 @@ namespace mellohi
         m_asset_registry = std::make_unique<AssetRegistry>();
         m_event_dispatcher = std::make_unique<EventDispatcher>();
         m_platform = std::make_unique<Platform>();
+        m_graphics = std::make_unique<Graphics>(*m_platform);
     }
 }
 

@@ -32,6 +32,19 @@ namespace mellohi
     {
         Glfw::get().poll_events();
     }
+
+    std::vector<const char *> Platform::get_required_vulkan_instance_extensions() const
+    {
+        u32 extension_count;
+        const char **extensions = glfwGetRequiredInstanceExtensions(&extension_count);
+
+        if (!extensions)
+        {
+            return {};
+        }
+
+        return {extensions, extensions + extension_count};
+    }
 }
 
 #endif
