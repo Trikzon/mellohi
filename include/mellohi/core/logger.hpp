@@ -121,13 +121,17 @@ namespace mellohi
     }
 
 #ifdef MH_DEBUG_MODE
-#define MH_ASSERT_DEBUG(condition, message, ...) \
+#define MH_DEBUG_ASSERT(condition, message, ...) \
     if (!(condition))                            \
     {                                            \
         MH_FATAL(message, ##__VA_ARGS__);        \
         std::abort();                            \
     }
 #else
-    #define MH_ASSERT_DEBUG(condition, message, ...)
+    #define MH_DEBUG_ASSERT(condition, message, ...)
 #endif
+
+#define MH_PANIC(message, ...)        \
+    MH_FATAL(message, ##__VA_ARGS__); \
+    std::abort();
 

@@ -46,9 +46,9 @@ namespace mellohi
             .ppEnabledExtensionNames = extensions.data(),
         };
 
-        const auto instance_rv = vk::createInstance(instance_ci);
-        MH_ASSERT(instance_rv.result == vk::Result::eSuccess, "Failed to create Vulkan instance.");
-        m_instance = instance_rv.value;
+        const auto instance_resval = vk::createInstance(instance_ci);
+        MH_ASSERT_VK(instance_resval.result, "Failed to create Vulkan instance.");
+        m_instance = instance_resval.value;
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(m_instance);
     }
