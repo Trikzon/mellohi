@@ -6,6 +6,10 @@
 
 #include <GLFW/glfw3.h>
 
+#ifdef MH_GRAPHICS_VULKAN
+#include "mellohi/graphics/vulkan/vulkan.hpp"
+#endif
+
 namespace mellohi
 {
     class Glfw
@@ -39,6 +43,10 @@ namespace mellohi
         template<typename T>
         T * window_user_pointer(GLFWwindow *glfw_window);
         void window_user_pointer(GLFWwindow *glfw_window, void *user_pointer);
+
+#ifdef MH_GRAPHICS_VULKAN
+        vk::SurfaceKHR window_create_vulkan_surface(GLFWwindow *glfw_window, vk::Instance instance) const;
+#endif
 
     private:
         Glfw();

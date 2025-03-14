@@ -1,6 +1,5 @@
 #pragma once
 
-#include "mellohi/platform/platform.hpp"
 
 #include <memory>
 
@@ -9,7 +8,7 @@ namespace mellohi
     class Graphics
     {
     public:
-        Graphics(const Platform &platform);
+        Graphics();
         ~Graphics();
 
         void draw_frame();

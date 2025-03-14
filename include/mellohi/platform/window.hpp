@@ -6,6 +6,10 @@
 
 #include <memory>
 
+#ifdef MH_GRAPHICS_VULKAN
+#include "mellohi/graphics/vulkan/vulkan.hpp"
+#endif
+
 namespace mellohi
 {
     class Window : public std::enable_shared_from_this<Window>
@@ -24,6 +28,10 @@ namespace mellohi
         void size(uvec2 size);
         std::string title() const;
         void title(const std::string &title);
+
+#ifdef MH_GRAPHICS_VULKAN
+        vk::SurfaceKHR create_vulkan_surface(vk::Instance instance) const;
+#endif
 
     private:
         friend class Platform;

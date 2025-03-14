@@ -72,6 +72,13 @@ namespace mellohi
         return Glfw::get().window_title(m_data->glfw_window, title);
     }
 
+#ifdef MH_GRAPHICS_VULKAN
+    vk::SurfaceKHR Window::create_vulkan_surface(vk::Instance instance) const
+    {
+        return Glfw::get().window_create_vulkan_surface(m_data->glfw_window, instance);
+    }
+#endif
+
     Window::Window(const uvec2 size, const bool resizable, const std::string &title)
     {
         m_data = std::make_unique<ImplData>();

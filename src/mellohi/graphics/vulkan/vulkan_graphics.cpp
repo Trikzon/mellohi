@@ -5,18 +5,18 @@
 
 namespace mellohi
 {
-    Graphics::Graphics(const Platform &platform)
+    Graphics::Graphics()
     {
         m_data = std::make_unique<ImplData>();
 
-        m_data->device = std::make_unique<VulkanDevice>(platform);
+        m_data->device = std::make_unique<VulkanDevice>();
 
         MH_TRACE("Successfully initialized Vulkan graphics.");
     }
 
     Graphics::~Graphics()
     {
-
+        MH_TRACE("Destructing graphics");
     }
 
     void Graphics::draw_frame()

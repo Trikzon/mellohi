@@ -124,6 +124,17 @@ namespace mellohi
         glfwSetWindowUserPointer(glfw_window, user_pointer);
     }
 
+#ifdef MH_GRAPHICS_VULKAN
+    vk::SurfaceKHR Glfw::window_create_vulkan_surface(GLFWwindow *glfw_window, vk::Instance instance) const
+    {
+        VkSurfaceKHR surface;
+        auto result = glfwCreateWindowSurface(instance, glfw_window, nullptr, &surface);
+        MH_ASSERT(result == VK_SUCCESS, "Failed to create Vulkan surface from GLFW window.");
+
+        return surface;
+    }
+#endif
+
     Glfw::Glfw()
     {
         MH_ASSERT(glfwInit(), "Failed to initialize GLFW.");

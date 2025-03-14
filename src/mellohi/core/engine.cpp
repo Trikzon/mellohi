@@ -17,6 +17,11 @@ namespace mellohi
 
     void Engine::initialize()
     {
+        m_asset_cache = std::make_unique<AssetCache>();
+        m_asset_registry = std::make_unique<AssetRegistry>();
+        m_event_dispatcher = std::make_unique<EventDispatcher>();
+        m_platform = std::make_unique<Platform>();
+
         const auto engine_config_id = asset_registry().asset_id_from_path(AssetPath{"@:config:engine.toml"});
         m_engine_config = asset_cache().load<EngineConfigAsset>(engine_config_id);
 
@@ -25,6 +30,8 @@ namespace mellohi
             m_engine_config->window_resizable(),
             m_engine_config->window_title()
         );
+
+        m_graphics = std::make_unique<Graphics>();
     }
 
     void Engine::run()
@@ -35,6 +42,8 @@ namespace mellohi
 
             m_graphics->draw_frame();
         }
+
+        shutdown();
     }
 
     AssetCache & Engine::asset_cache()
@@ -63,13 +72,25 @@ namespace mellohi
         return *m_engine_config;
     }
 
+    Window & Engine::main_window()
+    {
+        return *m_main_window;
+    }
+
+    Graphics & Engine::graphics()
+    {
+        MH_ASSERT(m_graphics != nullptr, "Cannot get graphics from Engine. Graphics is uninitialized or released.");
+        return *m_graphics;
+    }
+
     Engine::Engine()
     {
-        m_asset_cache = std::make_unique<AssetCache>();
-        m_asset_registry = std::make_unique<AssetRegistry>();
-        m_event_dispatcher = std::make_unique<EventDispatcher>();
-        m_platform = std::make_unique<Platform>();
-        m_graphics = std::make_unique<Graphics>(*m_platform);
+
+    }
+
+    void Engine::shutdown()
+    {
+        m_graphics.reset();
     }
 }
 

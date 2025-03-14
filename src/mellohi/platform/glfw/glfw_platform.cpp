@@ -18,7 +18,6 @@ namespace mellohi
 
     Platform::~Platform()
     {
-
     }
 
     std::shared_ptr<Window> Platform::create_window(const uvec2 size, const bool resizable, const std::string &title)
