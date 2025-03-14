@@ -13,7 +13,7 @@ namespace mellohi
         std::shared_ptr<Window> create_window(uvec2 size, bool resizable, const std::string &title);
         void process_events();
 
-        std::vector<const char *> get_required_vulkan_instance_extensions() const;
+        std::vector<const char *> required_vulkan_instance_extensions() const;
 
     private:
         struct ImplData;

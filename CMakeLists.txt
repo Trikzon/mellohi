@@ -62,11 +62,15 @@ if(MH_GRAPHICS_VULKAN)
         include/mellohi/graphics/vulkan/vulkan.hpp
         include/mellohi/graphics/vulkan/vulkan_device.hpp
         include/mellohi/graphics/vulkan/vulkan_graphics.hpp
+        include/mellohi/graphics/vulkan/vulkan_render_pass.hpp
+        include/mellohi/graphics/vulkan/vulkan_swapchain.hpp
     )
 
     list(APPEND SOURCES
         src/mellohi/graphics/vulkan/vulkan_device.cpp
         src/mellohi/graphics/vulkan/vulkan_graphics.cpp
+        src/mellohi/graphics/vulkan/vulkan_render_pass.cpp
+        src/mellohi/graphics/vulkan/vulkan_swapchain.cpp
     )
 endif()
 

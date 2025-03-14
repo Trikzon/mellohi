@@ -32,6 +32,7 @@ namespace mellohi
         m_surface = Engine::get().main_window().create_vulkan_surface(m_instance);
         choose_physical_device();
         create_logical_device_and_queues();
+        choose_preferred_surface_format();
     }
 
     VulkanDevice::~VulkanDevice()
@@ -48,15 +49,135 @@ namespace mellohi
         m_instance.destroy();
     }
 
-    vk::Queue VulkanDevice::get_queue(VulkanQueueCapability capability) const
+    void VulkanDevice::reset_fence(const vk::Fence fence) const
     {
-        const auto queue_it = m_queues.find(get_queue_family_index(capability));
+        const auto result = m_logical_device.resetFences(1, &fence);
+        MH_ASSERT_VK(result, "Failed to reset Vulkan fence.");
+    }
+
+    void VulkanDevice::wait_for_fence(const vk::Fence fence, const u64 timeout) const
+    {
+        const auto result = m_logical_device.waitForFences(1, &fence, vk::True, timeout);
+        MH_ASSERT_VK(result, "Failed to wait for Vulkan fence.");
+    }
+
+    void VulkanDevice::wait_idle() const
+    {
+        const auto result = m_logical_device.waitIdle();
+        MH_ASSERT_VK(result, "Failed to wait for Vulkan logical device.");
+    }
+
+    std::vector<vk::CommandBuffer> VulkanDevice::allocate_command_buffers(
+            const vk::CommandBufferAllocateInfo &allocate_info) const
+    {
+        const auto resval = m_logical_device.allocateCommandBuffers(allocate_info);
+        MH_ASSERT_VK(resval.result, "Failed to allocate Vulkan command buffers.");
+        return resval.value;
+    }
+
+    vk::CommandPool VulkanDevice::create_command_pool(const vk::CommandPoolCreateInfo &create_info) const
+    {
+        const auto resval = m_logical_device.createCommandPool(create_info);
+        MH_ASSERT_VK(resval.result, "Failed to create Vulkan command pool.");
+        return resval.value;
+    }
+
+    vk::Fence VulkanDevice::create_fence(const vk::FenceCreateInfo &create_info) const
+    {
+        const auto resval = m_logical_device.createFence(create_info);
+        MH_ASSERT_VK(resval.result, "Failed to create Vulkan fence.");
+        return resval.value;
+    }
+
+    vk::Framebuffer VulkanDevice::create_framebuffer(const vk::FramebufferCreateInfo &create_info) const
+    {
+        const auto resval = m_logical_device.createFramebuffer(create_info);
+        MH_ASSERT_VK(resval.result, "Failed to create Vulkan framebuffer.");
+        return resval.value;
+    }
+
+    vk::ImageView VulkanDevice::create_image_view(const vk::ImageViewCreateInfo &create_info) const
+    {
+        const auto resval = m_logical_device.createImageView(create_info);
+        MH_ASSERT_VK(resval.result, "Failed to create Vulkan image view.");
+        return resval.value;
+    }
+
+    vk::RenderPass VulkanDevice::create_render_pass(const vk::RenderPassCreateInfo &create_info) const
+    {
+        const auto resval = m_logical_device.createRenderPass(create_info);
+        MH_ASSERT_VK(resval.result, "Failed to create Vulkan render pass.");
+        return resval.value;
+    }
+
+    vk::Semaphore VulkanDevice::create_semaphore(const vk::SemaphoreCreateInfo &create_info) const
+    {
+        const auto resval = m_logical_device.createSemaphore(create_info);
+        MH_ASSERT_VK(resval.result, "Failed to create Vulkan semaphore.");
+        return resval.value;
+    }
+
+    vk::SwapchainKHR VulkanDevice::create_swapchain(const vk::SwapchainCreateInfoKHR &create_info) const
+    {
+        const auto resval = m_logical_device.createSwapchainKHR(create_info);
+        MH_ASSERT_VK(resval.result, "Failed to create Vulkan swapchain.");
+        return resval.value;
+    }
+
+    void VulkanDevice::destroy_command_pool(const vk::CommandPool command_pool) const
+    {
+        m_logical_device.destroyCommandPool(command_pool);
+    }
+
+    void VulkanDevice::destroy_fence(const vk::Fence fence) const
+    {
+        m_logical_device.destroyFence(fence);
+    }
+
+    void VulkanDevice::destroy_framebuffer(const vk::Framebuffer framebuffer) const
+    {
+        m_logical_device.destroyFramebuffer(framebuffer);
+    }
+
+    void VulkanDevice::destroy_image_view(const vk::ImageView image_view) const
+    {
+        m_logical_device.destroyImageView(image_view);
+    }
+
+    void VulkanDevice::destroy_render_pass(const vk::RenderPass render_pass) const
+    {
+        m_logical_device.destroyRenderPass(render_pass);
+    }
+
+    void VulkanDevice::destroy_semaphore(const vk::Semaphore semaphore) const
+    {
+        m_logical_device.destroySemaphore(semaphore);
+    }
+
+    void VulkanDevice::destroy_swapchain(const vk::SwapchainKHR swapchain) const
+    {
+        m_logical_device.destroySwapchainKHR(swapchain);
+    }
+
+    vk::Device VulkanDevice::logical_device() const
+    {
+        return m_logical_device;
+    }
+
+    vk::SurfaceFormatKHR VulkanDevice::preferred_surface_format() const
+    {
+        return m_preferred_surface_format;
+    }
+
+    vk::Queue VulkanDevice::queue(VulkanQueueCapability capability) const
+    {
+        const auto queue_it = m_queues.find(queue_family_index(capability));
         MH_ASSERT(queue_it != m_queues.end(), "Device is missing queue for {} capability.", capability);
 
         return queue_it->second;
     }
 
-    u32 VulkanDevice::get_queue_family_index(VulkanQueueCapability capability) const
+    u32 VulkanDevice::queue_family_index(VulkanQueueCapability capability) const
     {
         const auto queue_family_it = m_queue_family_indices.find(capability);
         MH_ASSERT(queue_family_it != m_queue_family_indices.end(), "Device is missing queue family for {} capability.", capability);
@@ -64,10 +185,43 @@ namespace mellohi
         return queue_family_it->second;
     }
 
-    std::vector<u32> VulkanDevice::get_unique_queue_family_indices() const
+    vk::SurfaceKHR VulkanDevice::surface() const
     {
-        const auto graphics_index = get_queue_family_index(VulkanQueueCapability::Graphics);
-        const auto present_index = get_queue_family_index(VulkanQueueCapability::Present);
+        return m_surface;
+    }
+
+    std::vector<vk::SurfaceFormatKHR> VulkanDevice::surface_formats() const
+    {
+        const auto resval = m_physical_device.getSurfaceFormatsKHR(m_surface);
+        MH_ASSERT_VK(resval.result, "Failed to get surface formats from Vulkan physical device.");
+        return resval.value;
+    }
+
+    vk::SurfaceCapabilitiesKHR VulkanDevice::surface_capabilities() const
+    {
+        const auto resval = m_physical_device.getSurfaceCapabilitiesKHR(m_surface);
+        MH_ASSERT_VK(resval.result, "Failed to get surface capabilities from Vulkan physical device.");
+        return resval.value;
+    }
+
+    std::vector<vk::PresentModeKHR> VulkanDevice::surface_present_modes() const
+    {
+        const auto resval = m_physical_device.getSurfacePresentModesKHR(m_surface);
+        MH_ASSERT_VK(resval.result, "Failed to get surface present modes from Vulkan physical device.");
+        return resval.value;
+    }
+
+    std::vector<vk::Image> VulkanDevice::swapchain_images(const vk::SwapchainKHR swapchain) const
+    {
+        const auto resval = m_logical_device.getSwapchainImagesKHR(swapchain);
+        MH_ASSERT_VK(resval.result, "Failed to get Vulkan swapchain images from logical device.");
+        return resval.value;
+    }
+
+    std::vector<u32> VulkanDevice::unique_queue_family_indices() const
+    {
+        const auto graphics_index = queue_family_index(VulkanQueueCapability::Graphics);
+        const auto present_index = queue_family_index(VulkanQueueCapability::Present);
 
         if (graphics_index != present_index)
         {
@@ -134,8 +288,8 @@ namespace mellohi
             .apiVersion = VK_API_VERSION_1_4,
         };
 
-        const auto extensions = get_required_instance_extensions();
-        const auto validation_layers = get_required_validation_layers();
+        const auto extensions = required_instance_extensions();
+        const auto validation_layers = required_validation_layers();
 
         vk::InstanceCreateFlagBits flags = {};
 #ifdef __APPLE__
@@ -229,7 +383,7 @@ namespace mellohi
     {
         std::vector<vk::DeviceQueueCreateInfo> device_queue_ci;
         const f32 queue_priority = 1.0f;
-        for (const u32 queue_family_index : get_unique_queue_family_indices())
+        for (const u32 queue_family_index : unique_queue_family_indices())
         {
             device_queue_ci.push_back(vk::DeviceQueueCreateInfo
             {
@@ -239,8 +393,8 @@ namespace mellohi
             });
         }
 
-        const auto extensions = get_required_device_extensions();
-        const auto validation_layers = get_required_validation_layers();
+        const auto extensions = required_device_extensions();
+        const auto validation_layers = required_validation_layers();
 
         const vk::PhysicalDeviceFeatures physical_device_features;
 
@@ -261,7 +415,7 @@ namespace mellohi
 
         VULKAN_HPP_DEFAULT_DISPATCHER.init(m_logical_device);
 
-        for (const u32 queue_family_index : get_unique_queue_family_indices())
+        for (const u32 queue_family_index : unique_queue_family_indices())
         {
             vk::Queue queue;
             m_logical_device.getQueue(queue_family_index, 0, &queue);
@@ -269,9 +423,25 @@ namespace mellohi
         }
     }
 
-    std::vector<const char *> VulkanDevice::get_required_instance_extensions() const
+    void VulkanDevice::choose_preferred_surface_format()
     {
-        auto extensions = Engine::get().platform().get_required_vulkan_instance_extensions();
+        const auto available_formats = surface_formats();
+        m_preferred_surface_format = available_formats[0];
+
+        for (const auto &available_format : available_formats)
+        {
+            if (available_format.format == vk::Format::eB8G8R8A8Srgb
+                && available_format.colorSpace == vk::ColorSpaceKHR::eSrgbNonlinear)
+            {
+                m_preferred_surface_format = available_format;
+                break;
+            }
+        }
+    }
+
+    std::vector<const char *> VulkanDevice::required_instance_extensions() const
+    {
+        auto extensions = Engine::get().platform().required_vulkan_instance_extensions();
 
 #ifdef __APPLE__
         extensions.push_back(VK_KHR_PORTABILITY_ENUMERATION_EXTENSION_NAME);
@@ -284,7 +454,7 @@ namespace mellohi
         return extensions;
     }
 
-    std::vector<const char *> VulkanDevice::get_required_device_extensions() const
+    std::vector<const char *> VulkanDevice::required_device_extensions() const
     {
         std::vector<const char *> extensions
         {
@@ -298,7 +468,7 @@ namespace mellohi
         return extensions;
     }
 
-    std::vector<const char *> VulkanDevice::get_required_validation_layers() const
+    std::vector<const char *> VulkanDevice::required_validation_layers() const
     {
         std::vector<const char *> validation_layers;
 

@@ -3,13 +3,18 @@
 #ifdef MH_GRAPHICS_VULKAN
 
 #include "mellohi/graphics/graphics.hpp"
-#include "mellohi/graphics/vulkan/vulkan_device.hpp"
 
 namespace mellohi
 {
+    class VulkanDevice;
+    class VulkanRenderPass;
+    class VulkanSwapchain;
+
     struct Graphics::ImplData
     {
-        std::unique_ptr<VulkanDevice> device;
+        std::shared_ptr<VulkanDevice> device;
+        std::shared_ptr<VulkanSwapchain> swapchain;
+        std::shared_ptr<VulkanRenderPass> render_pass;
     };
 }
 

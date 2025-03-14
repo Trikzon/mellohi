@@ -8,3 +8,4 @@ initial_size = [480, 360]
 resizable = true
 title = "Mellohi Window"
 vsync = false
+

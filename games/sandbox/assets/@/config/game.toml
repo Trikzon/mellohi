@@ -4,4 +4,4 @@ package = "sandbox"
 
 [window]
 title = "Sandbox"
-clear_color = "#fffffe"
+
